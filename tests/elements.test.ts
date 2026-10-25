@@ -498,6 +498,21 @@ describe("oq-command-palette", () => {
 });
 
 describe("oq-theme-select and oq-copy", () => {
+  // Node 25+ defines a global `localStorage` of its own (undefined, or throwing, without
+  // --localstorage-file) and it wins over happy-dom's. Give these tests a real in-memory one.
+  beforeAll(() => {
+    const data = new Map<string, string>();
+    vi.stubGlobal("localStorage", {
+      getItem: (k: string) => data.get(k) ?? null,
+      setItem: (k: string, v: string) => void data.set(k, String(v)),
+      removeItem: (k: string) => void data.delete(k),
+      clear: () => data.clear(),
+      key: (i: number) => [...data.keys()][i] ?? null,
+      get length() {
+        return data.size;
+      },
+    });
+  });
   it("creates a select of every theme and applies + remembers the choice", async () => {
     localStorage.removeItem("t-key");
     const el = await mount<HTMLElement>(`<oq-theme-select storage-key="t-key" default="light"></oq-theme-select>`, "oq-theme-select");
