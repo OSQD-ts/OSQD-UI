@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSQD UI — theme builder</title>
+<link rel="stylesheet" href="styles/index.css">
+<style>
+  /* Page layout only; nothing here is part of the kit. */
+  html, body { margin: 0; }
+  [hidden] { display: none !important; }
+  .tb { display: grid; grid-template-columns: 380px minmax(0, 1fr); min-height: calc(100vh - 48px); }
+  .tb__editor { border-right: 1px solid var(--oq-border); background: var(--oq-surface); padding: 16px; overflow: auto; position: sticky; top: 48px; height: calc(100vh - 48px); display: flex; flex-direction: column; gap: 14px; }
+  .tb__main { padding: 20px 24px 48px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+  .tb-group { display: flex; flex-direction: column; gap: 6px; }
+  .tb-row { display: grid; grid-template-columns: 118px minmax(0, 1fr); align-items: center; gap: 8px; }
+  .tb-row--pair { grid-template-columns: 118px minmax(0, 1fr) minmax(0, 1fr); }
+  .tb-row > label { font-size: var(--oq-text-sm); color: var(--oq-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tb-color { display: flex; align-items: center; gap: 4px; min-width: 0; }
+  .tb-color input[type="color"] { flex: none; width: 28px; height: 28px; padding: 0; border: 1px solid var(--oq-border-strong); border-radius: var(--oq-radius-sm); background: none; cursor: pointer; }
+  .tb-color input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+  .tb-color input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 2px; }
+  .tb-color .oq-input { height: 28px; font-family: var(--oq-font-mono); font-size: var(--oq-text-xs); padding: 0 6px; min-width: 0; }
+  .tb-color .oq-input[aria-invalid="true"] { border-color: var(--oq-danger); }
+  .tb-color.is-changed .oq-input { border-color: var(--oq-primary); }
+  .tb-alpha { width: 54px; flex: none; }
+  /* The preview takes the draft theme through inline custom properties. */
+  .tb-preview { border: 1px solid var(--oq-border); border-radius: var(--oq-radius-lg); overflow: hidden; }
+  .tb-preview__body { background: var(--oq-bg); color: var(--oq-text); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .tb-btns { display: grid; grid-template-columns: 70px repeat(7, minmax(0, auto)); gap: 6px; align-items: center; justify-content: start; }
+  .tb-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 16px; }
+  .tb-bars { display: flex; align-items: flex-end; gap: 6px; height: 90px; padding: 8px 0 0; border-bottom: 1px solid var(--oq-border); }
+  .tb-bars span { flex: 1; border-radius: 3px 3px 0 0; }
+  .tb-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 6px 16px; }
+  .tb-check { display: flex; align-items: center; gap: 8px; font-size: var(--oq-text-sm); min-width: 0; }
+  .tb-check .oq-chip { flex: none; min-width: 52px; justify-content: center; }
+  .tb-check .pair { display: inline-flex; gap: 2px; flex: none; }
+  .tb-check .pair i { width: 12px; height: 12px; border-radius: 2px; border: 1px solid var(--oq-border-strong); }
+  .tb-check .why { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tb-export pre { max-height: 420px; }
+  @media (max-width: 960px) { .tb { grid-template-columns: 1fr; } .tb__editor { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--oq-border); } }
+  /* Below 960px the editor and the results stack, so a sticky bar jumps between them. */
+  .tb-jump { display: none; }
+  @media (max-width: 960px) {
+    .tb-jump { display: flex; position: sticky; top: 48px; z-index: 6; padding: 6px 12px; gap: 4px; background: var(--oq-bg); border-bottom: 1px solid var(--oq-border); overflow-x: auto; }
+    .tb-jump > a { flex: none; }
+    .tb__editor, .tb__main > section { scroll-margin-top: 104px; }
+  }
+  @media (max-width: 720px) { .tb-jump { top: 96px; } .tb__editor, .tb__main > section { scroll-margin-top: 150px; } }
+  @media (max-width: 640px) {
+    .tb__editor { padding: 12px; }
+    .tb__main { padding: 16px 12px 40px; }
+    .tb-preview__body { padding: 14px; }
+    .tb-btns { display: flex; flex-wrap: wrap; }
+    .tb-btns > .oq-overline { flex-basis: 100%; margin-top: 4px; }
+    .tb-row, .tb-row--pair { grid-template-columns: 96px minmax(0, 1fr); }
+    .tb-row--pair > :last-child { grid-column: 2; }
+  }
+  @media (pointer: coarse) {
+    .tb-color input[type="color"] { width: 40px; height: 40px; }
+    .tb-color .oq-input { height: 40px; font-size: 16px; }
+  }
+</style>
+</head>
+<body class="oq">
+<header class="oq-appbar oq-appbar--sticky pv-appbar">
+    <a class="oq-appbar__brand" href="preview.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+      OSQD&nbsp;UI <span class="oq-chip oq-sm oq-neutral">0.4.0</span>
+    </a>
+    <nav class="pv-galleries" aria-label="Galleries">
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview.html">Core</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-charts.html">Charts</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-data.html">Data</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-forms.html">Forms</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-layout.html">Layout</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="elements.html">Elements</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="icons.html">Icons</a>
+      <a class="oq-btn oq-btn--soft oq-neutral oq-sm" href="theme-builder.html" aria-current="page">Theme builder</a>
+    </nav>
+    <oq-dropdown class="pv-galleries-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Theme builder <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Galleries">
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html" aria-current="page">Theme builder</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <oq-dropdown class="pv-samples-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Samples <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Sample sites">
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <div class="oq-spacer"></div>
+    <div class="pv-appbar-tools">
+      <button class="oq-btn oq-btn--ghost oq-neutral oq-sm" id="apply-page" aria-pressed="false" title="Use the draft on this whole page">Try on this page</button>
+    </div>
+    <oq-theme-select storage-key="oq-preview-theme" default="dark">
+      <select class="oq-select oq-sm" id="theme-switch" aria-label="Theme" style="width: 132px">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="graphite">Graphite</option>
+        <option value="midnight">Midnight</option>
+        <option value="contrast">Contrast</option>
+        <option value="paper">Paper</option>
+        <option value="slate">Slate</option>
+        <option value="auto">Auto (system)</option>
+      </select>
+    </oq-theme-select>
+    <oq-dropdown class="pv-site-menu">
+      <details class="oq-dropdown oq-dropdown--end">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon" aria-label="Menu"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+        <nav class="oq-menu" aria-label="Galleries and samples">
+          <div class="oq-menu__label oq-overline">Galleries</div>
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html" aria-current="page">Theme builder</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <div class="oq-menu__label oq-overline">Samples</div>
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <style data-pv-appbar>
+      /* Gallery app bar (the same on every gallery page). */
+      .pv-appbar { gap: 8px; min-width: 0; }
+      .pv-appbar .oq-appbar__brand { flex: none; }
+      .pv-galleries { display: flex; flex: none; gap: 2px; }
+      .pv-appbar > * { white-space: nowrap; }
+      .pv-galleries-menu, .pv-site-menu { display: none; }
+      .pv-appbar .oq-dropdown > summary { gap: 4px; }
+      .pv-appbar .oq-menu { min-width: 200px; }
+      .pv-appbar-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .pv-appbar .oq-input-group { flex: 0 1 240px; min-width: 0; width: auto !important; }
+      @media (max-width: 1359.98px) { .pv-galleries { display: none; } .pv-galleries-menu { display: inline-block; } }
+      /* Phones: brand, theme and one menu; the page's own tools move to a second row that scrolls. */
+      @media (max-width: 720px) {
+        .pv-appbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 4px 8px; row-gap: 0; gap: 4px; }
+        .pv-appbar .oq-appbar__brand .oq-chip, .pv-appbar .pv-hide-sm, .pv-galleries-menu, .pv-samples-menu { display: none; }
+        .pv-site-menu { display: inline-block; }
+        .pv-appbar #theme-switch { width: 108px !important; }
+        .pv-appbar-tools { order: 10; flex: 1 0 100%; padding: 4px 0 8px; overflow-x: auto; scrollbar-width: none; }
+        .pv-appbar-tools .oq-input-group { flex: 1 1 auto; }
+        .pv-site-menu .oq-menu { position: fixed; top: 52px; left: 8px; right: 8px; max-width: none; max-height: calc(100dvh - 64px); }
+      }
+    </style>
+    <script src="assets/osqd-ui-elements.js" defer></script>
+  </header>
+
+<nav class="tb-jump" aria-label="Jump to">
+  <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="#tb-editor">Colours</a>
+  <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="#tb-preview">Preview</a>
+  <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="#tb-contrast">Contrast</a>
+  <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="#tb-export">Export</a>
+</nav>
+<div class="tb">
+  <aside class="tb__editor" id="tb-editor" aria-label="Theme editor">
+    <div class="oq-row oq-gap-2">
+      <div class="oq-field oq-grow"><label class="oq-label" for="tb-name">Name</label><input class="oq-input oq-sm" id="tb-name" value="brand" spellcheck="false"></div>
+      <div class="oq-field"><label class="oq-label" for="tb-base">Start from</label><select class="oq-select oq-sm" id="tb-base"></select></div>
+    </div>
+    <div class="oq-row oq-gap-2">
+      <button class="oq-btn oq-btn--outline oq-neutral oq-sm" id="tb-reset" type="button">Reset to base</button>
+      <button class="oq-btn oq-btn--soft oq-sm" id="tb-fix" type="button">Auto-fix on-colours</button>
+      <span class="oq-spacer"></span>
+      <span class="oq-small oq-faint" id="tb-changed"></span>
+    </div>
+    <div id="tb-groups" class="oq-stack oq-gap-4"></div>
+  </aside>
+
+  <main class="tb__main">
+    <section class="oq-card" id="tb-contrast">
+      <div class="oq-card__header"><h2 class="oq-card__title">Contrast</h2><span class="oq-card__subtitle">The same rules the built-in themes are tested against</span><div class="oq-card__actions"><span class="oq-chip" id="tb-score"></span></div></div>
+      <div class="oq-card__body"><div class="tb-checks" id="tb-checks"></div></div>
+    </section>
+
+    <section class="tb-preview" id="tb-preview" aria-label="Preview">
+      <div class="tb-preview__body oq">
+        <div class="oq-row oq-between oq-wrap"><div><div class="oq-overline">Preview</div><div class="oq-h3">Edge node fra-02</div></div><div class="oq-row"><span class="oq-status"><span class="oq-dot oq-success oq-dot--pulse"></span>Operational</span><span class="oq-chip oq-warning">1 warning</span></div></div>
+        <div class="tb-btns" id="tb-btns"></div>
+        <div class="tb-cols">
+          <div class="oq-card">
+            <div class="oq-card__header"><h3 class="oq-card__title">Settings</h3><div class="oq-card__actions"><span class="oq-chip oq-sm oq-success">saved</span></div></div>
+            <div class="oq-card__body oq-stack oq-gap-3">
+              <label class="oq-field"><span class="oq-label">Service name</span><input class="oq-input" value="bothandler-edge"></label>
+              <label class="oq-field is-invalid"><span class="oq-label">Port</span><input class="oq-input" value="99999" aria-invalid="true"><span class="oq-help">Must be between 1 and 65535.</span></label>
+              <label class="oq-field"><span class="oq-label">Region</span><select class="oq-select"><option>eu-central-1</option></select></label>
+              <div class="oq-row oq-wrap oq-gap-4"><label class="oq-check"><input type="checkbox" class="oq-checkbox" checked> Log</label><label class="oq-check"><input type="radio" class="oq-radio" name="tb-r" checked> Challenge</label><label class="oq-check"><input type="checkbox" role="switch" class="oq-switch" checked> Enabled</label></div>
+              <input type="range" class="oq-range" value="60" aria-label="Threshold">
+            </div>
+            <div class="oq-card__footer"><button class="oq-btn oq-btn--ghost oq-neutral">Cancel</button><button class="oq-btn">Save</button></div>
+          </div>
+          <div class="oq-stack oq-gap-3">
+            <div class="oq-tabs" role="tablist" aria-label="Preview tabs"><button class="oq-tab" role="tab" aria-selected="true">Overview</button><button class="oq-tab" role="tab" aria-selected="false">Detectors <span class="oq-badge oq-neutral">8</span></button><button class="oq-tab" role="tab" aria-selected="false">Logs</button></div>
+            <div class="oq-alert oq-info"><div class="oq-alert__content"><div class="oq-alert__title">Maintenance window</div>Reloads pause Sunday 02:00–03:00.</div></div>
+            <div class="oq-alert oq-danger"><div class="oq-alert__content"><div class="oq-alert__title">Store unreachable</div>ECONNREFUSED 10.0.0.4:6379</div></div>
+            <div class="oq-row oq-wrap oq-gap-1" id="tb-chips"></div>
+            <div class="oq-paper oq-p-3"><div class="oq-row oq-between"><span class="oq-small oq-muted">Blocked per hour</span><span class="oq-small oq-mono">312</span></div><div class="tb-bars" id="tb-bars"></div></div>
+            <div class="oq-progress oq-warning"><div class="oq-progress__bar" style="--value: 72%"></div></div>
+          </div>
+        </div>
+        <div class="oq-table-wrap">
+          <table class="oq-table oq-table--hover oq-table--dense">
+            <thead><tr><th>Node</th><th>Status</th><th class="oq-num">Req/s</th><th class="oq-num">p95 ms</th></tr></thead>
+            <tbody>
+              <tr><td class="oq-mono">fra-01</td><td><span class="oq-status"><span class="oq-dot oq-success"></span>healthy</span></td><td class="oq-num">2,310</td><td class="oq-num">41</td></tr>
+              <tr aria-selected="true"><td class="oq-mono">fra-03</td><td><span class="oq-status"><span class="oq-dot oq-warning"></span>degraded</span></td><td class="oq-num">980</td><td class="oq-num oq-text-c oq-warning">412</td></tr>
+              <tr><td class="oq-mono">iad-02</td><td><span class="oq-status"><span class="oq-dot oq-danger"></span>down</span></td><td class="oq-num">0</td><td class="oq-num">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="oq-small"><span class="oq-muted">Muted text,</span> <span class="oq-faint">faint text,</span> a <a href="#">link</a>, <code>code</code> and <kbd class="oq-kbd">Ctrl</kbd> <kbd class="oq-kbd">K</kbd>.</p>
+      </div>
+    </section>
+
+    <section class="oq-card tb-export" id="tb-export">
+      <div class="oq-card__header"><h2 class="oq-card__title">Export</h2><div class="oq-card__actions"><label class="oq-check oq-small"><input type="checkbox" class="oq-checkbox" id="tb-full"> Full palette</label></div></div>
+      <div class="oq-card__body">
+        <oq-tabs id="tb-tabs">
+          <div class="oq-tabs" role="tablist" aria-label="Export format">
+            <button class="oq-tab" role="tab" id="ex-t1" aria-controls="ex-p1">TypeScript</button>
+            <button class="oq-tab" role="tab" id="ex-t2" aria-controls="ex-p2">CSS</button>
+            <button class="oq-tab" role="tab" id="ex-t3" aria-controls="ex-p3">JSON</button>
+          </div>
+          <div class="oq-tabpanel" role="tabpanel" id="ex-p1"><div class="oq-codeblock"><div class="oq-codeblock__header"><span class="oq-codeblock__file">theme.ts</span><oq-copy class="oq-codeblock__copy" target="#ex-ts"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button">Copy</button></oq-copy></div><pre class="oq-pre" id="ex-ts"></pre></div></div>
+          <div class="oq-tabpanel" role="tabpanel" id="ex-p2"><div class="oq-codeblock"><div class="oq-codeblock__header"><span class="oq-codeblock__file">theme.css</span><oq-copy class="oq-codeblock__copy" target="#ex-css"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button">Copy</button></oq-copy></div><pre class="oq-pre" id="ex-css"></pre></div></div>
+          <div class="oq-tabpanel" role="tabpanel" id="ex-p3"><div class="oq-codeblock"><div class="oq-codeblock__header"><span class="oq-codeblock__file">theme.json</span><oq-copy class="oq-codeblock__copy" target="#ex-json"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button">Copy</button></oq-copy></div><pre class="oq-pre" id="ex-json"></pre></div></div>
+        </oq-tabs>
+        <p class="oq-small oq-muted" style="margin: 12px 0 0">TypeScript goes through <code>createTheme</code> (unknown keys throw); the CSS block works with no build: put it after <code>styles/index.css</code> and set <code>data-theme</code> to its name. The chart series colours follow the base theme's mode.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Every built-in theme, so their values can be read from the computed CSS variables. -->
+<div id="tb-probes" hidden></div>
+
+<script>
+addEventListener("DOMContentLoaded", () => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const BASES = [["dark", "darkTheme", "dark"], ["light", "lightTheme", "light"], ["graphite", "graphiteTheme", "dark"], ["midnight", "midnightTheme", "dark"], ["contrast", "contrastTheme", "dark"], ["paper", "paperTheme", "light"], ["slate", "slateTheme", "light"]];
+  const GROUPS = [
+    ["Layers", [["bg", "Page"], ["surface", "Surface"], ["raised", "Raised"], ["hover", "Hover"], ["border", "Border"], ["borderStrong", "Border strong"]]],
+    ["Text", [["text", "Text"], ["textMuted", "Muted"], ["textFaint", "Faint"]]],
+    ["Intents and their text", [["primary", "Primary", "onPrimary"], ["secondary", "Secondary", "onSecondary"], ["success", "Success", "onSuccess"], ["warning", "Warning", "onWarning"], ["danger", "Danger", "onDanger"], ["info", "Info", "onInfo"], ["neutral", "Neutral", "onNeutral"]]],
+    ["Focus and overlays", [["focus", "Focus ring"], ["selection", "Selection"], ["overlay", "Overlay"]]],
+  ];
+  const KEYS = GROUPS.flatMap(([, items]) => items.flatMap(([k, , on]) => (on ? [k, on] : [k])));
+  const ALPHA = new Set(["selection", "overlay"]);
+  const kebab = (s) => s.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+  const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+
+  // ---------- Read the built-in themes from the CSS ----------
+  $("#tb-probes").innerHTML = BASES.map(([n]) => `<div data-theme="${n}"></div>`).join("");
+  const builtIn = Object.fromEntries(BASES.map(([n]) => {
+    const cs = getComputedStyle($(`#tb-probes [data-theme="${n}"]`));
+    return [n, Object.fromEntries(KEYS.map((k) => [k, cs.getPropertyValue(`--oq-${kebab(k)}`).trim()]))];
+  }));
+  $("#tb-base").innerHTML = BASES.map(([n]) => `<option value="${n}">${n[0].toUpperCase() + n.slice(1)}</option>`).join("");
+
+  // ---------- Colour maths ----------
+  const parse = (v) => {
+    v = String(v).trim().toLowerCase();
+    let m = /^#([0-9a-f]{3})$/.exec(v);
+    if (m) return { r: parseInt(m[1][0] + m[1][0], 16), g: parseInt(m[1][1] + m[1][1], 16), b: parseInt(m[1][2] + m[1][2], 16), a: 1 };
+    m = /^#([0-9a-f]{6})$/.exec(v);
+    if (m) return { r: parseInt(m[1].slice(0, 2), 16), g: parseInt(m[1].slice(2, 4), 16), b: parseInt(m[1].slice(4, 6), 16), a: 1 };
+    m = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(v);
+    if (m) return { r: +m[1], g: +m[2], b: +m[3], a: m[4] === undefined ? 1 : +m[4] };
+    return null;
+  };
+  const hex = ({ r, g, b }) => `#${[r, g, b].map((x) => Math.round(x).toString(16).padStart(2, "0")).join("")}`;
+  const lum = ({ r, g, b }) => { const f = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+  const ratio = (a, b) => { const x = parse(a), y = parse(b); if (!x || !y) return 0; const [hi, lo] = [lum(x), lum(y)].sort((p, q) => q - p); return (hi + 0.05) / (lo + 0.05); };
+
+  // ---------- State ----------
+  let base = "dark", palette = { ...builtIn.dark };
+  try {
+    const saved = JSON.parse(store.get("oq-theme-builder") ?? "null");
+    if (saved && builtIn[saved.base]) { base = saved.base; palette = { ...builtIn[base], ...saved.palette }; $("#tb-name").value = saved.name ?? "brand"; }
+  } catch {}
+  $("#tb-base").value = base;
+  const save = () => store.set("oq-theme-builder", JSON.stringify({ base, name: $("#tb-name").value, palette }));
+  const mode = () => BASES.find(([n]) => n === base)[2];
+  const changed = () => KEYS.filter((k) => palette[k] !== builtIn[base][k]);
+
+  // ---------- Editor ----------
+  const colorField = (k) => {
+    const p = parse(palette[k]) ?? { r: 0, g: 0, b: 0, a: 1 };
+    const alpha = ALPHA.has(k) ? `<input type="range" class="oq-range tb-alpha" min="0" max="100" value="${Math.round(p.a * 100)}" data-alpha="${k}" aria-label="${k} opacity">` : "";
+    return `<span class="tb-color${palette[k] !== builtIn[base][k] ? " is-changed" : ""}" data-key="${k}"><input type="color" value="${hex(p)}" data-pick="${k}" aria-label="${k}"><input class="oq-input" value="${palette[k]}" data-text="${k}" aria-label="${k} value" spellcheck="false">${alpha}</span>`;
+  };
+  const renderEditor = () => {
+    $("#tb-groups").innerHTML = GROUPS.map(([title, items]) => `<div class="tb-group"><div class="oq-overline">${title}</div>${items.map(([k, label, on]) =>
+      `<div class="tb-row${on ? " tb-row--pair" : ""}"><label title="${k}${on ? ` / ${on}` : ""}">${label}</label>${colorField(k)}${on ? colorField(on) : ""}</div>`).join("")}</div>`).join("");
+  };
+  const setColor = (k, v, { rerenderField = true } = {}) => {
+    palette[k] = v;
+    if (rerenderField) { const wrap = $(`.tb-color[data-key="${k}"]`); if (wrap) wrap.outerHTML = colorField(k); }
+    else $(`.tb-color[data-key="${k}"]`)?.classList.toggle("is-changed", palette[k] !== builtIn[base][k]);
+    update();
+  };
+  $("#tb-groups").addEventListener("input", (e) => {
+    const t = e.target;
+    if (t.dataset.pick) {
+      const k = t.dataset.pick, old = parse(palette[k]) ?? { a: 1 }, rgb = parse(t.value);
+      const v = ALPHA.has(k) ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${old.a})` : t.value;
+      $(`[data-text="${k}"]`).value = v;
+      setColor(k, v, { rerenderField: false });
+    } else if (t.dataset.text) {
+      const k = t.dataset.text, p = parse(t.value);
+      t.setAttribute("aria-invalid", String(!p));
+      if (!p) return;
+      $(`[data-pick="${k}"]`).value = hex(p);
+      setColor(k, t.value.trim(), { rerenderField: false });
+    } else if (t.dataset.alpha) {
+      const k = t.dataset.alpha, p = parse(palette[k]);
+      const v = `rgba(${p.r}, ${p.g}, ${p.b}, ${(+t.value / 100).toFixed(2)})`;
+      $(`[data-text="${k}"]`).value = v;
+      setColor(k, v, { rerenderField: false });
+    }
+  });
+  $("#tb-base").onchange = (e) => {
+    const keep = Object.fromEntries(changed().map((k) => [k, palette[k]]));
+    base = e.target.value;
+    palette = { ...builtIn[base], ...(changed().length && confirm("Keep your changed colours on the new base?") ? keep : {}) };
+    renderEditor(); update();
+  };
+  $("#tb-reset").onclick = () => { palette = { ...builtIn[base] }; renderEditor(); update(); OQ.toast({ title: `Reset to ${base}`, color: "info" }); };
+  $("#tb-fix").onclick = () => {
+    const fixed = [];
+    for (const [k, , on] of GROUPS[2][1]) {
+      const best = ratio(palette[k], "#ffffff") >= ratio(palette[k], "#000000") ? "#ffffff" : "#000000";
+      if (ratio(palette[k], palette[on]) < 4.5 && palette[on] !== best) { palette[on] = best; fixed.push(on); }
+    }
+    renderEditor(); update();
+    OQ.toast(fixed.length ? { title: `Fixed ${fixed.length} on-colour${fixed.length === 1 ? "" : "s"}`, message: fixed.join(", "), color: "success" } : { title: "Every on-colour already passes", color: "info" });
+  };
+  $("#tb-name").addEventListener("input", update);
+  $("#tb-full").addEventListener("change", update);
+
+  // ---------- Contrast rules (the same as tests/theme.test.ts) ----------
+  const checks = () => {
+    const p = palette, out = [];
+    for (const layer of ["bg", "surface", "raised"]) {
+      out.push({ a: "text", b: layer, min: 7 });
+      out.push({ a: "textMuted", b: layer, min: 4.5 });
+      out.push({ a: "textFaint", b: layer, min: 4.5 });
+    }
+    for (const [k, , on] of GROUPS[2][1]) {
+      if (k === "neutral") { out.push({ a: k, b: on, min: 4.5 }); continue; }
+      out.push({ a: k, b: on, min: 4.5 }, { a: k, b: "bg", min: 4.5 }, { a: k, b: "surface", min: 4.5 });
+    }
+    return out.map((c) => ({ ...c, r: ratio(p[c.a], p[c.b]) }));
+  };
+
+  // ---------- Output ----------
+  const exportName = () => ($("#tb-name").value.trim() || "brand").replace(/[^a-z0-9-]/gi, "-").toLowerCase();
+  function update() {
+    const name = exportName();
+    // Preview: the base theme underneath (for series colours and colour-scheme), the draft on top.
+    const pv = $("#tb-preview");
+    pv.dataset.theme = base;
+    for (const k of KEYS) pv.style.setProperty(`--oq-${kebab(k)}`, palette[k]);
+    if ($("#apply-page").getAttribute("aria-pressed") === "true") for (const k of KEYS) document.documentElement.style.setProperty(`--oq-${kebab(k)}`, palette[k]);
+
+    const list = checks(), fails = list.filter((c) => c.r < c.min);
+    $("#tb-checks").innerHTML = list.map((c) => `<div class="tb-check" title="${c.a} on ${c.b}: ${c.r.toFixed(2)} (needs ${c.min})">
+      <span class="oq-chip oq-sm ${c.r >= c.min ? "oq-success" : "oq-danger oq-chip--solid"}">${c.r >= c.min ? "pass" : "fail"} ${c.r.toFixed(1)}</span>
+      <span class="pair" aria-hidden="true"><i style="background:${palette[c.a]}"></i><i style="background:${palette[c.b]}"></i></span>
+      <span class="why"><code>${c.a}</code> on <code>${c.b}</code> <span class="oq-faint">≥ ${c.min}</span></span></div>`).join("");
+    $("#tb-score").className = `oq-chip ${fails.length ? "oq-danger" : "oq-success"}`;
+    $("#tb-score").textContent = fails.length ? `${fails.length} of ${list.length} fail` : `all ${list.length} pass`;
+    const n = changed().length;
+    $("#tb-changed").textContent = n ? `${n} changed` : "no changes";
+
+    const keys = $("#tb-full").checked ? KEYS : changed();
+    const baseVar = BASES.find(([b]) => b === base)[1];
+    $("#ex-ts").textContent = `import { createTheme, ${baseVar} } from "@osqd/ui/theme";\n\nexport const ${name.replace(/-([a-z])/g, (_, c) => c.toUpperCase())}Theme = createTheme(\n  {\n    name: "${name}",\n    palette: {${keys.length ? `\n${keys.map((k) => `      ${k}: "${palette[k]}",`).join("\n")}\n    ` : " "}},\n  },\n  ${baseVar},\n);\n`;
+    $("#ex-css").textContent = `/* ${name}: ${n} colour${n === 1 ? "" : "s"} changed from "${base}". Load after styles/index.css. */\n[data-theme="${name}"] {\n${KEYS.map((k) => `  --oq-${kebab(k)}: ${palette[k]};`).join("\n")}\n  color-scheme: ${mode()};\n}\n`;
+    $("#ex-json").textContent = JSON.stringify({ name, base, mode: mode(), palette: Object.fromEntries(keys.map((k) => [k, palette[k]])) }, null, 2);
+    save();
+  }
+
+  // Preview buttons and chips across every intent.
+  const intents = ["primary", "secondary", "success", "warning", "danger", "info", "neutral"];
+  $("#tb-btns").innerHTML = [["solid", ""], ["outline", "oq-btn--outline"], ["soft", "oq-btn--soft"], ["ghost", "oq-btn--ghost"]].map(([v, cls]) =>
+    `<span class="oq-overline">${v}</span>${intents.map((i) => `<button class="oq-btn oq-sm ${cls} oq-${i}">${i[0].toUpperCase() + i.slice(1)}</button>`).join("")}`).join("");
+  $("#tb-chips").innerHTML = intents.map((i) => `<span class="oq-chip oq-${i}">${i}</span>`).join("") + '<span class="oq-badge oq-danger">12</span>';
+  $("#tb-bars").innerHTML = [40, 62, 55, 80, 48, 92, 70, 58, 66, 84, 51, 74].map((h, i) => `<span style="height:${h}%; background: var(--oq-series-${(i % 3) + 1})"></span>`).join("");
+
+  // Try the draft on the whole page (until switched off).
+  $("#apply-page").onclick = (e) => {
+    const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+    e.currentTarget.setAttribute("aria-pressed", String(on));
+    e.currentTarget.classList.toggle("oq-btn--soft", on);
+    if (!on) for (const k of KEYS) document.documentElement.style.removeProperty(`--oq-${kebab(k)}`);
+    update();
+  };
+  document.addEventListener("oq-copy", () => OQ.toast({ title: "Copied", color: "success", duration: 1500 }));
+
+  renderEditor();
+  update();
+});
+</script>
+</body>
+</html>

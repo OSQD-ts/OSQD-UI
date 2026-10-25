@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSQD UI Icons</title>
+<link rel="stylesheet" href="styles/index.css">
+<style>
+  /* Gallery layout only; nothing here is part of the kit. */
+  html, body { margin: 0; }
+  [hidden] { display: none !important; }
+  .ic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
+  .ic {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    height: 96px; padding: 8px; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-md);
+    background: var(--oq-surface); color: var(--oq-text); font: inherit; cursor: pointer;
+  }
+  .ic:hover { border-color: var(--oq-border-strong); background: var(--oq-raised); color: var(--oq-primary); }
+  .ic:focus-visible { outline: none; box-shadow: var(--oq-ring); }
+  .ic > svg { width: var(--ic, 24px); height: var(--ic, 24px); }
+  .ic > span { font-size: var(--oq-text-xs); color: var(--oq-text-faint); font-family: var(--oq-font-mono); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .il-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 12px; }
+  .il-grid figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; }
+  .il-grid figcaption { font-family: var(--oq-font-mono); font-size: var(--oq-text-xs); color: var(--oq-text-faint); }
+  .il-grid svg { width: 160px; height: 120px; max-width: 100%; }
+  /* Phones: three icons a row; the names still fit at 11px. */
+  @media (max-width: 640px) { .ic-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; } }
+</style>
+</head>
+<body class="oq">
+<!-- ICONS:START -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="oq-i-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,12 7,12 10,5 14,19 17,12 21,12"/></symbol>
+  <symbol id="oq-i-archive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4.5" rx="1"/><path d="M5 8.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5"/><line x1="10" y1="12.5" x2="14" y2="12.5"/></symbol>
+  <symbol id="oq-i-arrow-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6,13 12,19 18,13"/></symbol>
+  <symbol id="oq-i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="11,6 5,12 11,18"/></symbol>
+  <symbol id="oq-i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/></symbol>
+  <symbol id="oq-i-arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="6,11 12,5 18,11"/></symbol>
+  <symbol id="oq-i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="oq-i-bell-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/><line x1="3" y1="3" x2="21" y2="21"/></symbol>
+  <symbol id="oq-i-book-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.5 5 8 4.5 3.5 4.5v14c4.5 0 7 .5 8.5 2 1.5-1.5 4-2 8.5-2v-14c-4.5 0-7 .5-8.5 2z"/><line x1="12" y1="6.5" x2="12" y2="20.5"/></symbol>
+  <symbol id="oq-i-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v16.5l-6-4-6 4z"/></symbol>
+  <symbol id="oq-i-briefcase" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><line x1="3" y1="13" x2="21" y2="13"/></symbol>
+  <symbol id="oq-i-bug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10a4 4 0 0 1 8 0v4a4 4 0 0 1-8 0z"/><path d="M9.5 6.5 8 5M14.5 6.5 16 5"/><line x1="12" y1="10" x2="12" y2="18"/><line x1="4" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="20" y2="12"/><line x1="5" y1="7.5" x2="8.3" y2="9.5"/><line x1="19" y1="7.5" x2="15.7" y2="9.5"/><line x1="4.5" y1="17.5" x2="8.3" y2="16"/><line x1="19.5" y1="17.5" x2="15.7" y2="16"/></symbol>
+  <symbol id="oq-i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><line x1="3.5" y1="10" x2="20.5" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></symbol>
+  <symbol id="oq-i-chart-bar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20.5" x2="20" y2="20.5"/><line x1="7" y1="17" x2="7" y2="11"/><line x1="12" y1="17" x2="12" y2="6"/><line x1="17" y1="17" x2="17" y2="9"/></symbol>
+  <symbol id="oq-i-chart-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"/><polyline points="7.5,15 11,11 14,13.5 19.5,7"/></symbol>
+  <symbol id="oq-i-chart-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A9 9 0 1 1 9.5 3.4"/><path d="M13 2.5V11h8.5A8.5 8.5 0 0 0 13 2.5z"/></symbol>
+  <symbol id="oq-i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,12.5 10,17.5 19,7"/></symbol>
+  <symbol id="oq-i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></symbol>
+  <symbol id="oq-i-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15,6 9,12 15,18"/></symbol>
+  <symbol id="oq-i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,6 15,12 9,18"/></symbol>
+  <symbol id="oq-i-chevron-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,15 12,9 18,15"/></symbol>
+  <symbol id="oq-i-chevrons-up-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="8,9 12,5 16,9"/><polyline points="8,15 12,19 16,15"/></symbol>
+  <symbol id="oq-i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12,7 12,12 15.5,14"/></symbol>
+  <symbol id="oq-i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></symbol>
+  <symbol id="oq-i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19a4.5 4.5 0 0 1-.6-9 6 6 0 0 1 11.5 1.5A3.75 3.75 0 0 1 17.5 19z"/></symbol>
+  <symbol id="oq-i-cloud-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19a4.5 4.5 0 0 1-.6-9 6 6 0 0 1 11.5 1.5A3.75 3.75 0 0 1 17.5 19z"/><line x1="3" y1="3" x2="21" y2="21"/></symbol>
+  <symbol id="oq-i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="8,7 3,12 8,17"/><polyline points="16,7 21,12 16,17"/><line x1="13.5" y1="5" x2="10.5" y2="19"/></symbol>
+  <symbol id="oq-i-columns" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/></symbol>
+  <symbol id="oq-i-contrast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z"/></symbol>
+  <symbol id="oq-i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+  <symbol id="oq-i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9.5 3v3M14.5 3v3M9.5 18v3M14.5 18v3M3 9.5h3M3 14.5h3M18 9.5h3M18 14.5h3"/></symbol>
+  <symbol id="oq-i-credit-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><line x1="2.5" y1="10" x2="21.5" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></symbol>
+  <symbol id="oq-i-database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7.5" ry="3"/><path d="M4.5 6v12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V6"/><path d="M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3"/></symbol>
+  <symbol id="oq-i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="15"/><polyline points="7,10 12,15 17,10"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></symbol>
+  <symbol id="oq-i-drag-handle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="0.6" fill="currentColor"/><circle cx="15" cy="6" r="0.6" fill="currentColor"/><circle cx="9" cy="12" r="0.6" fill="currentColor"/><circle cx="15" cy="12" r="0.6" fill="currentColor"/><circle cx="9" cy="18" r="0.6" fill="currentColor"/><circle cx="15" cy="18" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="oq-i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L8 18.5z"/><line x1="13.5" y1="7" x2="16.5" y2="10"/></symbol>
+  <symbol id="oq-i-error" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></symbol>
+  <symbol id="oq-i-external-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><line x1="20" y1="4" x2="11" y2="13"/><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></symbol>
+  <symbol id="oq-i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="oq-i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.7a9.7 9.7 0 0 1 2-.2c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-2.6 3.4"/><path d="M6.3 7.4A16.6 16.6 0 0 0 2.5 12s3.5 6.5 9.5 6.5c1.8 0 3.3-.6 4.6-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><line x1="3" y1="3" x2="21" y2="21"/></symbol>
+  <symbol id="oq-i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></symbol>
+  <symbol id="oq-i-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><line x1="8.5" y1="13" x2="15.5" y2="13"/><line x1="8.5" y1="17" x2="13" y2="17"/></symbol>
+  <symbol id="oq-i-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 7.5V19l-4 1.5v-8z"/></symbol>
+  <symbol id="oq-i-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="21" x2="5" y2="4"/><path d="M5 4h11l-2 4 2 4H5"/></symbol>
+  <symbol id="oq-i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="oq-i-folder-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V7a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v2"/><path d="M3 18l2.6-6.4A1 1 0 0 1 6.5 11h14a1 1 0 0 1 .9 1.4l-2.6 6.4a2 2 0 0 1-1.9 1.2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="oq-i-git-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="5.5" r="2"/><circle cx="6" cy="18.5" r="2"/><circle cx="18" cy="7" r="2"/><line x1="6" y1="7.5" x2="6" y2="16.5"/><path d="M18 9c0 4-3 6-7.5 6.5L7.5 17"/></symbol>
+  <symbol id="oq-i-git-commit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.5"/><line x1="3" y1="12" x2="8.5" y2="12"/><line x1="15.5" y1="12" x2="21" y2="12"/></symbol>
+  <symbol id="oq-i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+  <symbol id="oq-i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></symbol>
+  <symbol id="oq-i-hard-drive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14 5.5 5.6a1 1 0 0 1 1-.6h11a1 1 0 0 1 1 .6L21 14"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="17" r="0.6" fill="currentColor"/><line x1="14" y1="17" x2="17" y2="17"/></symbol>
+  <symbol id="oq-i-hash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="9.5" y1="3.5" x2="7.5" y2="20.5"/><line x1="16.5" y1="3.5" x2="14.5" y2="20.5"/><line x1="4" y1="9" x2="20.5" y2="9"/><line x1="3.5" y1="15" x2="20" y2="15"/></symbol>
+  <symbol id="oq-i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-8-4.9-8-10.5A4.5 4.5 0 0 1 12 6.8a4.5 4.5 0 0 1 8 2.7C20 15.1 12 20 12 20z"/></symbol>
+  <symbol id="oq-i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.9.7c0 1.7-2.4 2.3-2.4 3.8"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="oq-i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5"/><polyline points="4,4 4,8.5 8.5,8.5"/><polyline points="12,8 12,12 15,14"/></symbol>
+  <symbol id="oq-i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="oq-i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><polyline points="21,16 15.5,11 6,20"/></symbol>
+  <symbol id="oq-i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13.5 5.6 5.7A1 1 0 0 1 6.6 5h10.8a1 1 0 0 1 1 .7L21 13.5V19a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 13.5h5l1.5 2.5h5l1.5-2.5h5"/></symbol>
+  <symbol id="oq-i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.75" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="oq-i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4.5"/><line x1="11.2" y1="11.8" x2="20" y2="3"/><line x1="16.5" y1="6.5" x2="19" y2="9"/><line x1="14" y1="9" x2="16" y2="11"/></symbol>
+  <symbol id="oq-i-keyboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="6.5" cy="10" r="0.6" fill="currentColor"/><circle cx="10" cy="10" r="0.6" fill="currentColor"/><circle cx="14" cy="10" r="0.6" fill="currentColor"/><circle cx="17.5" cy="10" r="0.6" fill="currentColor"/><line x1="7.5" y1="14" x2="16.5" y2="14"/></symbol>
+  <symbol id="oq-i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,3.5 21,8 12,12.5 3,8"/><polyline points="3,12 12,16.5 21,12"/><polyline points="3,16 12,20.5 21,16"/></symbol>
+  <symbol id="oq-i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="oq-i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="0.6" fill="currentColor"/><circle cx="4.5" cy="12" r="0.6" fill="currentColor"/><circle cx="4.5" cy="18" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="oq-i-loader" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/></symbol>
+  <symbol id="oq-i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="oq-i-log-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><polyline points="9,8 13,12 9,16"/><line x1="13" y1="12" x2="3" y2="12"/></symbol>
+  <symbol id="oq-i-log-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/><polyline points="16,8 20,12 16,16"/><line x1="20" y1="12" x2="9" y2="12"/></symbol>
+  <symbol id="oq-i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3.5,6.5 12,13 20.5,6.5"/></symbol>
+  <symbol id="oq-i-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+  <symbol id="oq-i-maximize" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5"/><path d="M15 4h5v5"/><path d="M20 15v5h-5"/><path d="M9 20H4v-5"/></symbol>
+  <symbol id="oq-i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></symbol>
+  <symbol id="oq-i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-9l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></symbol>
+  <symbol id="oq-i-minimize" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4"/><path d="M20 9h-5V4"/><path d="M15 20v-5h5"/><path d="M4 15h5v5"/></symbol>
+  <symbol id="oq-i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="oq-i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></symbol>
+  <symbol id="oq-i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="oq-i-more-horizontal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="0.6" fill="currentColor"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/><circle cx="18" cy="12" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="oq-i-more-vertical" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="0.6" fill="currentColor"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/><circle cx="12" cy="18" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="oq-i-network" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="oq-i-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,3 20,7.5 20,16.5 12,21 4,16.5 4,7.5"/><polyline points="4,7.5 12,12 20,7.5"/><line x1="12" y1="12" x2="12" y2="21"/><line x1="8" y1="5.25" x2="16" y2="9.75"/></symbol>
+  <symbol id="oq-i-paperclip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5l-7.7 7.7a5 5 0 0 1-7.1-7.1L13 4.3a3.3 3.3 0 0 1 4.7 4.7L10 16.7a1.7 1.7 0 0 1-2.4-2.4l6.9-6.8"/></symbol>
+  <symbol id="oq-i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></symbol>
+  <symbol id="oq-i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5h6l-1 6.5 3 3V14H7v-1l3-3z"/><line x1="12" y1="14" x2="12" y2="20.5"/></symbol>
+  <symbol id="oq-i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="7,4.5 19,12 7,19.5"/></symbol>
+  <symbol id="oq-i-plug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v4M15 3v4"/><path d="M6 7h12v4a6 6 0 0 1-12 0z"/><line x1="12" y1="17" x2="12" y2="21"/></symbol>
+  <symbol id="oq-i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="oq-i-plus-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
+  <symbol id="oq-i-power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="11"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></symbol>
+  <symbol id="oq-i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V3.5h10V9"/><path d="M7 17H5a1.5 1.5 0 0 1-1.5-1.5v-5A1.5 1.5 0 0 1 5 9h14a1.5 1.5 0 0 1 1.5 1.5v5A1.5 1.5 0 0 1 19 17h-2"/><rect x="7" y="14" width="10" height="6.5"/></symbol>
+  <symbol id="oq-i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15,14 20,9 15,4"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
+  <symbol id="oq-i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 10A8 8 0 0 0 5.5 7.3L4 9"/><polyline points="4,4.5 4,9 8.5,9"/><path d="M4.5 14a8 8 0 0 0 14 2.7L20 15"/><polyline points="20,19.5 20,15 15.5,15"/></symbol>
+  <symbol id="oq-i-rocket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5 7 12c1.5-5 5-8.5 13-9-.5 8-4 11.5-9 13z"/><path d="M7 12H3.5L6 8.5h4"/><path d="M12 17v3.5l3.5-2.5v-4"/><circle cx="15" cy="9" r="1.5"/></symbol>
+  <symbol id="oq-i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l4 4v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M8 4v4.5h7V4"/><path d="M7.5 20v-6h9v6"/></symbol>
+  <symbol id="oq-i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><line x1="16" y1="16" x2="20" y2="20"/></symbol>
+  <symbol id="oq-i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 3.5 10.5l7 3 3 7z"/><line x1="20.5" y1="3.5" x2="10.5" y2="13.5"/></symbol>
+  <symbol id="oq-i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="7" rx="1.5"/><rect x="3.5" y="13" width="17" height="7" rx="1.5"/><circle cx="7" cy="7.5" r="0.6" fill="currentColor"/><circle cx="7" cy="16.5" r="0.6" fill="currentColor"/><line x1="11" y1="7.5" x2="17" y2="7.5"/><line x1="11" y1="16.5" x2="17" y2="16.5"/></symbol>
+  <symbol id="oq-i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="6.5"/><line x1="18.5" y1="12" x2="21" y2="12"/><line x1="3" y1="12" x2="5.5" y2="12"/><line x1="12" y1="3" x2="12" y2="5.5"/><line x1="12" y1="18.5" x2="12" y2="21"/><line x1="16.6" y1="16.6" x2="18.4" y2="18.4"/><line x1="5.6" y1="5.6" x2="7.4" y2="7.4"/><line x1="16.6" y1="7.4" x2="18.4" y2="5.6"/><line x1="5.6" y1="18.4" x2="7.4" y2="16.6"/></symbol>
+  <symbol id="oq-i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><line x1="8.2" y1="10.8" x2="15.8" y2="6.7"/><line x1="8.2" y1="13.2" x2="15.8" y2="17.3"/></symbol>
+  <symbol id="oq-i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 19.5 6v5.5c0 4.5-3.2 8-7.5 9.5-4.3-1.5-7.5-5-7.5-9.5V6z"/></symbol>
+  <symbol id="oq-i-shield-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 19.5 6v5.5c0 4.5-3.2 8-7.5 9.5-4.3-1.5-7.5-5-7.5-9.5V6z"/><polyline points="8.5,12 11,14.5 15.5,10"/></symbol>
+  <symbol id="oq-i-sidebar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></symbol>
+  <symbol id="oq-i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+  <symbol id="oq-i-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2"/><circle cx="12" cy="18" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="oq-i-sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="4" x2="8" y2="20"/><polyline points="4,8 8,4 12,8"/><line x1="16" y1="20" x2="16" y2="4"/><polyline points="12,16 16,20 20,16"/></symbol>
+  <symbol id="oq-i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,3.5 14.35,9.26 20.56,9.72 15.8,13.74 17.29,19.78 12,16.5 6.71,19.78 8.2,13.74 3.44,9.72 9.65,9.26"/></symbol>
+  <symbol id="oq-i-stop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="5.5" width="13" height="13" rx="2"/></symbol>
+  <symbol id="oq-i-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="8,12.5 11,15.5 16.5,9.5"/></symbol>
+  <symbol id="oq-i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="21.5" y2="12"/><line x1="6" y1="6" x2="7.4" y2="7.4"/><line x1="16.6" y1="16.6" x2="18" y2="18"/><line x1="6" y1="18" x2="7.4" y2="16.6"/><line x1="16.6" y1="7.4" x2="18" y2="6"/></symbol>
+  <symbol id="oq-i-table" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="3.5" y1="14.5" x2="20.5" y2="14.5"/><line x1="9.5" y1="9.5" x2="9.5" y2="19.5"/></symbol>
+  <symbol id="oq-i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 4.5v6.6a1 1 0 0 0 .3.7l8.9 8.9a1 1 0 0 0 1.4 0l6.6-6.6a1 1 0 0 0 0-1.4l-8.9-8.9a1 1 0 0 0-.7-.3H4.5a1 1 0 0 0-1 1z"/><circle cx="8" cy="8.5" r="1.25"/></symbol>
+  <symbol id="oq-i-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2"/><polyline points="7,9.5 10,12 7,14.5"/><line x1="12.5" y1="15" x2="17" y2="15"/></symbol>
+  <symbol id="oq-i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5V7"/><path d="M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12"/><line x1="10" y1="11" x2="10" y2="16"/><line x1="14" y1="11" x2="14" y2="16"/></symbol>
+  <symbol id="oq-i-trending-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,7 9.5,13.5 13.5,9.5 21,17"/><polyline points="15.5,17 21,17 21,11.5"/></symbol>
+  <symbol id="oq-i-trending-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,17 9.5,10.5 13.5,14.5 21,7"/><polyline points="15.5,7 21,7 21,12.5"/></symbol>
+  <symbol id="oq-i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,14 4,9 9,4"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+  <symbol id="oq-i-unlink" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 6l1-1a4 4 0 0 1 5.7 5.7l-1 1"/><path d="M11 18l-1 1a4 4 0 0 1-5.7-5.7l1-1"/><line x1="8" y1="2.5" x2="8" y2="5"/><line x1="2.5" y1="8" x2="5" y2="8"/><line x1="16" y1="19" x2="16" y2="21.5"/><line x1="19" y1="16" x2="21.5" y2="16"/></symbol>
+  <symbol id="oq-i-unlock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.7-1.5"/></symbol>
+  <symbol id="oq-i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="15" x2="12" y2="4"/><polyline points="7,9 12,4 17,9"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></symbol>
+  <symbol id="oq-i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="oq-i-user-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="4"/><path d="M3 20a7 7 0 0 1 14 0"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></symbol>
+  <symbol id="oq-i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M15.5 4.6a3.5 3.5 0 0 1 0 6.8"/><path d="M18 14a6.5 6.5 0 0 1 3.5 6"/></symbol>
+  <symbol id="oq-i-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,3.5 21.5,20 2.5,20"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="oq-i-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.8a14 14 0 0 1 19 0"/><path d="M5.5 12.2a9.5 9.5 0 0 1 13 0"/><path d="M8.6 15.6a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="oq-i-wifi-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.8a14 14 0 0 1 19 0"/><path d="M5.5 12.2a9.5 9.5 0 0 1 13 0"/><path d="M8.6 15.6a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19" r="0.6" fill="currentColor"/><line x1="3" y1="3" x2="21" y2="21"/></symbol>
+  <symbol id="oq-i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13,3 5,13.5 11.5,13.5 10.5,21 19,10.5 12.5,10.5"/></symbol>
+  <symbol id="oq-i-zoom-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="11" y1="8.5" x2="11" y2="13.5"/><line x1="8.5" y1="11" x2="13.5" y2="11"/></symbol>
+  <symbol id="oq-i-zoom-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="8.5" y1="11" x2="13.5" y2="11"/></symbol>
+</svg>
+<script type="application/json" id="oq-icon-names">["activity","archive","arrow-down","arrow-left","arrow-right","arrow-up","bell","bell-off","book-open","bookmark","briefcase","bug","calendar","chart-bar","chart-line","chart-pie","check","chevron-down","chevron-left","chevron-right","chevron-up","chevrons-up-down","clock","close","cloud","cloud-off","code","columns","contrast","copy","cpu","credit-card","database","download","drag-handle","edit","error","external-link","eye","eye-off","file","file-text","filter","flag","folder","folder-open","git-branch","git-commit","globe","grid","hard-drive","hash","heart","help","history","home","image","inbox","info","key","keyboard","layers","link","list","loader","lock","log-in","log-out","mail","map-pin","maximize","menu","message","minimize","minus","monitor","moon","more-horizontal","more-vertical","network","package","paperclip","pause","pin","play","plug","plus","plus-circle","power","printer","redo","refresh","rocket","save","search","send","server","settings","share","shield","shield-check","sidebar","sliders","smartphone","sort","star","stop","success","sun","table","tag","terminal","trash","trending-down","trending-up","undo","unlink","unlock","upload","user","user-plus","users","warning","wifi","wifi-off","zap","zoom-in","zoom-out"]</script>
+<!-- ICONS:END -->
+
+<header class="oq-appbar oq-appbar--sticky pv-appbar">
+    <a class="oq-appbar__brand" href="preview.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+      OSQD&nbsp;UI <span class="oq-chip oq-sm oq-neutral">0.4.0</span>
+    </a>
+    <nav class="pv-galleries" aria-label="Galleries">
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview.html">Core</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-charts.html">Charts</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-data.html">Data</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-forms.html">Forms</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-layout.html">Layout</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="elements.html">Elements</a>
+      <a class="oq-btn oq-btn--soft oq-neutral oq-sm" href="icons.html" aria-current="page">Icons</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="theme-builder.html">Theme builder</a>
+    </nav>
+    <oq-dropdown class="pv-galleries-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Icons <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Galleries">
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html" aria-current="page">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <oq-dropdown class="pv-samples-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Samples <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Sample sites">
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <div class="oq-spacer"></div>
+    <div class="pv-appbar-tools">
+      <span class="oq-small oq-muted pv-hide-sm"><span id="count"></span> icons</span>
+      <div class="oq-input-group" style="width: 240px">
+      <span class="oq-addon oq-addon--plain"><svg class="oq-icon"><use href="#oq-i-search"/></svg></span>
+      <input class="oq-input" id="q" placeholder="Search icons…" aria-label="Search icons">
+    </div>
+    <div class="oq-segmented" role="group" aria-label="Icon size" id="size">
+      <button aria-pressed="false" data-size="16">16</button>
+      <button aria-pressed="false" data-size="20">20</button>
+      <button aria-pressed="true" data-size="24">24</button>
+      <button aria-pressed="false" data-size="32">32</button>
+    </div>
+    </div>
+    <oq-theme-select storage-key="oq-preview-theme" default="dark">
+      <select class="oq-select oq-sm" id="theme-switch" aria-label="Theme" style="width: 132px">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="graphite">Graphite</option>
+        <option value="midnight">Midnight</option>
+        <option value="contrast">Contrast</option>
+        <option value="paper">Paper</option>
+        <option value="slate">Slate</option>
+        <option value="auto">Auto (system)</option>
+      </select>
+    </oq-theme-select>
+    <oq-dropdown class="pv-site-menu">
+      <details class="oq-dropdown oq-dropdown--end">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon" aria-label="Menu"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+        <nav class="oq-menu" aria-label="Galleries and samples">
+          <div class="oq-menu__label oq-overline">Galleries</div>
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html" aria-current="page">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <div class="oq-menu__label oq-overline">Samples</div>
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <style data-pv-appbar>
+      /* Gallery app bar (the same on every gallery page). */
+      .pv-appbar { gap: 8px; min-width: 0; }
+      .pv-appbar .oq-appbar__brand { flex: none; }
+      .pv-galleries { display: flex; flex: none; gap: 2px; }
+      .pv-appbar > * { white-space: nowrap; }
+      .pv-galleries-menu, .pv-site-menu { display: none; }
+      .pv-appbar .oq-dropdown > summary { gap: 4px; }
+      .pv-appbar .oq-menu { min-width: 200px; }
+      .pv-appbar-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .pv-appbar .oq-input-group { flex: 0 1 240px; min-width: 0; width: auto !important; }
+      @media (max-width: 1359.98px) { .pv-galleries { display: none; } .pv-galleries-menu { display: inline-block; } }
+      /* Phones: brand, theme and one menu; the page's own tools move to a second row that scrolls. */
+      @media (max-width: 720px) {
+        .pv-appbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 4px 8px; row-gap: 0; gap: 4px; }
+        .pv-appbar .oq-appbar__brand .oq-chip, .pv-appbar .pv-hide-sm, .pv-galleries-menu, .pv-samples-menu { display: none; }
+        .pv-site-menu { display: inline-block; }
+        .pv-appbar #theme-switch { width: 108px !important; }
+        .pv-appbar-tools { order: 10; flex: 1 0 100%; padding: 4px 0 8px; overflow-x: auto; scrollbar-width: none; }
+        .pv-appbar-tools .oq-input-group { flex: 1 1 auto; }
+        .pv-site-menu .oq-menu { position: fixed; top: 52px; left: 8px; right: 8px; max-width: none; max-height: calc(100dvh - 64px); }
+      }
+    </style>
+    <script src="assets/osqd-ui-elements.js" defer></script>
+  </header>
+
+<main class="oq-container oq-stack oq-gap-6" style="--max: 1200px; padding-block: 24px">
+  <section class="oq-stack oq-gap-3">
+    <div class="oq-row oq-between oq-wrap">
+      <h1 class="oq-h3">Icons</h1>
+      <span class="oq-small oq-muted">Click an icon to copy its snippet. Files: <code>assets/icons/&lt;name&gt;.svg</code>, sprite <code>assets/icons.svg</code>.</span>
+    </div>
+<pre class="oq-pre">&lt;svg class="oq-icon"&gt;&lt;use href="assets/icons.svg#oq-i-search"/&gt;&lt;/svg&gt;      plain HTML
+&lt;Icon name="search" size={16} /&gt;                                        React</pre>
+    <div class="ic-grid" id="grid"></div>
+    <div class="oq-empty" id="empty" hidden><div class="oq-empty__title">No icons match</div></div>
+  </section>
+
+  <section class="oq-stack oq-gap-3">
+    <div class="oq-row oq-between oq-wrap">
+      <h2 class="oq-h3">Illustrations</h2>
+      <span class="oq-small oq-muted">Inlined, they follow the theme. Files: <code>assets/illustrations/&lt;name&gt;.svg</code>.</span>
+    </div>
+    <div class="il-grid">
+<!-- ILLUSTRATIONS:START -->
+      <figure class="oq-paper"><svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><path d="M30 62 44 32h72l14 30v30a4 4 0 0 1-4 4H34a4 4 0 0 1-4-4z" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><path d="M30 62h28l6 10h32l6-10h28v30a4 4 0 0 1-4 4H34a4 4 0 0 1-4-4z" style="fill:var(--oq-raised, #363337);stroke:var(--oq-border-strong, #5b595c)"/><path d="M80 12v10M60 18l5 7M100 18l-5 7" style="fill:none;stroke:var(--oq-primary, #78dce8);stroke-width:3"/></svg><figcaption>empty-inbox</figcaption></figure>
+      <figure class="oq-paper"><svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><rect x="32" y="16" width="60" height="80" rx="6" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><path d="M44 34h36M44 46h30M44 58h22" style="fill:none;stroke:var(--oq-text-faint, #939293)"/><circle cx="100" cy="64" r="22" style="fill:var(--oq-raised, #363337);stroke:var(--oq-primary, #78dce8);stroke-width:4"/><path d="M93 57l14 14M107 57 93 71" style="fill:none;stroke:var(--oq-text-faint, #939293);stroke-width:3"/><path d="M116 80l16 16" style="fill:none;stroke:var(--oq-primary, #78dce8);stroke-width:7"/></svg><figcaption>no-results</figcaption></figure>
+      <figure class="oq-paper"><svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><rect x="22" y="14" width="116" height="84" rx="6" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><path d="M22 28h116" style="fill:none;stroke:var(--oq-border-strong, #5b595c)"/><circle cx="31" cy="21" r="2" style="fill:var(--oq-danger, #ff6188);stroke:none"/><circle cx="38" cy="21" r="2" style="fill:var(--oq-warning, #ffd866);stroke:none"/><circle cx="45" cy="21" r="2" style="fill:var(--oq-success, #a9dc76);stroke:none"/><text x="80" y="72" text-anchor="middle" font-family="system-ui, sans-serif" font-size="32" font-weight="700" style="fill:var(--oq-warning, #ffd866);stroke:none">404</text><path d="M58 84h44" style="fill:none;stroke:var(--oq-text-faint, #939293);stroke-width:2;stroke-dasharray:4 5"/></svg><figcaption>error-404</figcaption></figure>
+      <figure class="oq-paper"><svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><rect x="36" y="22" width="68" height="22" rx="4" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><circle cx="47" cy="33" r="3" style="fill:var(--oq-success, #a9dc76);stroke:none"/><path d="M60 33h32" style="fill:none;stroke:var(--oq-text-faint, #939293)"/><rect x="36" y="50" width="68" height="22" rx="4" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><circle cx="47" cy="61" r="3" style="fill:var(--oq-danger, #ff6188);stroke:none"/><path d="M60 61h32" style="fill:none;stroke:var(--oq-text-faint, #939293)"/><rect x="36" y="78" width="68" height="22" rx="4" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><circle cx="47" cy="89" r="3" style="fill:var(--oq-text-faint, #939293);stroke:none"/><path d="M60 89h32" style="fill:none;stroke:var(--oq-text-faint, #939293)"/><path d="M118 44 141 84H95z" style="fill:var(--oq-danger, #ff6188);stroke:var(--oq-danger, #ff6188);stroke-width:4"/><path d="M118 58v12" style="fill:none;stroke:var(--oq-surface, #2d2a2e);stroke-width:4"/><circle cx="118" cy="77" r="2.2" style="fill:var(--oq-surface, #2d2a2e);stroke:none"/></svg><figcaption>server-error</figcaption></figure>
+      <figure class="oq-paper"><svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><path d="M52 88a20 20 0 0 1-3-39.8 28 28 0 0 1 54.5 6.3A16.8 16.8 0 0 1 106 88z" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><path d="M66 70a20 20 0 0 1 28 0M73 77a10 10 0 0 1 14 0" style="fill:none;stroke:var(--oq-text-faint, #939293);stroke-width:3"/><path d="M40 24l80 76" style="fill:none;stroke:var(--oq-surface, #2d2a2e);stroke-width:10"/><path d="M40 24l80 76" style="fill:none;stroke:var(--oq-danger, #ff6188);stroke-width:4"/></svg><figcaption>offline</figcaption></figure>
+      <figure class="oq-paper"><svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><circle cx="80" cy="58" r="34" style="fill:var(--oq-raised, #363337);stroke:var(--oq-success, #a9dc76);stroke-width:3"/><path d="M64 58l12 12 22-24" style="fill:none;stroke:var(--oq-success, #a9dc76);stroke-width:6"/><path d="M30 30l4 4M126 26l-4 5M134 66h6M22 72h6" style="fill:none;stroke:var(--oq-primary, #78dce8);stroke-width:3"/><circle cx="120" cy="96" r="3" style="fill:var(--oq-warning, #ffd866);stroke:none"/><circle cx="36" cy="94" r="3" style="fill:var(--oq-secondary, #ab9df2);stroke:none"/><rect x="110" y="40" width="6" height="6" rx="1" transform="rotate(20 113 43)" style="fill:var(--oq-warning, #ffd866);stroke:none"/><rect x="40" y="46" width="6" height="6" rx="1" transform="rotate(-15 43 49)" style="fill:var(--oq-secondary, #ab9df2);stroke:none"/></svg><figcaption>success</figcaption></figure>
+      <figure class="oq-paper"><svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><path d="M30 18v74h104" style="fill:none;stroke:var(--oq-border-strong, #5b595c)"/><rect x="42" y="62" width="14" height="30" rx="2" style="fill:var(--oq-raised, #363337);stroke:var(--oq-text-faint, #939293);stroke-dasharray:4 4"/><rect x="64" y="46" width="14" height="46" rx="2" style="fill:var(--oq-raised, #363337);stroke:var(--oq-text-faint, #939293);stroke-dasharray:4 4"/><rect x="86" y="70" width="14" height="22" rx="2" style="fill:var(--oq-raised, #363337);stroke:var(--oq-text-faint, #939293);stroke-dasharray:4 4"/><rect x="108" y="38" width="14" height="54" rx="2" style="fill:var(--oq-raised, #363337);stroke:var(--oq-text-faint, #939293);stroke-dasharray:4 4"/><path d="M49 54l22-16 22 24 22-30" style="fill:none;stroke:var(--oq-primary, #78dce8);stroke-width:3;stroke-dasharray:6 6"/></svg><figcaption>no-data</figcaption></figure>
+      <figure class="oq-paper"><svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><path d="M80 12l38 14v30c0 24-16 40-38 48-22-8-38-24-38-48V26z" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><path d="M70 56v-8a10 10 0 0 1 20 0v8" style="fill:none;stroke:var(--oq-primary, #78dce8);stroke-width:4"/><rect x="62" y="56" width="36" height="28" rx="4" style="fill:var(--oq-primary, #78dce8);stroke:var(--oq-primary, #78dce8)"/><circle cx="80" cy="67" r="3.5" style="fill:var(--oq-surface, #2d2a2e);stroke:none"/><path d="M80 70v6" style="fill:none;stroke:var(--oq-surface, #2d2a2e);stroke-width:3"/></svg><figcaption>locked</figcaption></figure>
+<!-- ILLUSTRATIONS:END -->
+    </div>
+  </section>
+</main>
+
+<div class="oq-toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const html = document.documentElement;
+  const names = JSON.parse($("#oq-icon-names").textContent);
+  $("#count").textContent = names.length;
+
+  // The theme select in the app bar (<oq-theme-select>) sets and remembers the theme, shared with the other galleries.
+
+  $("#grid").innerHTML = names.map((n) =>
+    `<button class="ic" data-name="${n}" title="${n}"><svg aria-hidden="true"><use href="#oq-i-${n}"/></svg><span>${n}</span></button>`).join("");
+
+  $("#q").oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    let shown = 0;
+    document.querySelectorAll(".ic").forEach((b) => { const on = b.dataset.name.includes(q); b.hidden = !on; shown += on; });
+    $("#empty").hidden = shown > 0;
+  };
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== $("#q")) { e.preventDefault(); $("#q").focus(); }
+  });
+
+  $("#size").onclick = (e) => {
+    const b = e.target.closest("[data-size]"); if (!b) return;
+    document.querySelectorAll("#size button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    $("#grid").style.setProperty("--ic", `${b.dataset.size}px`);
+  };
+
+  const toast = (title, msg) => {
+    const el = document.createElement("div");
+    el.className = "oq-toast oq-success";
+    el.innerHTML = `<div class="oq-toast__body"><div class="oq-toast__title"></div><div class="oq-toast__message oq-mono"></div></div>`;
+    el.querySelector(".oq-toast__title").textContent = title;
+    el.querySelector(".oq-toast__message").textContent = msg;
+    $("#toasts").append(el);
+    setTimeout(() => el.remove(), 2200);
+  };
+  const copy = async (text) => {
+    try { await navigator.clipboard.writeText(text); return true; } catch {}
+    const ta = Object.assign(document.createElement("textarea"), { value: text });
+    document.body.append(ta); ta.select();
+    const ok = document.execCommand("copy"); ta.remove(); return ok;
+  };
+  $("#grid").onclick = async (e) => {
+    const b = e.target.closest(".ic"); if (!b) return;
+    const snippet = `<svg class="oq-icon"><use href="assets/icons.svg#oq-i-${b.dataset.name}"/></svg>`;
+    toast(await copy(snippet) ? "Copied" : "Copy failed — select it from here", snippet);
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+/*
+ * Base: reset, typography and layout utilities.
+ * Everything is scoped to .oq (or the page when <html class="oq">) so the kit can be dropped
+ * into an existing page without restyling what is already there.
+ */
+
+.oq,
+.oq *,
+.oq *::before,
+.oq *::after {
+  box-sizing: border-box;
+}
+
+.oq {
+  /* The current intent colour. Intent classes (.oq-primary …) set these two; components read them. */
+  --oq-c: var(--oq-primary);
+  --oq-on-c: var(--oq-on-primary);
+  --oq-soft: color-mix(in srgb, var(--oq-c) 16%, transparent);
+  --oq-ring: 0 0 0 2px var(--oq-bg), 0 0 0 4px var(--oq-focus);
+
+  background: var(--oq-bg);
+  color: var(--oq-text);
+  font-family: var(--oq-font-sans);
+  font-size: var(--oq-text-md);
+  line-height: var(--oq-line-height);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-variant-numeric: tabular-nums;
+}
+
+.oq ::selection {
+  background: color-mix(in srgb, var(--oq-primary) 35%, transparent);
+}
+
+.oq :focus-visible {
+  outline: 2px solid var(--oq-focus);
+  outline-offset: 2px;
+}
+
+.oq :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, figure, blockquote, pre) {
+  margin: 0;
+}
+
+.oq :where(a) {
+  color: var(--oq-primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--oq-primary) 40%, transparent);
+  text-underline-offset: 2px;
+}
+@media (hover: hover) {
+  .oq :where(a):hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* Scrollbars that match the theme instead of the OS default. */
+.oq,
+.oq * {
+  scrollbar-color: var(--oq-border-strong) transparent;
+  scrollbar-width: thin;
+}
+
+/* ---------- Intents: one class sets the colour every component below reads. ---------- */
+
+.oq-primary   { --oq-c: var(--oq-primary);   --oq-on-c: var(--oq-on-primary); }
+.oq-secondary { --oq-c: var(--oq-secondary); --oq-on-c: var(--oq-on-secondary); }
+.oq-success   { --oq-c: var(--oq-success);   --oq-on-c: var(--oq-on-success); }
+.oq-warning   { --oq-c: var(--oq-warning);   --oq-on-c: var(--oq-on-warning); }
+.oq-danger    { --oq-c: var(--oq-danger);    --oq-on-c: var(--oq-on-danger); }
+.oq-info      { --oq-c: var(--oq-info);      --oq-on-c: var(--oq-on-info); }
+.oq-neutral   { --oq-c: var(--oq-neutral);   --oq-on-c: var(--oq-on-neutral); }
+.oq-primary, .oq-secondary, .oq-success, .oq-warning, .oq-danger, .oq-info, .oq-neutral {
+  --oq-soft: color-mix(in srgb, var(--oq-c) 16%, transparent);
+}
+
+/* ---------- Typography ---------- */
+
+.oq-h1, .oq-h2, .oq-h3, .oq-h4, .oq-h5 {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--oq-text);
+}
+.oq-h1 { font-size: var(--oq-text-3xl); }
+.oq-h2 { font-size: var(--oq-text-2xl); }
+.oq-h3 { font-size: var(--oq-text-xl); }
+.oq-h4 { font-size: var(--oq-text-lg); }
+.oq-h5 { font-size: var(--oq-text-md); }
+
+.oq-body   { font-size: var(--oq-text-md); }
+.oq-small  { font-size: var(--oq-text-sm); }
+.oq-tiny   { font-size: var(--oq-text-xs); }
+.oq-muted  { color: var(--oq-text-muted); }
+.oq-faint  { color: var(--oq-text-faint); }
+.oq-strong { font-weight: 600; }
+.oq-mono   { font-family: var(--oq-font-mono); font-size: 0.92em; }
+.oq-num    { font-variant-numeric: tabular-nums; text-align: right; }
+.oq-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.oq-text-c { color: var(--oq-c); }
+
+/* Small uppercase section label — the workhorse of dense panels. */
+.oq-overline {
+  font-size: var(--oq-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--oq-text-faint);
+}
+
+.oq-code,
+.oq :where(code):not(pre code) {
+  font-family: var(--oq-font-mono);
+  font-size: 0.88em;
+  padding: 0.1em 0.35em;
+  border-radius: var(--oq-radius-sm);
+  background: var(--oq-raised);
+  border: 1px solid var(--oq-border);
+  color: var(--oq-text);
+}
+
+.oq-pre {
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-sm);
+  line-height: 1.55;
+  padding: calc(var(--oq-space) * 3) calc(var(--oq-space) * 4);
+  border-radius: var(--oq-radius-md);
+  background: var(--oq-bg);
+  border: 1px solid var(--oq-border);
+  overflow: auto;
+  margin: 0;
+  color: var(--oq-text);
+}
+
+.oq-kbd {
+  display: inline-block;
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-xs);
+  line-height: 1;
+  padding: 3px 5px;
+  min-width: 1.6em;
+  text-align: center;
+  border-radius: var(--oq-radius-sm);
+  background: var(--oq-raised);
+  border: 1px solid var(--oq-border-strong);
+  border-bottom-width: 2px;
+  color: var(--oq-text-muted);
+}
+
+/* ---------- Layout ---------- */
+
+.oq-stack { display: flex; flex-direction: column; gap: calc(var(--oq-space) * var(--gap, 3)); }
+.oq-row   { display: flex; flex-direction: row; align-items: center; gap: calc(var(--oq-space) * var(--gap, 2)); }
+.oq-wrap  { flex-wrap: wrap; }
+.oq-grow  { flex: 1 1 auto; min-width: 0; }
+.oq-spacer { flex: 1 1 auto; }
+.oq-between { justify-content: space-between; }
+.oq-end   { justify-content: flex-end; }
+.oq-center { align-items: center; justify-content: center; }
+.oq-start { align-items: flex-start; }
+
+.oq-grid {
+  display: grid;
+  gap: calc(var(--oq-space) * var(--gap, 3));
+  /* min(…, 100%): a column minimum wider than the screen must not push the page sideways. */
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--min, 220px), 100%), 1fr));
+}
+
+/* Spans in a .oq-grid. Use these rather than an inline "grid-column: span 2": in an auto-fill
+   grid that is down to one column, span 2 adds an implicit column and pushes the page sideways. */
+.oq-grid > .oq-span-2 { grid-column: span 2; }
+.oq-grid > .oq-span-all { grid-column: 1 / -1; }
+@media (max-width: 640px) { .oq-grid > .oq-span-2 { grid-column: 1 / -1; } }
+
+.oq-gap-0 { --gap: 0; }
+.oq-gap-1 { --gap: 1; }
+.oq-gap-2 { --gap: 2; }
+.oq-gap-3 { --gap: 3; }
+.oq-gap-4 { --gap: 4; }
+.oq-gap-6 { --gap: 6; }
+.oq-gap-8 { --gap: 8; }
+
+.oq-p-0 { padding: 0; }
+.oq-p-2 { padding: calc(var(--oq-space) * 2); }
+.oq-p-3 { padding: calc(var(--oq-space) * 3); }
+.oq-p-4 { padding: calc(var(--oq-space) * 4); }
+.oq-p-6 { padding: calc(var(--oq-space) * 6); }
+
+.oq-container {
+  width: 100%;
+  max-width: var(--max, 1200px);
+  margin-inline: auto;
+  padding-inline: calc(var(--oq-space) * 4);
+}
+
+.oq-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  max-width: 1px;
+  max-height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+/* A table ignores width and keeps its content width, so a hidden data table (charts have one
+   for screen readers) would still widen its scroll container. As a block it is 1px. */
+table.oq-sr-only { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .oq { --oq-motion: 0ms; }
+}
+
+/* ---------- Icons ----------
+ * <svg class="oq-icon"><use href="assets/icons.svg#oq-i-search"/></svg>
+ * Stroke width, caps and joins come from the sprite's <symbol>; colour follows the text,
+ * or the intent with .oq-text-c + .oq-primary …
+ */
+
+.oq-icon {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  vertical-align: -0.2em;
+  fill: none;
+  stroke: currentColor;
+  overflow: visible;
+}
+.oq-icon.oq-sm { width: 14px; height: 14px; }
+.oq-icon.oq-lg { width: 20px; height: 20px; }
+.oq-icon--em { width: 1em; height: 1em; vertical-align: -0.125em; }
+.oq-icon--spin { animation: oq-spin 0.9s linear infinite; }
+
+/* Illustrations inlined from @osqd/ui (assets/illustrations or <Illustration>). */
+.oq-illustration { display: block; width: var(--w, 160px); height: auto; max-width: 100%; }
+
+/* ---------- Density: data-density="compact|comfortable" on any element ----------
+ * Leaving it off is the default density. It rescales the spacing unit, control heights and the
+ * text steps, so every component follows. The second selector of each pair re-applies it under
+ * a nested data-theme, which would otherwise reset the sizes to the theme's own.
+ * The sizes assume the built-in 14px base; a custom theme with another base keeps its own
+ * sizes only at the default density.
+ */
+[data-density="compact"],
+[data-density="compact"] [data-theme] {
+  --oq-space: 3px;
+  --oq-control-sm: 22px;
+  --oq-control-md: 28px;
+  --oq-control-lg: 34px;
+  --oq-text-xs: 10px;
+  --oq-text-sm: 12px;
+  --oq-text-md: 13px;
+  --oq-text-lg: 15px;
+  --oq-text-xl: 17px;
+  --oq-text-2xl: 20px;
+  --oq-text-3xl: 26px;
+}
+[data-density="comfortable"],
+[data-density="comfortable"] [data-theme] {
+  --oq-space: 5px;
+  --oq-control-sm: 30px;
+  --oq-control-md: 38px;
+  --oq-control-lg: 46px;
+  --oq-text-xs: 12px;
+  --oq-text-sm: 14px;
+  --oq-text-md: 15px;
+  --oq-text-lg: 17px;
+  --oq-text-xl: 19px;
+  --oq-text-2xl: 24px;
+  --oq-text-3xl: 30px;
+}
+[data-density] { font-size: var(--oq-text-md); }
+/* The few components with fixed pixel heights follow the density too. */
+[data-density="compact"] .oq-nav__item { height: 28px; }
+[data-density="compact"] .oq-tab { height: 32px; }
+[data-density="compact"] .oq-appbar { height: 40px; }
+[data-density="compact"] .oq-card__header { min-height: 36px; }
+[data-density="compact"] .oq-list__item { min-height: 32px; }
+[data-density="compact"] .oq-menu__item { height: 26px; }
+[data-density="comfortable"] .oq-nav__item { height: 38px; }
+[data-density="comfortable"] .oq-tab { height: 44px; }
+[data-density="comfortable"] .oq-appbar { height: 56px; }
+[data-density="comfortable"] .oq-card__header { min-height: 52px; }
+[data-density="comfortable"] .oq-list__item { min-height: 48px; }
+[data-density="comfortable"] .oq-menu__item { height: 34px; }
+
+/* ---------- Touch and small screens ----------
+ * On a touch screen (pointer: coarse) every control grows to a finger-sized target: WCAG 2.2
+ * asks for 24×24 px at least, and 40 px is what a thumb actually hits. On phone widths text
+ * fields use 16 px text, because phone browsers zoom the page on focus below that.
+ * This block sits last so it wins over density: compact on a phone is still tappable.
+ */
+@media (pointer: coarse) {
+  .oq,
+  .oq [data-theme],
+  .oq [data-density] {
+    --oq-control-sm: 32px;
+    --oq-control-md: 40px;
+    --oq-control-lg: 46px;
+  }
+  /* Small links and summaries get an invisible taller hit area without moving the layout. */
+  /* Not links inside a paragraph: running text stays inline (and is exempt from target sizes). */
+  .oq :where(.oq-breadcrumbs a, :not(p).oq-small > a, a.oq-small, :not(p).oq-faint > a, summary, .oq-card__actions > a, .oq-row > a:not(.oq-btn)) {
+    display: inline-block;
+    padding-block: 6px;
+    margin-block: -6px;
+  }
+  /* :is, not :where — these must outrank the component rules in components.css, which loads later. */
+  .oq :is(button.oq-chip, a.oq-chip, .oq-segmented > button) { min-height: 32px; }
+  .oq .oq-chip__remove { width: 24px; height: 24px; margin-right: -6px; }
+  .oq :is(.oq-checkbox, .oq-radio) { width: 24px; height: 24px; }
+  .oq .oq-checkbox:checked::before { width: 12px; height: 7px; }
+  .oq .oq-radio:checked::before { width: 12px; height: 12px; }
+  .oq .oq-switch { width: 40px; height: 24px; border-radius: 12px; }
+  .oq .oq-switch::before { width: 20px; height: 20px; }
+  .oq .oq-switch:checked::before { transform: translateX(16px); }
+  .oq .oq-check { min-height: 32px; }
+  .oq .oq-range { height: 28px; }
+  .oq .oq-range::-webkit-slider-thumb { width: 22px; height: 22px; margin-top: -9px; }
+  .oq .oq-range::-moz-range-thumb { width: 20px; height: 20px; }
+  .oq .oq-pagination > :is(button, a) { min-width: 40px; height: 40px; }
+  .oq .oq-nav__item { height: 40px; }
+  .oq .oq-appbar__brand { min-height: 40px; }
+  .oq .oq-menu__item { height: 40px; }
+  .oq .oq-tab { height: 44px; }
+}
+
+@media (max-width: 640px), (pointer: coarse) {
+  .oq :is(.oq-input, .oq-select, .oq-textarea),
+  .oq :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="hidden"]), select, textarea) {
+    font-size: 16px;
+  }
+}
+
+/* Phone widths: tighter page gutters and headings that fit. */
+@media (max-width: 640px) {
+  .oq {
+    --oq-text-3xl: 24px;
+    --oq-text-2xl: 20px;
+  }
+  .oq .oq-container { padding-inline: calc(var(--oq-space) * 3); }
+  .oq :where(img, svg, video, canvas) { max-width: 100%; }
+  .oq :where(pre, .oq-pre) { max-width: 100%; overflow-x: auto; }
+  .oq :where(h1, h2, h3, .oq-h1, .oq-h2, .oq-h3) { overflow-wrap: anywhere; }
+}

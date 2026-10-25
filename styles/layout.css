@@ -1,0 +1,465 @@
+/* Layout and feedback: split panes, page header, context menu, notifications, error pages, density. Same conventions as components.css: theme variables only, intents via --oq-c. */
+
+/* ========== Split pane ========== */
+
+.oq-split {
+  --split: 50%;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+.oq-split--vertical { flex-direction: column; }
+.oq-split__pane { min-width: 0; min-height: 0; overflow: auto; }
+.oq-split__pane:first-child { flex: 0 0 var(--split); }
+.oq-split__pane:last-child { flex: 1 1 0; }
+.oq-split.is-collapsed > .oq-split__pane:first-child { flex-basis: 0; overflow: hidden; }
+
+.oq-split__handle {
+  position: relative;
+  flex: none;
+  width: 7px;
+  margin: 0 -3px;
+  z-index: 2;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+.oq-split--vertical > .oq-split__handle { width: auto; height: 7px; margin: -3px 0; cursor: row-resize; }
+/* The visible hairline; the 7px hit area around it stays transparent. */
+.oq-split__handle::before {
+  content: "";
+  position: absolute;
+  inset: 0 3px;
+  background: var(--oq-border);
+  transition: background var(--oq-motion), inset var(--oq-motion);
+}
+.oq-split--vertical > .oq-split__handle::before { inset: 3px 0; }
+.oq-split__handle:hover::before,
+.oq-split.is-dragging > .oq-split__handle::before { background: var(--oq-primary); inset: 0 2px; }
+.oq-split--vertical > .oq-split__handle:hover::before,
+.oq-split--vertical.is-dragging > .oq-split__handle::before { inset: 2px 0; }
+.oq-split__handle:focus-visible::before { background: var(--oq-focus); inset: 0 2px; }
+.oq-split--vertical > .oq-split__handle:focus-visible::before { inset: 2px 0; }
+.oq-split.is-dragging { cursor: col-resize; user-select: none; }
+.oq-split--vertical.is-dragging { cursor: row-resize; }
+.oq-split.is-dragging .oq-split__pane { pointer-events: none; }
+
+/* Touch: a 24px hit area around the same hairline, plus a grip so the handle reads as draggable. */
+@media (pointer: coarse) {
+  .oq-split__handle { width: 24px; margin: 0 -12px; }
+  .oq-split--vertical > .oq-split__handle { width: auto; height: 24px; margin: -12px 0; }
+  .oq-split__handle::before { inset: 0 11.5px; }
+  .oq-split--vertical > .oq-split__handle::before { inset: 11.5px 0; }
+  .oq-split__handle::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 32px;
+    border-radius: 3px;
+    transform: translate(-50%, -50%);
+    background: var(--oq-border-strong);
+    box-shadow: 0 0 0 2px var(--oq-bg);
+  }
+  .oq-split--vertical > .oq-split__handle::after { width: 32px; height: 6px; }
+}
+
+/*
+ * Stacked: a side-by-side split on a phone shows its panes one above the other at their own
+ * height, without the handle. Plain HTML gets this below 640px from the media query; opt out with
+ * .oq-split--fixed. The React SplitPane sets .oq-split--stacked itself (its `stackBelow` prop).
+ */
+.oq-split--stacked { flex-direction: column; height: auto; }
+.oq-split--stacked > .oq-split__pane { flex: none !important; overflow: visible; }
+.oq-split--stacked > .oq-split__pane + .oq-split__handle + .oq-split__pane { border-top: 1px solid var(--oq-border); }
+.oq-split--stacked > .oq-split__handle { display: none; }
+/* A split nested in a stacked one has no height to divide any more: it flows too. */
+.oq-split--stacked .oq-split { height: auto; flex-direction: column; }
+.oq-split--stacked .oq-split > .oq-split__pane { flex: none !important; overflow: visible; }
+.oq-split--stacked .oq-split > .oq-split__handle { display: none; }
+.oq-split--stacked .oq-split > .oq-split__handle + .oq-split__pane { border-top: 1px solid var(--oq-border); }
+@media (max-width: 640px) {
+  .oq-split:not(.oq-split--vertical):not(.oq-split--fixed) { flex-direction: column; height: auto; }
+  .oq-split:not(.oq-split--vertical):not(.oq-split--fixed) > .oq-split__pane { flex: none !important; overflow: visible; }
+  .oq-split:not(.oq-split--vertical):not(.oq-split--fixed) > .oq-split__handle { display: none; }
+  .oq-split:not(.oq-split--vertical):not(.oq-split--fixed) > .oq-split__handle + .oq-split__pane { border-top: 1px solid var(--oq-border); }
+  .oq-split:not(.oq-split--vertical):not(.oq-split--fixed) .oq-split { height: auto; flex-direction: column; }
+  .oq-split:not(.oq-split--vertical):not(.oq-split--fixed) .oq-split > .oq-split__pane { flex: none !important; overflow: visible; }
+  .oq-split:not(.oq-split--vertical):not(.oq-split--fixed) .oq-split > .oq-split__handle { display: none; }
+  .oq-split:not(.oq-split--vertical):not(.oq-split--fixed) .oq-split > .oq-split__handle + .oq-split__pane { border-top: 1px solid var(--oq-border); }
+}
+
+/* ========== Shell: icon rail and mobile drawer ========== */
+
+.oq-shell { transition: grid-template-columns calc(var(--oq-motion) * 1.5) ease-out; }
+.oq-shell--rail { --sidebar-w: var(--rail-w, 56px); }
+.oq-shell--rail > .oq-sidebar { padding-inline: calc(var(--oq-space) * 1.5); overflow: visible; }
+/* Every rail rule is scoped to the shell's own sidebar, so nav lists inside the page keep their labels. */
+.oq-shell--rail > .oq-sidebar .oq-nav__section,
+.oq-shell--rail > .oq-sidebar .oq-sidebar__extra { display: none; }
+.oq-shell--rail > .oq-sidebar .oq-nav__item { justify-content: center; padding: 0; gap: 0; position: relative; }
+.oq-shell--rail > .oq-sidebar .oq-nav__item > .oq-truncate,
+.oq-shell--rail > .oq-sidebar .oq-nav__item > .oq-nav__label,
+.oq-shell--rail > .oq-sidebar .oq-nav__item > .oq-chip { display: none; }
+.oq-shell--rail > .oq-sidebar .oq-nav__item > svg { width: 18px; height: 18px; }
+/* A badge shrinks to a corner marker so a count is still visible in the rail. */
+.oq-shell--rail > .oq-sidebar .oq-nav__item > .oq-badge {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  font-size: 9px;
+  margin: 0;
+}
+/* Item tooltips are for the rail only; with labels showing they would repeat the text. */
+.oq-shell:not(.oq-shell--rail) > .oq-sidebar .oq-nav__item[data-tip]::after { display: none; }
+
+.oq-nav__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+
+.oq-shell__backdrop { display: none; }
+.oq-shell__menu-btn { display: none; }
+/* Never squeezed by a crowded app bar: these are the way into the navigation. */
+.oq-shell__menu-btn,
+.oq-shell__rail-btn { flex: none; }
+
+@media (max-width: 760px) {
+  .oq-shell--rail { --sidebar-w: 0px; }
+  .oq-shell__menu-btn { display: inline-flex; }
+  .oq-shell__rail-btn { display: none; }
+  .oq-shell--drawer-open > .oq-sidebar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 61;
+    width: min(280px, 85vw);
+    height: 100vh;
+    height: 100dvh;
+    padding-top: calc(var(--oq-space) * 3 + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(var(--oq-space) * 3 + env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    box-shadow: var(--oq-shadow-lg);
+    animation: oq-drawer-in calc(var(--oq-motion) * 1.5) ease-out;
+  }
+  /* The drawer always shows full labels, whatever the rail setting is. */
+  .oq-shell--drawer-open.oq-shell--rail > .oq-sidebar .oq-nav__section { display: block; }
+  .oq-shell--drawer-open.oq-shell--rail > .oq-sidebar .oq-sidebar__extra { display: flex; }
+  .oq-shell--drawer-open.oq-shell--rail > .oq-sidebar .oq-nav__item { justify-content: flex-start; padding: 0 calc(var(--oq-space) * 2.5); gap: calc(var(--oq-space) * 2.5); }
+  .oq-shell--drawer-open.oq-shell--rail > .oq-sidebar .oq-nav__item > .oq-truncate,
+  .oq-shell--drawer-open.oq-shell--rail > .oq-sidebar .oq-nav__item > .oq-nav__label { display: inline; }
+  .oq-shell--drawer-open.oq-shell--rail > .oq-sidebar .oq-nav__item > .oq-badge { position: static; margin-left: auto; }
+  .oq-shell--drawer-open > .oq-sidebar .oq-nav__item[data-tip]::after { display: none; }
+  .oq-shell--drawer-open > .oq-shell__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--oq-overlay);
+    animation: oq-fade var(--oq-motion) ease-out;
+  }
+}
+
+/* The page behind an open drawer does not scroll (works without script, through :has). */
+@media (max-width: 760px) {
+  html:has(.oq-shell--drawer-open) { overflow: hidden; }
+}
+
+@keyframes oq-drawer-in { from { transform: translateX(-100%); } }
+@keyframes oq-fade { from { opacity: 0; } }
+
+/* ========== Page header ========== */
+
+.oq-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--oq-space) * 2);
+  margin-bottom: calc(var(--oq-space) * 6);
+}
+.oq-page-header--bordered { border-bottom: 1px solid var(--oq-border); }
+.oq-page-header--bordered:not(:has(.oq-page-header__tabs)) { padding-bottom: calc(var(--oq-space) * 4); }
+.oq-page-header__row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: calc(var(--oq-space) * 3) calc(var(--oq-space) * 6);
+}
+.oq-page-header__heading { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 1); flex: 1 1 320px; min-width: 0; }
+.oq-page-header__title-row { display: flex; align-items: center; flex-wrap: wrap; gap: calc(var(--oq-space) * 2.5); min-width: 0; }
+.oq-page-header__title {
+  margin: 0;
+  font-size: var(--oq-text-2xl);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+.oq-page-header__subtitle { color: var(--oq-text-muted); }
+.oq-page-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--oq-space) * 1) calc(var(--oq-space) * 4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--oq-text-sm);
+  color: var(--oq-text-faint);
+}
+.oq-page-header__meta > li { display: inline-flex; align-items: center; gap: calc(var(--oq-space) * 1.5); }
+.oq-page-header__meta > li > svg { width: 14px; height: 14px; }
+.oq-page-header__actions { display: flex; align-items: center; flex-wrap: wrap; gap: calc(var(--oq-space) * 2); }
+.oq-page-header__tabs { margin-top: calc(var(--oq-space) * 1); }
+@media (max-width: 640px) {
+  .oq-page-header { margin-bottom: calc(var(--oq-space) * 4); }
+  .oq-page-header__heading { flex-basis: 100%; }
+  .oq-page-header__title { font-size: var(--oq-text-xl); }
+  /* Actions wrap under the title and share the row; one long label cannot push the others out. */
+  .oq-page-header__actions { width: 100%; }
+  .oq-page-header__actions > :is(.oq-btn, .oq-dropdown, oq-dropdown) { flex: 1 1 auto; }
+  .oq-page-header__actions > .oq-btn--icon { flex: none; }
+  .oq-page-header__tabs > .oq-tabs { margin-inline: calc(var(--oq-space) * -1); padding-inline: calc(var(--oq-space) * 1); }
+}
+/* Tabs sit on the header's own bottom border instead of drawing a second one. */
+.oq-page-header--bordered > .oq-page-header__tabs > .oq-tabs { border-bottom: 0; margin-bottom: -1px; }
+
+/* ========== Detail layout ========== */
+
+.oq-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--aside-w, 300px);
+  grid-template-areas: "header header" "main aside";
+  gap: 0 calc(var(--oq-space) * 6);
+  align-items: start;
+}
+.oq-detail > .oq-page-header { grid-area: header; }
+.oq-detail__main { grid-area: main; display: flex; flex-direction: column; gap: calc(var(--oq-space) * 6); min-width: 0; }
+.oq-detail__aside { grid-area: aside; display: flex; flex-direction: column; gap: calc(var(--oq-space) * 4); min-width: 0; position: sticky; top: calc(var(--oq-space) * 4); }
+.oq-detail__section { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 3); }
+.oq-detail__section > h2,
+.oq-detail__section > h3 { margin: 0; font-size: var(--oq-text-lg); font-weight: 600; }
+.oq-detail__aside .oq-dl { grid-template-columns: max-content minmax(0, 1fr); gap: calc(var(--oq-space) * 2.5) calc(var(--oq-space) * 4); }
+@media (max-width: 960px) {
+  .oq-detail { grid-template-columns: minmax(0, 1fr); grid-template-areas: "header" "aside" "main"; gap: calc(var(--oq-space) * 6); }
+  .oq-detail__aside { position: static; }
+}
+/* Tablets: the property cards sit side by side above the content instead of one long column. */
+@media (min-width: 641px) and (max-width: 960px) {
+  .oq-detail__aside { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); align-items: start; }
+}
+@media (max-width: 640px) {
+  .oq-detail { gap: calc(var(--oq-space) * 4); }
+  .oq-detail__main { gap: calc(var(--oq-space) * 4); }
+}
+
+/* ========== Context menu ========== */
+
+.oq-context-menu {
+  position: fixed;
+  z-index: 70;
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  animation: oq-pop var(--oq-motion) ease-out;
+}
+.oq-context-menu[hidden] { display: none; }
+/* Something with a context menu says so with the cursor only where it would otherwise be plain. */
+[data-context-menu] { -webkit-touch-callout: none; }
+/* A long press opens the menu on touch; it must not also start a text selection. */
+@media (pointer: coarse) {
+  [data-context-menu] { -webkit-user-select: none; user-select: none; }
+  .oq-context-menu { min-width: min(240px, calc(100vw - 16px)); }
+}
+
+/* ========== Shortcuts overlay ========== */
+
+.oq-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: calc(var(--oq-space) * 5) calc(var(--oq-space) * 8);
+}
+.oq-shortcuts__group { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 1); }
+.oq-shortcuts__group > .oq-overline { margin-bottom: calc(var(--oq-space) * 1); }
+.oq-shortcuts__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--oq-space) * 3);
+  min-height: 30px;
+  padding: calc(var(--oq-space) * 1) 0;
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-shortcuts__row:last-child { border-bottom: 0; }
+.oq-shortcuts__keys { display: inline-flex; align-items: center; gap: 3px; flex: none; color: var(--oq-text-faint); font-size: var(--oq-text-xs); }
+.oq-shortcuts__empty { color: var(--oq-text-faint); }
+/* Shown only where there is probably no keyboard: a phone or a tablet without one. */
+.oq-shortcuts__touch { display: none; margin: 0 0 calc(var(--oq-space) * 4); color: var(--oq-text-muted); font-size: var(--oq-text-sm); }
+@media (hover: none) and (pointer: coarse) { .oq-shortcuts__touch { display: block; } }
+
+/* ========== Notification center ========== */
+
+.oq-notify { position: relative; display: inline-flex; }
+.oq-notify > .oq-badge-anchor > .oq-badge { pointer-events: none; }
+.oq-notify__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  width: min(var(--w, 380px), calc(100vw - 24px));
+  max-height: min(520px, calc(100vh - 80px));
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-lg);
+  background: var(--oq-raised);
+  color: var(--oq-text);
+  box-shadow: var(--oq-shadow-lg);
+  overflow: hidden;
+  animation: oq-pop var(--oq-motion) ease-out;
+}
+.oq-notify__panel[hidden] { display: none; }
+.oq-notify--start > .oq-notify__panel { right: auto; left: 0; }
+/* Static: the panel drawn in place (for docs, or a full "inbox" page). */
+.oq-notify__panel--static { position: static; width: 100%; max-height: none; animation: none; box-shadow: none; border-color: var(--oq-border); }
+.oq-notify__header {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 2);
+  padding: calc(var(--oq-space) * 2.5) calc(var(--oq-space) * 3) calc(var(--oq-space) * 2.5) calc(var(--oq-space) * 4);
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-notify__title { font-weight: 600; margin: 0; font-size: var(--oq-text-md); }
+.oq-notify__header > .oq-btn { margin-left: auto; }
+.oq-notify__list { flex: 1 1 auto; overflow-y: auto; margin: 0; padding: 0; list-style: none; }
+.oq-notify__group {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: calc(var(--oq-space) * 1.5) calc(var(--oq-space) * 4);
+  background: var(--oq-raised);
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-notify__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: calc(var(--oq-space) * 3);
+  padding: calc(var(--oq-space) * 3) calc(var(--oq-space) * 3) calc(var(--oq-space) * 3) calc(var(--oq-space) * 4);
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-notify__item:last-child { border-bottom: 0; }
+.oq-notify__item:hover { background: var(--oq-hover); }
+.oq-notify__item.is-unread { background: color-mix(in srgb, var(--oq-primary) 6%, transparent); }
+.oq-notify__item.is-unread:hover { background: color-mix(in srgb, var(--oq-primary) 10%, var(--oq-hover)); }
+.oq-notify__mark {
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: transparent;
+}
+.oq-notify__item.is-unread > .oq-notify__mark { background: var(--oq-c); }
+.oq-notify__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.oq-notify__item-title { font-weight: 500; overflow-wrap: anywhere; }
+.oq-notify__item:not(.is-unread) .oq-notify__item-title { font-weight: 400; color: var(--oq-text-muted); }
+.oq-notify__text { font-size: var(--oq-text-sm); color: var(--oq-text-muted); overflow-wrap: anywhere; }
+.oq-notify__time { font-size: var(--oq-text-xs); color: var(--oq-text-faint); }
+.oq-notify__link { color: inherit; text-decoration: none; }
+.oq-notify__link:hover .oq-notify__item-title { text-decoration: underline; }
+/* Item actions appear on hover/focus, so the list stays calm. */
+.oq-notify__actions { display: flex; gap: 2px; opacity: 0; transition: opacity var(--oq-motion); }
+.oq-notify__item:hover > .oq-notify__actions,
+.oq-notify__item:focus-within > .oq-notify__actions { opacity: 1; }
+@media (hover: none) { .oq-notify__actions { opacity: 1; } }
+.oq-notify__footer {
+  display: flex;
+  justify-content: center;
+  padding: calc(var(--oq-space) * 2);
+  border-top: 1px solid var(--oq-border);
+  font-size: var(--oq-text-sm);
+}
+.oq-notify__panel > .oq-empty { padding-block: calc(var(--oq-space) * 8); }
+.oq-notify__footer a { display: inline-block; padding-block: 4px; }
+
+/* Phones: the panel is a sheet under the app bar, the full width of the screen. */
+@media (max-width: 640px) {
+  .oq-notify__panel:not(.oq-notify__panel--static) {
+    position: fixed;
+    top: calc(var(--oq-appbar-h, 48px) + 6px);
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: calc(100vh - var(--oq-appbar-h, 48px) - 20px);
+    max-height: calc(100dvh - var(--oq-appbar-h, 48px) - 20px - env(safe-area-inset-bottom, 0px));
+  }
+  .oq-notify__item { padding-inline: calc(var(--oq-space) * 3); gap: calc(var(--oq-space) * 2.5); }
+}
+
+/* ========== Skeleton presets ========== */
+
+.oq-skeleton-text { display: flex; flex-direction: column; gap: 0.55em; }
+.oq-skeleton-text > .oq-skeleton:last-child:not(:first-child) { width: 62%; }
+.oq-skeleton--circle { border-radius: 50%; flex: none; }
+.oq-skeleton-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.oq-skeleton-list > li {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 3);
+  padding: calc(var(--oq-space) * 3) calc(var(--oq-space) * 4);
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-skeleton-list > li:last-child { border-bottom: 0; }
+.oq-skeleton-list .oq-skeleton-text { flex: 1 1 auto; min-width: 0; }
+.oq-skeleton-card__media { display: block; height: 120px; border-radius: 0; }
+.oq-skeleton-table td .oq-skeleton { height: 0.85em; }
+.oq-skeleton-table th .oq-skeleton { height: 0.7em; }
+
+/* Live regions announce "Loading…" once; the shimmer is decoration. */
+[aria-busy="true"] > .oq-skeleton-text,
+[aria-busy="true"] > .oq-skeleton-list { pointer-events: none; }
+
+/* ========== Error page ========== */
+
+.oq-error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--oq-space) * 3);
+  min-height: var(--min-h, 60vh);
+  padding: calc(var(--oq-space) * 10) calc(var(--oq-space) * 6);
+  text-align: center;
+}
+.oq-error-page--full { --min-h: 100vh; }
+.oq-error-page .oq-illustration { --w: 200px; margin-bottom: calc(var(--oq-space) * 2); }
+.oq-error-page__code {
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--oq-c);
+}
+.oq-error-page__title { margin: 0; font-size: var(--oq-text-2xl); font-weight: 600; letter-spacing: -0.01em; }
+.oq-error-page__message { max-width: 460px; color: var(--oq-text-muted); }
+.oq-error-page__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--oq-space) * 2); margin-top: calc(var(--oq-space) * 2); }
+.oq-error-page__details { width: min(560px, 100%); margin-top: calc(var(--oq-space) * 4); text-align: left; }
+.oq-error-page__details > summary { cursor: pointer; font-size: var(--oq-text-sm); color: var(--oq-text-faint); }
+.oq-error-page__details > .oq-pre { margin-top: calc(var(--oq-space) * 2); white-space: pre-wrap; overflow-wrap: anywhere; }
+.oq-error-page__foot { margin-top: calc(var(--oq-space) * 4); font-size: var(--oq-text-xs); color: var(--oq-text-faint); }
+.oq-error-page__foot a { display: inline-block; padding-block: 5px; }
+
+@media (max-width: 640px) {
+  .oq-error-page { padding: calc(var(--oq-space) * 8) calc(var(--oq-space) * 4) calc(var(--oq-space) * 8 + env(safe-area-inset-bottom, 0px)); gap: calc(var(--oq-space) * 2.5); }
+  .oq-error-page .oq-illustration { --w: min(160px, 50vw); }
+  .oq-error-page__title { font-size: var(--oq-text-xl); }
+  /* Buttons stack full width: the first is the way out, so it is easy to hit. */
+  .oq-error-page__actions { flex-direction: column; align-self: stretch; }
+  .oq-error-page__actions > .oq-btn { width: 100%; }
+}

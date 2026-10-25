@@ -1,0 +1,496 @@
+/* Data: virtual table, log viewer, JSON inspector, diff view. Same conventions as components.css: theme variables only, intents via --oq-c. */
+
+/* ========== Virtual table ========== */
+
+/*
+ * A div grid: every row is `display: grid` on the same column template (--oq-vt-cols), and all
+ * rows are --oq-vt-row tall, which is what lets the body render only the rows in view.
+ */
+.oq-vtable {
+  --oq-vt-row: 34px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--oq-border);
+  border-radius: var(--oq-radius-lg);
+  background: var(--oq-surface);
+  font-size: var(--oq-text-md);
+  font-variant-numeric: tabular-nums;
+}
+.oq-vtable--dense { font-size: var(--oq-text-sm); }
+
+.oq-vtable__toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(var(--oq-space) * 2);
+  padding: calc(var(--oq-space) * 2) calc(var(--oq-space) * 3);
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-vtable__toolbar .oq-menu { max-height: 320px; overflow-y: auto; }
+.oq-vtable__toolbar label.oq-menu__item { cursor: pointer; }
+
+.oq-vtable__grid { outline: none; min-width: 0; border-radius: 0 0 var(--oq-radius-lg) var(--oq-radius-lg); }
+.oq-vtable__grid:focus-visible { box-shadow: inset 0 0 0 2px var(--oq-focus); }
+.oq-vtable__viewport { position: relative; overflow: auto; border-radius: inherit; }
+
+.oq-vtable__head,
+.oq-vtable__row {
+  display: grid;
+  grid-template-columns: var(--oq-vt-cols);
+  width: max(100%, var(--oq-vt-width));
+  height: var(--oq-vt-row);
+}
+.oq-vtable__head {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--oq-raised);
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-vtable__body { position: relative; width: max(100%, var(--oq-vt-width)); }
+.oq-vtable__rows { position: absolute; inset: 0 auto auto 0; width: 100%; will-change: transform; }
+
+.oq-vtable__th,
+.oq-vtable__cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0 calc(var(--oq-space) * 3);
+  overflow: hidden;
+  white-space: nowrap;
+}
+.oq-vtable--dense :is(.oq-vtable__th, .oq-vtable__cell) { padding: 0 calc(var(--oq-space) * 2.5); }
+.oq-vtable__th {
+  gap: calc(var(--oq-space) * 1.5);
+  color: var(--oq-text-faint);
+  font-size: var(--oq-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  user-select: none;
+}
+.oq-vtable__th.is-sortable { cursor: pointer; }
+.oq-vtable__th.is-sortable:hover { color: var(--oq-text); }
+.oq-vtable__th[aria-sort]::after { content: "↕"; opacity: 0.4; font-size: 1.1em; letter-spacing: 0; }
+.oq-vtable__th[aria-sort="ascending"]::after { content: "↑"; opacity: 1; color: var(--oq-primary); }
+.oq-vtable__th[aria-sort="descending"]::after { content: "↓"; opacity: 1; color: var(--oq-primary); }
+:is(.oq-vtable__th, .oq-vtable__cell).oq-num { justify-content: flex-end; text-align: right; }
+.oq-vtable__th.oq-num { flex-direction: row-reverse; }
+:is(.oq-vtable__th, .oq-vtable__cell).is-center { justify-content: center; }
+.oq-vtable__check { justify-content: center; padding: 0; }
+
+/* Resize handle: a strip on the header's right edge with a hairline that shows on hover. */
+.oq-vtable__resize {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+}
+.oq-vtable__resize::after {
+  content: "";
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
+  right: 3px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--oq-border-strong);
+  opacity: 0;
+  transition: opacity var(--oq-motion);
+}
+.oq-vtable__th:hover .oq-vtable__resize::after { opacity: 1; }
+.oq-vtable__resize:hover::after,
+.oq-vtable__resize:active::after { opacity: 1; background: var(--oq-primary); }
+
+.oq-vtable__row { border-bottom: 1px solid var(--oq-border); background: var(--oq-surface); }
+.oq-vtable--striped .oq-vtable__row.is-odd { background: color-mix(in srgb, var(--oq-hover) 45%, var(--oq-surface)); }
+.oq-vtable__row:hover { background: var(--oq-hover); }
+.oq-vtable__row[aria-selected="true"] { background: color-mix(in srgb, var(--oq-primary) 12%, var(--oq-surface)); }
+.oq-vtable__grid:focus-visible .oq-vtable__row.is-active { box-shadow: inset 3px 0 0 var(--oq-primary); }
+.oq-vtable__grid:focus-visible .oq-vtable__cell.is-active { box-shadow: inset 0 0 0 1px var(--oq-focus); }
+.oq-vtable__cell.is-editable { cursor: text; }
+
+.oq-vtable__editor {
+  width: calc(100% + var(--oq-space) * 2);
+  height: calc(var(--oq-vt-row) - 6px);
+  margin: 0 calc(var(--oq-space) * -1);
+  padding: 0 calc(var(--oq-space) * 1.5);
+  border: 1px solid var(--oq-focus);
+  border-radius: var(--oq-radius-sm);
+  background: var(--oq-bg);
+  color: var(--oq-text);
+  font: inherit;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--oq-focus) 22%, transparent);
+  outline: none;
+}
+
+/* Sticky first column: the checkbox column (if any) and the first data column stay put. */
+.oq-vtable--sticky-first :is(.oq-vtable__th, .oq-vtable__cell).oq-vtable__check { position: sticky; left: 0; z-index: 2; background: inherit; }
+.oq-vtable--sticky-first :is(.oq-vtable__th, .oq-vtable__cell).is-first {
+  position: sticky;
+  left: var(--oq-vt-sticky, 0px);
+  z-index: 2;
+  background: inherit;
+  box-shadow: 1px 0 0 var(--oq-border);
+}
+.oq-vtable--sticky-first .oq-vtable__head > * { background: var(--oq-raised); }
+
+.oq-vtable__empty { padding: calc(var(--oq-space) * 10); text-align: center; color: var(--oq-text-faint); }
+
+/* ========== Log viewer ========== */
+
+.oq-log {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--oq-border);
+  border-radius: var(--oq-radius-lg);
+  background: var(--oq-surface);
+  overflow: hidden;
+}
+.oq-log__toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(var(--oq-space) * 2);
+  padding: calc(var(--oq-space) * 2) calc(var(--oq-space) * 3);
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-log__search { width: 280px; max-width: 100%; height: var(--oq-control-sm); }
+.oq-log__search > .oq-btn { width: 26px; flex: none; padding: 0; }
+/* The input gives way first, so the prev/next buttons keep their size on a narrow screen. */
+.oq-log__search > .oq-input { min-width: 0; flex: 1 1 auto; }
+.oq-log__search > .oq-addon { min-width: 40px; justify-content: flex-end; padding: 0 4px; }
+.oq-log__levels { display: flex; flex-wrap: wrap; gap: calc(var(--oq-space) * 1); }
+
+/* Level → intent. debug is plain grey; fatal is a filled badge. */
+.oq-log [data-level="debug"] { --oq-c: var(--oq-text-faint); --oq-on-c: var(--oq-bg); }
+.oq-log [data-level="info"]  { --oq-c: var(--oq-primary);    --oq-on-c: var(--oq-on-primary); }
+.oq-log [data-level="warn"]  { --oq-c: var(--oq-warning);    --oq-on-c: var(--oq-on-warning); }
+.oq-log [data-level="error"] { --oq-c: var(--oq-danger);     --oq-on-c: var(--oq-on-danger); }
+.oq-log [data-level="fatal"] { --oq-c: var(--oq-danger);     --oq-on-c: var(--oq-on-danger); }
+
+.oq-log__chip { --oq-soft: color-mix(in srgb, var(--oq-c) 16%, transparent); text-transform: uppercase; letter-spacing: 0.04em; }
+.oq-log__chip[aria-pressed="false"] { background: transparent; color: var(--oq-text-faint); border-color: var(--oq-border); text-decoration: line-through; }
+.oq-log__chip[aria-pressed="true"] { background: var(--oq-soft); color: var(--oq-c); }
+.oq-log__count { font-variant-numeric: tabular-nums; opacity: 0.75; text-transform: none; letter-spacing: 0; }
+
+.oq-log__frame { position: relative; }
+.oq-log__viewport {
+  overflow: auto;
+  background: var(--oq-bg);
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-sm);
+  line-height: 1.6;
+}
+.oq-log__line {
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--oq-space) * 3);
+  padding: 0 calc(var(--oq-space) * 3);
+  white-space: pre;
+  overflow: hidden;
+  border-left: 2px solid transparent;
+}
+.oq-log__line > * { line-height: var(--oq-log-line, 22px); }
+.oq-log__line:hover { background: var(--oq-hover); }
+.oq-log__line.is-active { background: var(--oq-selection); border-left-color: var(--oq-primary); }
+.oq-log__line[data-level="error"],
+.oq-log__line[data-level="fatal"] { background: color-mix(in srgb, var(--oq-danger) 7%, transparent); }
+.oq-log__line[data-level="error"]:hover,
+.oq-log__line[data-level="fatal"]:hover { background: color-mix(in srgb, var(--oq-danger) 14%, transparent); }
+.oq-log__time { flex: none; color: var(--oq-text-faint); }
+.oq-log__level {
+  flex: none;
+  width: 5ch;
+  color: var(--oq-c);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.oq-log__line[data-level="fatal"] .oq-log__level {
+  width: auto;
+  min-width: 5ch;
+  padding: 0 4px;
+  border-radius: var(--oq-radius-sm);
+  background: var(--oq-c);
+  color: var(--oq-on-c);
+  line-height: 18px;
+}
+.oq-log__source { flex: none; min-width: 9ch; color: var(--oq-secondary); }
+.oq-log__msg { flex: 1 1 auto; min-width: 0; color: var(--oq-text); overflow: hidden; text-overflow: ellipsis; }
+.oq-log__line[data-level="debug"] .oq-log__msg { color: var(--oq-text-muted); }
+
+.oq-log--wrap .oq-log__line { white-space: pre-wrap; overflow-wrap: anywhere; content-visibility: auto; contain-intrinsic-size: auto 22px; }
+.oq-log--wrap .oq-log__msg { overflow: visible; }
+
+.oq-log__match { background: color-mix(in srgb, var(--oq-warning) 30%, transparent); color: inherit; border-radius: 2px; }
+.oq-log__match.is-current { background: var(--oq-warning); color: var(--oq-on-warning); }
+
+.oq-log__copy {
+  flex: none;
+  margin-left: auto;
+  padding: 0 6px;
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-sm);
+  background: var(--oq-raised);
+  color: var(--oq-text-muted);
+  font: inherit;
+  font-family: var(--oq-font-sans);
+  font-size: var(--oq-text-xs);
+  line-height: 18px !important;
+  cursor: pointer;
+  opacity: 0;
+}
+.oq-log__line:hover .oq-log__copy,
+.oq-log__copy:focus-visible { opacity: 1; }
+.oq-log__copy:hover { color: var(--oq-text); }
+
+.oq-log__pill {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--oq-primary);
+  color: var(--oq-on-primary);
+  font: inherit;
+  font-size: var(--oq-text-sm);
+  font-weight: 600;
+  box-shadow: var(--oq-shadow-md);
+  cursor: pointer;
+  animation: oq-pop var(--oq-motion) ease-out;
+}
+.oq-log__empty { padding: calc(var(--oq-space) * 8); text-align: center; color: var(--oq-text-faint); font-family: var(--oq-font-sans); }
+
+/* ========== JSON inspector ========== */
+
+.oq-json {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--oq-border);
+  border-radius: var(--oq-radius-lg);
+  background: var(--oq-surface);
+  overflow: hidden;
+}
+.oq-json__toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(var(--oq-space) * 2);
+  padding: calc(var(--oq-space) * 2) calc(var(--oq-space) * 3);
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-json__search { width: 240px; max-width: 100%; height: var(--oq-control-sm); }
+.oq-json__toolbar .oq-segmented > button { height: calc(var(--oq-control-sm) - 6px); padding: 0 calc(var(--oq-space) * 2.5); }
+.oq-json__toolbar .oq-segmented > button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.oq-json__tree {
+  margin: 0;
+  padding: calc(var(--oq-space) * 1.5) 0;
+  list-style: none;
+  overflow: auto;
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-sm);
+  line-height: 1.5;
+}
+.oq-json__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding-right: calc(var(--oq-space) * 3);
+  white-space: nowrap;
+  cursor: default;
+  outline: none;
+}
+.oq-json__row[aria-expanded] { cursor: pointer; }
+.oq-json__row:hover { background: var(--oq-hover); }
+.oq-json__row:focus-visible { background: var(--oq-selection); box-shadow: inset 2px 0 0 var(--oq-focus); }
+.oq-json__row.is-hit { background: color-mix(in srgb, var(--oq-warning) 8%, transparent); }
+
+.oq-json__twisty { display: inline-grid; place-content: center; flex: none; width: 14px; height: 14px; color: var(--oq-text-faint); transition: transform var(--oq-motion); }
+.oq-json__row[aria-expanded="true"] > .oq-json__twisty { transform: rotate(90deg); }
+.oq-json__key { color: var(--oq-text); font-weight: 500; }
+.oq-json__key.is-index { color: var(--oq-text-faint); font-weight: 400; }
+.oq-json__key.is-root { color: var(--oq-text-faint); }
+.oq-json__colon { color: var(--oq-text-faint); margin-left: -4px; }
+.oq-json__value { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.oq-json__value.is-string { color: var(--oq-success); }
+.oq-json__value.is-number { color: var(--oq-info); }
+.oq-json__value.is-boolean { color: var(--oq-secondary); }
+.oq-json__value.is-null,
+.oq-json__value.is-undefined { color: var(--oq-text-faint); font-style: italic; }
+.oq-json__meta { color: var(--oq-text-faint); font-family: var(--oq-font-sans); font-size: var(--oq-text-xs); }
+.oq-json__brace { font-family: var(--oq-font-mono); font-size: var(--oq-text-sm); margin-right: 6px; color: var(--oq-text-muted); }
+.oq-json__match { background: color-mix(in srgb, var(--oq-warning) 35%, transparent); color: inherit; border-radius: 2px; }
+
+.oq-json__actions { display: inline-flex; gap: 4px; margin-left: auto; padding-left: calc(var(--oq-space) * 3); opacity: 0; }
+.oq-json__row:hover > .oq-json__actions,
+.oq-json__row:focus-visible > .oq-json__actions { opacity: 1; }
+.oq-json__action {
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-sm);
+  background: var(--oq-raised);
+  color: var(--oq-text-muted);
+  font: inherit;
+  font-family: var(--oq-font-sans);
+  font-size: var(--oq-text-xs);
+  cursor: pointer;
+}
+.oq-json__action:hover { color: var(--oq-text); border-color: var(--oq-text-faint); }
+.oq-json__empty { padding: calc(var(--oq-space) * 6); text-align: center; color: var(--oq-text-faint); font-family: var(--oq-font-sans); }
+
+/* ========== Diff view ========== */
+
+.oq-diff {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--oq-border);
+  border-radius: var(--oq-radius-lg);
+  background: var(--oq-surface);
+  overflow: hidden;
+  --oq-diff-add: color-mix(in srgb, var(--oq-success) 13%, transparent);
+  --oq-diff-add-strong: color-mix(in srgb, var(--oq-success) 32%, transparent);
+  --oq-diff-del: color-mix(in srgb, var(--oq-danger) 12%, transparent);
+  --oq-diff-del-strong: color-mix(in srgb, var(--oq-danger) 30%, transparent);
+}
+.oq-diff__header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(var(--oq-space) * 3);
+  padding: calc(var(--oq-space) * 2) calc(var(--oq-space) * 3);
+  border-bottom: 1px solid var(--oq-border);
+  background: var(--oq-raised);
+}
+.oq-diff__label { font-family: var(--oq-font-mono); font-size: var(--oq-text-sm); color: var(--oq-text-muted); }
+.oq-diff--split .oq-diff__label { flex: 1 1 0; min-width: 0; }
+.oq-diff__stat { font-family: var(--oq-font-mono); font-size: var(--oq-text-sm); font-weight: 600; }
+.oq-diff__stat.is-add { color: var(--oq-success); }
+.oq-diff__stat.is-del { color: var(--oq-danger); }
+.oq-diff__header .oq-segmented > button { height: calc(var(--oq-control-sm) - 6px); padding: 0 calc(var(--oq-space) * 2.5); }
+
+.oq-diff__body { overflow: auto; }
+.oq-diff__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-sm);
+  line-height: 1.6;
+}
+.oq-diff__numcol { width: 5ch; }
+.oq-diff__signcol { width: 2.5ch; }
+.oq-diff__table td { padding: 0 calc(var(--oq-space) * 2); vertical-align: top; }
+.oq-diff__num {
+  width: 5ch;
+  color: var(--oq-text-faint);
+  text-align: right;
+  user-select: none;
+  background: var(--oq-raised);
+}
+.oq-diff--split .oq-diff__num + .oq-diff__code + .oq-diff__num { border-left: 1px solid var(--oq-border); }
+.oq-diff__sign { text-align: center; user-select: none; color: var(--oq-text-faint); padding: 0 !important; }
+.oq-diff__code { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--oq-text); }
+
+.oq-diff__line.is-add > td,
+.oq-diff__table td.is-add { background: var(--oq-diff-add); }
+.oq-diff__line.is-del > td,
+.oq-diff__table td.is-del { background: var(--oq-diff-del); }
+.oq-diff__line.is-add > .oq-diff__num,
+.oq-diff__table .oq-diff__num.is-add { background: var(--oq-diff-add-strong); color: var(--oq-text-muted); }
+.oq-diff__line.is-del > .oq-diff__num,
+.oq-diff__table .oq-diff__num.is-del { background: var(--oq-diff-del-strong); color: var(--oq-text-muted); }
+.oq-diff__line.is-add > .oq-diff__sign { color: var(--oq-success); }
+.oq-diff__line.is-del > .oq-diff__sign { color: var(--oq-danger); }
+.oq-diff__table td.is-blank { background: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--oq-border) 50%, transparent) 6px 7px); }
+
+ins.oq-diff__word,
+del.oq-diff__word { text-decoration: none; border-radius: 2px; }
+ins.oq-diff__word { background: var(--oq-diff-add-strong); }
+del.oq-diff__word { background: var(--oq-diff-del-strong); }
+
+.oq-diff__skip > td { padding: 0 !important; background: color-mix(in srgb, var(--oq-primary) 6%, var(--oq-raised)); }
+.oq-diff__skip button {
+  display: block;
+  width: 100%;
+  padding: 3px calc(var(--oq-space) * 3);
+  border: 0;
+  border-block: 1px solid var(--oq-border);
+  background: transparent;
+  color: var(--oq-text-faint);
+  font: inherit;
+  font-family: var(--oq-font-sans);
+  font-size: var(--oq-text-xs);
+  text-align: left;
+  cursor: pointer;
+}
+.oq-diff__skip button:hover { color: var(--oq-primary); background: var(--oq-hover); }
+.oq-diff__empty { padding: calc(var(--oq-space) * 6); text-align: center; color: var(--oq-text-faint); }
+
+/* ========== Small screens and touch ========== */
+
+/* Hover-only reveals need a touch alternative: on touch screens (some of which still report
+   hover) and screens without hover, row actions stay visible. */
+@media (hover: none), (pointer: coarse) {
+  .oq-log__copy,
+  .oq-json__actions { opacity: 1; }
+  .oq-vtable__resize::after { opacity: 1; }
+}
+
+@media (pointer: coarse) {
+  /* Row height itself comes from the component (one source, --oq-vt-row); here only targets grow. */
+  .oq-vtable__check .oq-checkbox { width: 24px; height: 24px; }
+  .oq-vtable__check { min-width: 44px; }
+  /* A wider grab strip for a finger, with the hairline in its middle. */
+  .oq-vtable__resize { width: 20px; right: -6px; z-index: 3; }
+  .oq-vtable__resize::after { right: 9px; }
+  .oq-log__search { height: var(--oq-control-md); }
+  .oq-log__search > .oq-btn { width: 36px; }
+  .oq-log__copy { padding: 0 10px; line-height: 24px !important; }
+  .oq-json__row { min-height: 36px; }
+  .oq-json__action { height: 28px; padding: 0 10px; }
+  .oq-json__toolbar .oq-segmented > button,
+  .oq-diff__header .oq-segmented > button { height: 32px; }
+  .oq-diff__skip button { padding: 10px calc(var(--oq-space) * 3); }
+}
+
+@media (max-width: 640px) {
+  /* Toolbars: search takes a full row, the rest wraps beneath it. */
+  .oq-vtable__toolbar,
+  .oq-log__toolbar,
+  .oq-json__toolbar { padding: calc(var(--oq-space) * 2); }
+  .oq-log__search,
+  .oq-json__search { flex: 1 1 100%; width: auto; }
+  .oq-log__levels { flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .oq-log__levels > * { flex: none; }
+
+  /* Log lines: the source column goes (it is in the copied line and the JSON panel), the gaps tighten. */
+  .oq-log__line { gap: calc(var(--oq-space) * 2); padding: 0 calc(var(--oq-space) * 2); }
+  .oq-log__source { display: none; }
+
+  /* JSON: half the indent per level, so deep objects still fit. */
+  .oq-json { --oq-json-indent: 10px; }
+  .oq-json__actions { padding-left: calc(var(--oq-space) * 1.5); }
+
+  /* Diff: narrower gutters; split mode is switched off by the component below 720px. */
+  .oq-diff__numcol,
+  .oq-diff__num { width: 4ch; }
+  .oq-diff__table td { padding: 0 calc(var(--oq-space) * 1); }
+  .oq-diff__header { gap: calc(var(--oq-space) * 2); }
+}

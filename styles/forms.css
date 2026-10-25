@@ -1,0 +1,467 @@
+/* Forms: form system, inputs, query builder, wizard, confirm. Same conventions as components.css: theme variables only, intents via --oq-c. */
+
+/* The `hidden` attribute must win over the display these blocks set below (plain-HTML use). */
+.oq-savebar[hidden],
+.oq-error-summary[hidden],
+.oq-confirm__type[hidden],
+.oq-cron__runs[hidden],
+.oq-multiselect__panel[hidden] { display: none; }
+
+/* ========== Form ========== */
+
+.oq-form { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 4); }
+.oq-form[aria-busy="true"] { cursor: progress; }
+
+/* ========== Error summary ========== */
+
+.oq-error-summary {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--oq-space) * 1.5);
+  padding: calc(var(--oq-space) * 3) calc(var(--oq-space) * 4);
+  border: 1px solid color-mix(in srgb, var(--oq-danger) 40%, transparent);
+  border-left: 3px solid var(--oq-danger);
+  border-radius: var(--oq-radius-md);
+  background: color-mix(in srgb, var(--oq-danger) 8%, var(--oq-surface));
+}
+.oq-error-summary:focus { outline: none; }
+.oq-error-summary__title { display: flex; align-items: center; gap: calc(var(--oq-space) * 2); font-weight: 600; color: var(--oq-text); }
+.oq-error-summary__title > svg { width: 16px; height: 16px; color: var(--oq-danger); flex: none; }
+.oq-error-summary__message { margin: 0; color: var(--oq-text-muted); }
+.oq-error-summary__list { margin: 0; padding-left: calc(var(--oq-space) * 6); display: flex; flex-direction: column; gap: 2px; }
+.oq-error-summary__list a { color: var(--oq-danger); text-decoration-color: color-mix(in srgb, var(--oq-danger) 40%, transparent); }
+.oq-error-summary__list strong { font-weight: 600; }
+
+/* ========== Save bar ========== */
+
+.oq-savebar {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 2);
+  padding: calc(var(--oq-space) * 2.5) calc(var(--oq-space) * 4);
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-lg);
+  background: var(--oq-raised);
+  box-shadow: var(--oq-shadow-md);
+  animation: oq-pop var(--oq-motion) ease-out;
+}
+.oq-savebar--sticky { position: sticky; bottom: calc(var(--oq-space) * 3); z-index: 15; }
+.oq-savebar__message { font-size: var(--oq-text-sm); font-weight: 500; }
+.oq-savebar__errors { color: var(--oq-danger); }
+
+/* ========== Multi-select ========== */
+
+.oq-multiselect { position: relative; min-width: 0; }
+.oq-multiselect__trigger {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 2);
+  width: 100%;
+  min-height: var(--oq-control-md);
+  padding: 2px calc(var(--oq-space) * 2) 2px calc(var(--oq-space) * 2.5);
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-md);
+  background: var(--oq-surface);
+  color: var(--oq-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--oq-motion), box-shadow var(--oq-motion);
+}
+.oq-multiselect__trigger:hover { border-color: var(--oq-text-faint); }
+.oq-multiselect__trigger:focus-visible,
+.oq-multiselect__trigger[aria-expanded="true"] {
+  outline: none;
+  border-color: var(--oq-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--oq-focus) 22%, transparent);
+}
+.oq-multiselect__trigger:disabled { opacity: 0.55; cursor: not-allowed; background: var(--oq-raised); }
+.oq-multiselect__trigger[aria-invalid="true"] { border-color: var(--oq-danger); }
+.oq-multiselect.oq-sm .oq-multiselect__trigger { min-height: var(--oq-control-sm); font-size: var(--oq-text-sm); }
+.oq-multiselect__placeholder { flex: 1; color: var(--oq-text-faint); }
+.oq-multiselect__chips { flex: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; min-width: 0; }
+.oq-multiselect__more { font-size: var(--oq-text-sm); color: var(--oq-text-muted); font-weight: 500; }
+.oq-multiselect__caret { flex: none; width: 14px; height: 14px; color: var(--oq-text-faint); transition: transform var(--oq-motion); }
+.oq-multiselect__trigger[aria-expanded="true"] .oq-multiselect__caret { transform: rotate(180deg); }
+.oq-multiselect__scrim { display: none; }
+.oq-multiselect__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 30;
+  width: max(100%, 260px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-md);
+  background: var(--oq-raised);
+  box-shadow: var(--oq-shadow-md);
+  animation: oq-pop var(--oq-motion) ease-out;
+}
+.oq-multiselect__search { margin: calc(var(--oq-space) * 2) calc(var(--oq-space) * 2) 0; width: auto; }
+.oq-multiselect__all {
+  padding: calc(var(--oq-space) * 2) calc(var(--oq-space) * 3);
+  border-bottom: 1px solid var(--oq-border);
+  font-size: var(--oq-text-sm);
+  font-weight: 500;
+}
+.oq-multiselect__list { max-height: 240px; overflow-y: auto; margin: 0; padding: calc(var(--oq-space) * 1); list-style: none; }
+.oq-multiselect__list:focus { outline: none; }
+.oq-multiselect__option {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 2.5);
+  min-height: 30px;
+  padding: 0 calc(var(--oq-space) * 2);
+  border-radius: var(--oq-radius-sm);
+  cursor: pointer;
+  user-select: none;
+}
+.oq-multiselect__option[data-active="true"] { background: var(--oq-hover); }
+.oq-multiselect__option[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+.oq-multiselect__option > .oq-checkbox { pointer-events: none; }
+.oq-multiselect__footer {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 1);
+  padding: calc(var(--oq-space) * 1.5) calc(var(--oq-space) * 2) calc(var(--oq-space) * 1.5) calc(var(--oq-space) * 3);
+  border-top: 1px solid var(--oq-border);
+  font-size: var(--oq-text-sm);
+  color: var(--oq-text-faint);
+}
+
+/* ========== Colour input ========== */
+
+.oq-color { display: flex; align-items: stretch; gap: calc(var(--oq-space) * 2); }
+.oq-color__swatch {
+  position: relative;
+  flex: none;
+  width: var(--oq-control-md);
+  height: var(--oq-control-md);
+  border-radius: var(--oq-radius-md);
+  background: var(--swatch, var(--oq-primary));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--oq-text) 20%, transparent);
+  cursor: pointer;
+}
+.oq-color__swatch:focus-within { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--oq-text) 20%, transparent), var(--oq-ring); }
+.oq-color__swatch > input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: 0; padding: 0; }
+.oq-color__hex { width: 120px; text-transform: lowercase; }
+.oq-color__presets { display: flex; flex-wrap: wrap; gap: calc(var(--oq-space) * 1.5); }
+.oq-color__preset {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--oq-radius-sm);
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--oq-text) 18%, transparent);
+  cursor: pointer;
+}
+.oq-color__preset:hover { transform: scale(1.08); }
+.oq-color__preset:focus-visible { outline: none; box-shadow: var(--oq-ring); }
+.oq-color__preset[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--oq-surface), 0 0 0 4px var(--oq-text); }
+
+/* ========== Password + strength meter ========== */
+
+.oq-password > .oq-input { letter-spacing: 0.02em; }
+.oq-password__toggle { align-self: center; margin-right: 3px; height: calc(var(--oq-control-md) - 8px) !important; width: calc(var(--oq-control-md) - 8px); border-radius: var(--oq-radius-sm) !important; }
+.oq-password__toggle > svg { color: var(--oq-text-faint); }
+.oq-password__toggle[aria-pressed="true"] > svg { color: var(--oq-text); }
+
+.oq-strength { display: flex; align-items: center; gap: calc(var(--oq-space) * 3); font-size: var(--oq-text-sm); }
+.oq-strength__bars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; flex: 1; max-width: 240px; }
+.oq-strength__bars > span { height: 4px; border-radius: 2px; background: var(--oq-hover); transition: background var(--oq-motion); }
+.oq-strength__label { min-width: 64px; color: var(--oq-text-faint); font-weight: 500; }
+.oq-strength[data-score="0"], .oq-strength[data-score="1"] { --oq-c: var(--oq-danger); }
+.oq-strength[data-score="2"] { --oq-c: var(--oq-warning); }
+.oq-strength[data-score="3"] { --oq-c: var(--oq-info); }
+.oq-strength[data-score="4"] { --oq-c: var(--oq-success); }
+.oq-strength[data-score] .oq-strength__bars > span[data-on] { background: var(--oq-c); }
+.oq-strength[data-score] .oq-strength__label { color: var(--oq-c); }
+
+/* ========== One-time code ========== */
+
+.oq-otp { display: flex; align-items: center; gap: calc(var(--oq-space) * 2); max-width: 100%; }
+.oq-otp__slot { display: contents; }
+.oq-otp__cell {
+  /* Up to 40px wide, shrinking with the column so 8 cells still fit a 320px phone. */
+  flex: 0 1 40px;
+  width: 40px;
+  min-width: 0;
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-md);
+  background: var(--oq-surface);
+  color: var(--oq-text);
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-xl);
+  font-weight: 600;
+  text-align: center;
+  caret-color: var(--oq-focus);
+  transition: border-color var(--oq-motion), box-shadow var(--oq-motion);
+}
+.oq-otp__cell:hover { border-color: var(--oq-text-faint); }
+.oq-otp__cell:focus { outline: none; border-color: var(--oq-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--oq-focus) 22%, transparent); }
+.oq-otp__cell:disabled { opacity: 0.55; }
+.oq-otp__cell[aria-invalid="true"] { border-color: var(--oq-danger); }
+.oq-otp__sep { flex: none; width: 10px; height: 2px; border-radius: 1px; background: var(--oq-border-strong); margin: 0 2px; }
+
+/* ========== Cron ========== */
+
+.oq-cron { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 2.5); }
+.oq-cron__fields { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: calc(var(--oq-space) * 2); max-width: 460px; }
+.oq-cron__field { display: flex; flex-direction: column; gap: 4px; }
+.oq-cron__field > .oq-input { text-align: center; padding-inline: 4px; }
+.oq-cron__name { font-size: var(--oq-text-xs); color: var(--oq-text-faint); text-align: center; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.oq-cron__bar { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--oq-space) * 2); }
+.oq-cron__presets { width: auto; min-width: 180px; }
+.oq-cron__expr {
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-sm);
+  padding: 3px 8px;
+  border-radius: var(--oq-radius-sm);
+  background: var(--oq-raised);
+  border: 1px solid var(--oq-border);
+}
+.oq-cron__desc { font-weight: 500; color: var(--oq-text); }
+.oq-cron__desc::first-letter { text-transform: uppercase; }
+.oq-cron__desc.is-error { color: var(--oq-danger); }
+.oq-cron__runs {
+  margin: 0;
+  padding: calc(var(--oq-space) * 2) calc(var(--oq-space) * 3) calc(var(--oq-space) * 2) calc(var(--oq-space) * 8);
+  border-radius: var(--oq-radius-md);
+  background: var(--oq-raised);
+  border: 1px solid var(--oq-border);
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-sm);
+  color: var(--oq-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.oq-cron__runs > li::marker { color: var(--oq-text-faint); }
+
+/* ========== Key–value editor ========== */
+
+.oq-kv { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 1.5); }
+.oq-kv__head,
+.oq-kv__row {
+  display: grid;
+  /* A fixed action column, so the header row (which has no buttons) splits the width the same way. */
+  grid-template-columns: minmax(100px, 2fr) minmax(120px, 3fr) calc(var(--oq-control-sm) * 3 + 4px);
+  gap: calc(var(--oq-space) * 2);
+  align-items: center;
+}
+.oq-kv__head { font-size: var(--oq-text-xs); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--oq-text-faint); }
+.oq-kv__head::after { content: ""; }
+.oq-kv__head > span { padding-left: calc(var(--oq-space) * 2); }
+.oq-kv__actions { display: flex; gap: 2px; }
+.oq-kv__problem { grid-column: 1 / -1; margin-top: -2px; font-size: var(--oq-text-sm); color: var(--oq-danger); }
+.oq-kv__add { align-self: flex-start; }
+.oq-kv__add > svg { width: 14px; height: 14px; }
+
+/* ========== IP / CIDR ========== */
+
+.oq-ip__version { min-width: 52px; justify-content: center; font-family: var(--oq-font-mono); font-size: var(--oq-text-xs); }
+.oq-ip__version.is-ok { color: var(--oq-success); }
+.oq-ip__warn { color: var(--oq-warning); }
+
+/* ========== Query builder ========== */
+
+.oq-query { position: relative; min-width: 0; }
+.oq-query__box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--oq-space) * 1.5);
+  min-height: var(--oq-control-md);
+  padding: 3px calc(var(--oq-space) * 1.5) 3px calc(var(--oq-space) * 2.5);
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-md);
+  background: var(--oq-surface);
+  cursor: text;
+  transition: border-color var(--oq-motion), box-shadow var(--oq-motion);
+}
+.oq-query__box:hover { border-color: var(--oq-text-faint); }
+.oq-query__box:focus-within { border-color: var(--oq-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--oq-focus) 22%, transparent); }
+.oq-query__icon { flex: none; width: 15px; height: 15px; color: var(--oq-text-faint); }
+.oq-query__term {
+  display: inline-flex;
+  align-items: stretch;
+  height: 24px;
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-sm);
+  background: var(--oq-raised);
+  font-size: var(--oq-text-sm);
+  overflow: hidden;
+}
+.oq-query__term > button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 calc(var(--oq-space) * 1.75);
+  border: 0;
+  background: transparent;
+  color: var(--oq-text);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.oq-query__term > button:hover { background: var(--oq-hover); }
+.oq-query__term > button:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--oq-focus); }
+.oq-query__field { color: var(--oq-text-muted) !important; font-weight: 500; padding-right: 2px !important; }
+.oq-query__op {
+  color: var(--oq-primary) !important;
+  font-family: var(--oq-font-mono) !important;
+  font-weight: 600;
+  min-width: 22px;
+  justify-content: center;
+  border-left: 1px solid var(--oq-border) !important;
+  border-right: 1px solid var(--oq-border) !important;
+}
+.oq-query__value { font-family: var(--oq-font-mono) !important; max-width: 220px; overflow: hidden; text-overflow: ellipsis; display: block !important; line-height: 22px; }
+.oq-query__remove { color: var(--oq-text-faint) !important; padding: 0 5px !important; border-left: 1px solid var(--oq-border) !important; }
+.oq-query__remove > svg { width: 12px; height: 12px; }
+.oq-query__remove:hover { color: var(--oq-danger) !important; }
+.oq-query__term--text { border-style: dashed; }
+.oq-query__term.is-unknown { border-color: var(--oq-warning); }
+.oq-query__term.is-unknown .oq-query__field { color: var(--oq-warning) !important; }
+.oq-query__input {
+  flex: 1 1 140px;
+  min-width: min(140px, 100%);
+  height: calc(var(--oq-control-md) - 8px);
+  padding: 0 calc(var(--oq-space) * 1);
+  border: 0;
+  background: transparent;
+  color: var(--oq-text);
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-sm);
+}
+.oq-query__input:focus { outline: none; }
+.oq-query__input::placeholder { color: var(--oq-text-faint); font-family: var(--oq-font-sans); font-size: var(--oq-text-md); }
+.oq-query__clear { margin-left: auto; }
+
+/* ========== Wizard ========== */
+
+.oq-wizard { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 5); }
+.oq-wizard--vertical { flex-direction: row; align-items: flex-start; gap: calc(var(--oq-space) * 8); }
+.oq-wizard--vertical > .oq-stepper { flex: none; width: 220px; }
+.oq-wizard__main { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 4); flex: 1 1 auto; min-width: 0; }
+.oq-wizard__body { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 4); min-height: 120px; }
+.oq-wizard__body:focus { outline: none; }
+.oq-wizard__title { margin: 0; font-size: var(--oq-text-lg); font-weight: 600; }
+.oq-wizard__footer {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 2);
+  padding-top: calc(var(--oq-space) * 4);
+  border-top: 1px solid var(--oq-border);
+}
+.oq-wizard__count { font-size: var(--oq-text-sm); color: var(--oq-text-faint); }
+
+/* ========== Small screens and touch ==========
+ * Phones (≤ 640px): fields stack, the save bar and wizard footer stick to the bottom edge with
+ * room for the home indicator, the multi-select opens as a bottom sheet, and key–value rows
+ * become small cards. Touch (pointer: coarse): every chip, swatch and toggle is a 32px+ target.
+ */
+@media (pointer: coarse) {
+  .oq-color__preset { width: 32px; height: 32px; }
+  .oq-query__term { height: 34px; }
+  .oq-query__term > button { padding: 0 calc(var(--oq-space) * 2.5); }
+  .oq-query__field { padding-right: 4px !important; }
+  .oq-query__op { min-width: 34px; }
+  .oq-query__value { line-height: 32px; }
+  .oq-query__remove { padding: 0 9px !important; }
+  .oq-query__remove > svg { width: 14px; height: 14px; }
+  .oq-password__toggle { height: 100% !important; width: 44px; margin-right: 0; border-radius: 0 var(--oq-radius-md) var(--oq-radius-md) 0 !important; }
+  .oq-multiselect__option { min-height: 44px; }
+  .oq-strength__bars > span { height: 6px; }
+}
+
+@media (max-width: 640px) {
+  .oq-form .oq-field--inline { flex-direction: column; align-items: stretch; gap: calc(var(--oq-space) * 1.5); }
+  .oq-form .oq-field--inline > .oq-label { min-width: 0; }
+
+  .oq-error-summary { padding: calc(var(--oq-space) * 3); }
+  .oq-error-summary__list { padding-left: calc(var(--oq-space) * 4); }
+  .oq-error-summary__list a { display: inline-block; padding-block: 4px; }
+
+  /* Save bar: the message gets its own line and the two buttons share the next one. */
+  .oq-savebar { flex-wrap: wrap; row-gap: calc(var(--oq-space) * 2); padding: calc(var(--oq-space) * 2.5) calc(var(--oq-space) * 3); }
+  .oq-savebar--sticky { bottom: calc(var(--oq-space) * 2 + env(safe-area-inset-bottom, 0px)); }
+  .oq-savebar__message { flex: 1 1 calc(100% - 24px); }
+  .oq-savebar > .oq-spacer { display: none; }
+  .oq-savebar > .oq-btn { flex: 1 1 0; }
+
+  /* Multi-select: a bottom sheet over a scrim, so long lists have the whole screen. */
+  .oq-multiselect__panel {
+    position: fixed;
+    top: auto;
+    left: 8px;
+    right: 8px;
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    z-index: 70;
+    width: auto;
+    max-height: min(70vh, 560px);
+    box-shadow: var(--oq-shadow-lg);
+    animation: oq-sheet-in calc(var(--oq-motion) * 1.5) ease-out;
+  }
+  .oq-multiselect__list { max-height: none; flex: 1 1 auto; min-height: 0; }
+  .oq-multiselect__scrim { display: block; position: fixed; inset: 0; z-index: 69; background: var(--oq-overlay); animation: oq-fade var(--oq-motion) ease-out; }
+
+  .oq-strength__bars { max-width: none; }
+  .oq-color { flex-wrap: wrap; }
+  .oq-color__hex { flex: 1 1 120px; width: auto; }
+
+  .oq-cron__fields { gap: calc(var(--oq-space) * 1.5); max-width: none; }
+  .oq-cron__name { font-size: 10px; letter-spacing: 0.02em; }
+  .oq-cron__presets { flex: 1 1 100%; }
+  .oq-cron__runs { padding-left: calc(var(--oq-space) * 6); }
+
+  /* Key–value: each pair is a card — key and its actions on top, the value full width below. */
+  .oq-kv__head { display: none; }
+  .oq-kv__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "key actions" "value value";
+    gap: calc(var(--oq-space) * 1.5);
+    padding: calc(var(--oq-space) * 2);
+    border: 1px solid var(--oq-border);
+    border-radius: var(--oq-radius-md);
+    background: var(--oq-raised);
+  }
+  .oq-kv__row.is-invalid { border-color: color-mix(in srgb, var(--oq-danger) 50%, var(--oq-border)); }
+  .oq-kv__key { grid-area: key; }
+  .oq-kv__value { grid-area: value; }
+  .oq-kv__actions { grid-area: actions; }
+  .oq-kv__problem { margin-top: 0; }
+
+  .oq-query__value { max-width: 150px; }
+  .oq-query__input { flex-basis: 100px; }
+
+  /* Wizard: a stepper without descriptions, and Back/Next stuck to the bottom edge. */
+  .oq-wizard { gap: calc(var(--oq-space) * 4); }
+  .oq-wizard--vertical { flex-direction: column; gap: calc(var(--oq-space) * 4); }
+  .oq-wizard--vertical > .oq-stepper { width: auto; }
+  .oq-wizard .oq-step__desc { display: none; }
+  .oq-wizard__footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    flex-wrap: wrap;
+    margin-inline: calc(var(--oq-space) * -1);
+    padding: calc(var(--oq-space) * 3) calc(var(--oq-space) * 1) calc(var(--oq-space) * 3 + env(safe-area-inset-bottom, 0px));
+    background: var(--oq-wizard-bg, var(--oq-surface));
+  }
+}
+
+@media (max-width: 400px) {
+  .oq-wizard__count { display: none; }
+  .oq-otp { gap: calc(var(--oq-space) * 1.5); }
+}
+
+@keyframes oq-sheet-in { from { transform: translateY(16px); opacity: 0; } }
+
+/* ========== Confirm ========== */
+
+.oq-confirm .oq-dialog__body { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 4); }
+.oq-confirm__message { color: var(--oq-text-muted); }

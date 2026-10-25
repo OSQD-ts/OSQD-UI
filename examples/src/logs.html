@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="graphite">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log Explorer</title>
+<link rel="stylesheet" href="../styles/index.css">
+<link rel="stylesheet" href="lib/samples.css">
+<script src="../assets/osqd-ui-elements.js" defer></script>
+<script src="lib/forms-logic.js" defer></script>
+<script src="lib/demo-kit.js" defer></script>
+<style>
+  .page { display: flex; flex-direction: column; gap: 12px; padding: 16px; max-width: 1600px; margin: 0 auto; }
+  .querybar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .querybar .filter { flex: 1 1 480px; min-width: 0; }
+  .hist .oq-card__body { padding-block: 8px 4px; }
+  .workspace { height: 560px; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-lg); background: var(--oq-surface); }
+  .workspace > .oq-split__pane { padding: 12px; }
+  .workspace .oq-log { height: 100%; }
+  .event-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  @media (max-width: 900px) { .workspace { height: auto; } .workspace.oq-split { flex-direction: column; } .workspace > .oq-split__handle { display: none; } .workspace > .oq-split__pane:first-child { flex-basis: auto; } }
+  @media (max-width: 640px) {
+    .page { padding: 10px max(10px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px)); gap: 10px; }
+    .querybar .filter { flex: 1 1 100%; }
+    .querybar #range { flex: 1 1 0; min-width: 0; }
+    .workspace { border: 0; background: none; }
+    .workspace > .oq-split__pane:first-child { padding: 0; }
+    /* The event panel is a bottom sheet (OQX.sheet); inside it the panel keeps its own padding. */
+    .workspace > .oq-split__pane.sx-sheet { padding: 0 12px 12px; }
+    #detail-empty { display: none; }
+  }
+</style>
+</head>
+<body class="oq">
+<header class="oq-appbar oq-appbar--sticky">
+  {{brand:Log Explorer}}
+  <span class="oq-chip oq-sm oq-success sx-hide-sm" id="live-chip"><span class="oq-dot oq-success oq-dot--pulse"></span> live</span>
+  <div class="oq-spacer"></div>
+  <a class="oq-btn oq-btn--ghost oq-neutral oq-sm sx-hide-sm" href="dashboard.html">{{icon:activity:oq-sm}} Dashboard</a>
+  {{appbar-end}}<a class="oq-menu__item" role="menuitem" href="dashboard.html">{{icon:activity:oq-sm}} Dashboard</a>{{/appbar-end}}
+</header>
+
+<main class="page">
+  <div class="querybar">
+    <div class="filter" id="filter"></div>
+    <div id="range"></div>
+    <label class="oq-check oq-small"><input type="checkbox" role="switch" class="oq-switch oq-success" id="live" checked> Live tail</label>
+    <button class="oq-btn oq-btn--outline oq-neutral oq-sm" id="save-search" aria-label="Save search">{{icon:bookmark:oq-sm}}<span class="sx-hide-sm"> Save search</span></button>
+  </div>
+  <div class="oq-row oq-gap-1 oq-small sx-scroll-x">
+    <span class="oq-faint">Saved:</span>
+    <button class="oq-chip oq-neutral" data-q="level:error,fatal">Errors</button>
+    <button class="oq-chip oq-neutral" data-q="source:auth status:401,403">Failed sign-ins</button>
+    <button class="oq-chip oq-neutral" data-q="latency>400">Slow requests</button>
+    <button class="oq-chip oq-neutral" data-q="node:fra-03">fra-03 only</button>
+  </div>
+
+  <section class="oq-card hist">
+    <div class="oq-card__header"><h2 class="oq-card__title">Events per minute</h2><span class="oq-card__subtitle" id="hist-sub"></span><div class="oq-card__actions"><span class="oq-small oq-muted" id="matches"></span></div></div>
+    <div class="oq-card__body"><div id="hist"></div></div>
+  </section>
+
+  <div class="oq-split workspace" id="workspace" data-split data-min="40" data-max="80" data-key="oq-samples-logs-split" style="--split: 62%">
+    <div class="oq-split__pane"><div id="log"></div></div>
+    <div class="oq-split__handle" role="separator" tabindex="0" aria-label="Resize event panel" aria-orientation="vertical" aria-valuemin="40" aria-valuemax="80" aria-valuenow="62"></div>
+    <div class="oq-split__pane" id="event-pane">
+      <div id="detail-empty" class="oq-empty">{{illustration:no-data}}<div class="oq-empty__title">Pick a line</div><div class="oq-small">Its full event shows here as JSON.</div></div>
+      <div id="detail" hidden>
+        <div class="event-head">
+          <div class="oq-row oq-gap-2"><span class="oq-chip oq-sm" id="ev-level"></span><code id="ev-id"></code><span class="oq-spacer"></span><oq-copy id="ev-copy"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button">{{icon:copy:oq-sm}} Copy JSON</button></oq-copy></div>
+          <div class="oq-strong" id="ev-msg"></div>
+          <div class="oq-small oq-muted" id="ev-meta"></div>
+        </div>
+        <div id="json"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+addEventListener("DOMContentLoaded", () => {
+  const { $, $$, rng, queryBar, matchTerms, logViewer, jsonInspector, barChart, rangePicker, presets, splitPane, sheet, toast } = OQX;
+  // On a phone the event panel is a bottom sheet that rises when a line is picked.
+  const eventSheet = sheet($("#event-pane"), { title: "Event" });
+  const r = rng(42);
+  const pick = (a) => a[Math.floor(r() * a.length)];
+  const nodes = ["fra-01", "fra-02", "fra-03", "dub-01", "iad-01"];
+  const sources = ["edge", "auth", "store", "reload", "ratelim", "detector"];
+  const paths = ["/api/login", "/api/nodes", "/api/events", "/healthz", "/api/rules/42", "/static/app.js"];
+  let seq = 0;
+  const make = (t) => {
+    const x = r();
+    const level = x < 0.18 ? "debug" : x < 0.8 ? "info" : x < 0.93 ? "warn" : x < 0.995 ? "error" : "fatal";
+    const source = pick(sources), node = pick(nodes), path = pick(paths), ip = `185.220.${Math.floor(r() * 255)}.${Math.floor(r() * 255)}`;
+    const status = level === "error" ? pick([500, 502, 503]) : source === "auth" && r() < 0.4 ? pick([401, 403]) : level === "warn" ? 429 : 200;
+    const latency = Math.round((node === "fra-03" ? 300 : 20) + r() * (level === "warn" ? 600 : 180));
+    const msg = {
+      debug: `cache ${r() < 0.5 ? "hit" : "miss"} key=${Math.random().toString(36).slice(2, 8)}`,
+      info: `${pick(["GET", "POST"])} ${path} ${status} ${latency} ms`,
+      warn: pick([`rate limit reached on ${path} (31/60s)`, `slow query ${latency} ms on events`, "retrying store connection (attempt 2)"]),
+      error: pick([`POST ${path} ${status} after ${latency} ms`, "ECONNREFUSED 10.0.0.4:6379", "certificate for edge.osqd.local expires in 6 days"]),
+      fatal: `worker ${Math.floor(r() * 16)} crashed: out of memory`,
+    }[level];
+    return { id: `evt_${(++seq).toString(36).padStart(6, "0")}`, t, level, source, node, path, status, latency, ip, msg };
+  };
+  let now = Date.now() - 60 * 60000;
+  const lines = Array.from({ length: 6000 }, () => make((now += Math.floor(r() * 1200))));
+
+  const fields = [
+    { name: "level", label: "Level", type: "enum", options: ["debug", "info", "warn", "error", "fatal"] },
+    { name: "source", label: "Source", type: "enum", options: sources },
+    { name: "node", label: "Node", type: "enum", options: nodes },
+    { name: "status", label: "Status", type: "number" },
+    { name: "latency", label: "Latency ms", type: "number" },
+    { name: "path", label: "Path", type: "string" },
+    { name: "ip", label: "Client IP", type: "string" },
+  ];
+  const text = (l) => `${l.msg} ${l.path} ${l.ip} ${l.id}`;
+  let range = presets[0].range(new Date());
+  const inRange = (l) => l.t >= range.from.getTime() && l.t <= range.to.getTime() + 60000;
+  const bar = queryBar($("#filter"), { fields, label: "Filter events", text: "-level:debug", placeholder: "Filter… e.g. level:error node:fra-03 latency>400", onChange: () => { viewer.refilter(); drawHist(); } });
+  const passes = (l) => inRange(l) && matchTerms(bar.terms, l, text);
+
+  // The selected event, as JSON.
+  const inspector = jsonInspector($("#json"), {}, { maxHeight: 400, depth: 2 });
+  const show = (l) => {
+    if (!l) return;
+    const event = {
+      id: l.id, time: new Date(l.t).toISOString(), level: l.level, source: l.source, node: l.node, message: l.msg,
+      request: { method: l.msg.startsWith("POST") ? "POST" : "GET", path: l.path, status: l.status, latencyMs: l.latency, headers: { "user-agent": l.source === "auth" ? "python-requests/2.32" : "Mozilla/5.0", "x-forwarded-for": `${l.ip}, 10.0.0.1` } },
+      client: { ip: l.ip, country: "DE", tor: l.ip.startsWith("185.220") && l.status >= 400 },
+      trace: { span: Math.random().toString(16).slice(2, 18), parent: null },
+    };
+    $("#detail-empty").hidden = true; $("#detail").hidden = false;
+    const color = { debug: "neutral", info: "info", warn: "warning", error: "danger", fatal: "danger" }[l.level];
+    $("#ev-level").className = `oq-chip oq-sm oq-${color}`; $("#ev-level").textContent = l.level;
+    $("#ev-id").textContent = l.id;
+    $("#ev-msg").textContent = l.msg;
+    $("#ev-meta").textContent = `${new Date(l.t).toLocaleString("en-GB")} · ${l.node} · ${l.source}`;
+    $("#ev-copy").setAttribute("text", JSON.stringify(event, null, 2));
+    inspector.set(event);
+    eventSheet.open();
+    // Tablets stack the panel under the log: bring it into view (phones get the sheet instead).
+    if (matchMedia("(min-width: 641px) and (max-width: 900px)").matches) $("#event-pane").scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const viewer = logViewer($("#log"), { lines, height: 470, filter: passes, onSelect: show, stacked: "(max-width: 640px)" });
+
+  // Histogram of the filtered events, per minute, stacked by severity.
+  const drawHist = () => {
+    const from = range.from.getTime(), to = Math.min(range.to.getTime(), Date.now());
+    const span = to - from, minutes = span <= 2 * 3600000;
+    // About one bar per 9 px of width: 60 on a desktop, around 36 on a phone, so bars stay readable.
+    const target = Math.max(12, Math.min(60, Math.floor(($("#hist").parentElement?.clientWidth || 600) / 9)));
+    const bucket = minutes ? Math.max(60000, Math.ceil(span / target / 60000) * 60000) : Math.ceil(span / Math.min(48, target) / 3600000) * 3600000;
+    const n = Math.max(1, Math.ceil(span / bucket));
+    const rows = Array.from({ length: n }, (_, i) => { const d = new Date(from + i * bucket); return { t: d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }), ok: 0, warn: 0, err: 0 }; });
+    let total = 0;
+    for (const l of lines) {
+      if (!passes(l)) continue;
+      const i = Math.floor((l.t - from) / bucket); if (i < 0 || i >= n) continue;
+      total++;
+      if (l.level === "warn") rows[i].warn++; else if (l.level === "error" || l.level === "fatal") rows[i].err++; else rows[i].ok++;
+    }
+    $("#hist").replaceWith(Object.assign(document.createElement("div"), { id: "hist" }));
+    barChart($("#hist"), { label: "Events over time by severity", x: "t", data: rows, height: 150, stacked: true,
+      series: [{ key: "ok", label: "Info / debug", color: "var(--oq-series-1)" }, { key: "warn", label: "Warn", color: "var(--oq-warning)" }, { key: "err", label: "Error", color: "var(--oq-danger)" }] });
+    $("#matches").textContent = `${total.toLocaleString("en-US")} matching events`;
+    $("#hist-sub").textContent = minutes ? `per ${bucket / 60000} min` : `per ${bucket / 3600000} h`;
+  };
+  rangePicker($("#range"), { value: presets[0].range(new Date()), preset: "24h", onChange: (rg) => { range = rg; viewer.refilter(); drawHist(); } });
+  range = { from: new Date(Date.now() - 60 * 60000), to: new Date() };
+  $("#range .oq-datepicker__trigger span:last-child").textContent = "Last 60 minutes";
+  $("#range").classList.add("oq-datepicker--end");
+  drawHist();
+
+  // Live tail.
+  let live = true;
+  $("#live").onchange = (e) => { live = e.target.checked; $("#live-chip").hidden = !live; };
+  setInterval(() => {
+    if (!live) return;
+    const fresh = Array.from({ length: 1 + Math.floor(r() * 3) }, () => make(Date.now()));
+    range = { from: range.from, to: new Date(Math.max(range.to.getTime(), Date.now())) };
+    viewer.push(fresh);
+  }, 800);
+  setInterval(() => { if (live) drawHist(); }, 10000);
+
+  $$("[data-q]").forEach((b) => (b.onclick = () => bar.set(b.dataset.q)));
+  $("#save-search").onclick = () => toast("Search saved", "success", OQForms.formatFilterText(bar.terms) || "(everything)");
+  splitPane($("#workspace"));
+  $("#ev-copy").addEventListener("oq-copy", () => toast("Event copied as JSON"));
+});
+</script>
+</body>
+</html>

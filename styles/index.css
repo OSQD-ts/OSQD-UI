@@ -1,0 +1,8 @@
+/* @osqd/ui — the whole kit. Link this in a page with no build step, or import "@osqd/ui/css" (one bundled file). */
+@import url("./tokens.css");
+@import url("./base.css");
+@import url("./components.css");
+@import url("./charts.css");
+@import url("./data.css");
+@import url("./forms.css");
+@import url("./layout.css");

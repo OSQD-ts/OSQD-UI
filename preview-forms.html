@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSQD UI — forms</title>
+<link rel="stylesheet" href="styles/index.css">
+<style>
+  /* Preview-page layout only; nothing here is part of the kit. */
+  html, body { margin: 0; }
+  .pv-section { scroll-margin-top: 64px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid var(--oq-border); }
+  .pv-section:last-child { border-bottom: 0; }
+  .pv-section > header { display: flex; flex-direction: column; gap: 4px; }
+  .pv-demo { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .pv-main { max-width: 1080px; }
+  .pv-sidebar { position: sticky; top: 48px; height: calc(100vh - 48px); }
+  .pv-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 24px; align-items: start; }
+  .pv-out { font-size: 12px; max-height: 260px; }
+</style>
+</head>
+<body class="oq">
+
+<div class="oq-shell">
+  <header class="oq-appbar oq-appbar--sticky pv-appbar">
+    <a class="oq-appbar__brand" href="preview.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+      OSQD&nbsp;UI <span class="oq-chip oq-sm oq-neutral">0.4.0</span>
+    </a>
+    <nav class="pv-galleries" aria-label="Galleries">
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview.html">Core</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-charts.html">Charts</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-data.html">Data</a>
+      <a class="oq-btn oq-btn--soft oq-neutral oq-sm" href="preview-forms.html" aria-current="page">Forms</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-layout.html">Layout</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="elements.html">Elements</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="icons.html">Icons</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="theme-builder.html">Theme builder</a>
+    </nav>
+    <oq-dropdown class="pv-galleries-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Forms <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Galleries">
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html" aria-current="page">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <oq-dropdown class="pv-samples-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Samples <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Sample sites">
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <div class="oq-spacer"></div>
+    <oq-theme-select storage-key="oq-preview-theme" default="dark">
+      <select class="oq-select oq-sm" id="theme-switch" aria-label="Theme" style="width: 132px">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="graphite">Graphite</option>
+        <option value="midnight">Midnight</option>
+        <option value="contrast">Contrast</option>
+        <option value="paper">Paper</option>
+        <option value="slate">Slate</option>
+        <option value="auto">Auto (system)</option>
+      </select>
+    </oq-theme-select>
+    <oq-dropdown class="pv-site-menu">
+      <details class="oq-dropdown oq-dropdown--end">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon" aria-label="Menu"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+        <nav class="oq-menu" aria-label="Galleries and samples">
+          <div class="oq-menu__label oq-overline">Galleries</div>
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html" aria-current="page">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <div class="oq-menu__label oq-overline">Samples</div>
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <style data-pv-appbar>
+      /* Gallery app bar (the same on every gallery page). */
+      .pv-appbar { gap: 8px; min-width: 0; }
+      .pv-appbar .oq-appbar__brand { flex: none; }
+      .pv-galleries { display: flex; flex: none; gap: 2px; }
+      .pv-appbar > * { white-space: nowrap; }
+      .pv-galleries-menu, .pv-site-menu { display: none; }
+      .pv-appbar .oq-dropdown > summary { gap: 4px; }
+      .pv-appbar .oq-menu { min-width: 200px; }
+      .pv-appbar-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .pv-appbar .oq-input-group { flex: 0 1 240px; min-width: 0; width: auto !important; }
+      @media (max-width: 1359.98px) { .pv-galleries { display: none; } .pv-galleries-menu { display: inline-block; } }
+      /* Phones: brand, theme and one menu; the page's own tools move to a second row that scrolls. */
+      @media (max-width: 720px) {
+        .pv-appbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 4px 8px; row-gap: 0; gap: 4px; }
+        .pv-appbar .oq-appbar__brand .oq-chip, .pv-appbar .pv-hide-sm, .pv-galleries-menu, .pv-samples-menu { display: none; }
+        .pv-site-menu { display: inline-block; }
+        .pv-appbar #theme-switch { width: 108px !important; }
+        .pv-appbar-tools { order: 10; flex: 1 0 100%; padding: 4px 0 8px; overflow-x: auto; scrollbar-width: none; }
+        .pv-appbar-tools .oq-input-group { flex: 1 1 auto; }
+        .pv-site-menu .oq-menu { position: fixed; top: 52px; left: 8px; right: 8px; max-width: none; max-height: calc(100dvh - 64px); }
+      }
+    </style>
+    <script src="assets/osqd-ui-elements.js" defer></script>
+  </header>
+
+  <aside class="oq-sidebar pv-sidebar">
+    <nav class="oq-nav" id="toc">
+      <div class="oq-nav__section oq-overline">Form system</div>
+      <a class="oq-nav__item" href="#form">Form &amp; validation</a>
+      <a class="oq-nav__item" href="#wizard">Wizard</a>
+      <a class="oq-nav__item" href="#confirm">Confirm</a>
+      <div class="oq-nav__section oq-overline">Inputs</div>
+      <a class="oq-nav__item" href="#multiselect">Multi-select</a>
+      <a class="oq-nav__item" href="#password">Password</a>
+      <a class="oq-nav__item" href="#otp">One-time code</a>
+      <a class="oq-nav__item" href="#color">Colour</a>
+      <a class="oq-nav__item" href="#ip">IP &amp; CIDR</a>
+      <a class="oq-nav__item" href="#kv">Key–value</a>
+      <a class="oq-nav__item" href="#cron">Schedule (cron)</a>
+      <div class="oq-nav__section oq-overline">Search</div>
+      <a class="oq-nav__item" href="#query">Query builder</a>
+    </nav>
+  </aside>
+
+  <main class="oq-shell__main">
+  <div class="pv-main">
+
+  <!-- ================= Form ================= -->
+  <section class="pv-section" id="form">
+    <header>
+      <div class="oq-overline">Form system</div>
+      <h2 class="oq-h2">Form &amp; validation</h2>
+      <p class="oq-muted"><code>useForm</code> + <code>&lt;Form&gt;</code>: rules per field, errors shown once a field is left or after a submit, an <code>ErrorSummary</code> whose links focus the field, and a <code>SaveBar</code> while there are unsaved changes. Clear a required field and press Create.</p>
+    </header>
+    <form class="oq-card" id="demo-form" novalidate>
+      <div class="oq-card__header"><div><h3 class="oq-card__title">New service</h3><div class="oq-card__subtitle">Every field has a rule; the port and allowlist use the network validators.</div></div></div>
+      <div class="oq-card__body oq-form">
+        <div id="summary"></div>
+        <div class="oq-grid" style="--min: 260px; --gap: 5">
+          <div class="oq-field" data-field="name"><label class="oq-label" for="f-name">Name<span class="oq-req" aria-hidden="true">*</span></label><input class="oq-input oq-input--mono" id="f-name" name="name" placeholder="edge-gateway" aria-describedby="f-name-help"><div class="oq-help" id="f-name-help" data-help="Lowercase letters, digits and dashes.">Lowercase letters, digits and dashes.</div></div>
+          <div class="oq-field" data-field="owner"><label class="oq-label" for="f-owner">Owner e-mail<span class="oq-req" aria-hidden="true">*</span></label><input class="oq-input" id="f-owner" name="owner" placeholder="ops@example.com" aria-describedby="f-owner-help"><div class="oq-help" id="f-owner-help" data-help=""></div></div>
+          <div class="oq-field" data-field="port"><label class="oq-label" for="f-port">Port<span class="oq-req" aria-hidden="true">*</span></label><input class="oq-input" id="f-port" name="port" value="8080" inputmode="numeric" aria-describedby="f-port-help"><div class="oq-help" id="f-port-help" data-help="1–65535.">1–65535.</div></div>
+          <div class="oq-field" data-field="health"><label class="oq-label" for="f-health">Health check URL</label><input class="oq-input oq-input--mono" id="f-health" name="health" placeholder="https://…/health" aria-describedby="f-health-help"><div class="oq-help" id="f-health-help" data-help="Optional.">Optional.</div></div>
+          <div class="oq-field" data-field="allow"><label class="oq-label" for="f-allow">Allowed network</label><input class="oq-input oq-input--mono" id="f-allow" name="allow" value="10.0.0.0/8" aria-describedby="f-allow-help"><div class="oq-help" id="f-allow-help" data-help="A CIDR block.">A CIDR block.</div></div>
+          <div class="oq-field" data-field="timeout"><label class="oq-label" for="f-timeout">Timeout</label><div class="oq-input-group"><input class="oq-input" id="f-timeout" name="timeout" value="2500" inputmode="numeric" aria-describedby="f-timeout-help"><span class="oq-addon">ms</span></div><div class="oq-help" id="f-timeout-help" data-help="100–60000.">100–60000.</div></div>
+        </div>
+        <div class="oq-field" data-field="terms"><label class="oq-check"><input type="checkbox" class="oq-checkbox" id="f-terms" name="terms"> I have read the runbook for this service</label><div class="oq-help" id="f-terms-help" data-help=""></div></div>
+        <div class="oq-savebar oq-savebar--sticky" id="savebar" hidden role="region" aria-label="Unsaved changes">
+          <span class="oq-dot oq-warning" aria-hidden="true"></span>
+          <span class="oq-savebar__message">Unsaved changes<span class="oq-savebar__errors"></span></span>
+          <span class="oq-spacer"></span>
+          <button type="button" class="oq-btn oq-btn--ghost oq-neutral" id="discard">Discard</button>
+          <button type="submit" class="oq-btn" id="save">Save changes</button>
+        </div>
+      </div>
+      <div class="oq-card__footer">
+        <button type="button" class="oq-btn oq-btn--ghost oq-neutral" id="reset">Reset</button>
+        <button type="submit" class="oq-btn" id="create">Create service</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ================= Wizard ================= -->
+  <section class="pv-section" id="wizard">
+    <header>
+      <div class="oq-overline">Form system</div>
+      <h2 class="oq-h2">Wizard</h2>
+      <p class="oq-muted">A multi-step form on <code>Stepper</code>. Next checks the step first; a failed step turns red in the stepper.</p>
+    </header>
+    <div class="oq-card"><div class="oq-card__body">
+      <div class="oq-wizard" id="wiz">
+        <ol class="oq-stepper" id="wiz-steps"></ol>
+        <div class="oq-wizard__main">
+          <div class="oq-wizard__body" role="group" aria-labelledby="wiz-title" tabindex="-1" id="wiz-body"></div>
+          <div id="wiz-msg"></div>
+          <div class="oq-wizard__footer">
+            <button type="button" class="oq-btn oq-btn--ghost oq-neutral" id="wiz-cancel">Cancel</button>
+            <span class="oq-wizard__count" id="wiz-count"></span>
+            <span class="oq-spacer"></span>
+            <button type="button" class="oq-btn oq-btn--outline oq-neutral" id="wiz-back">Back</button>
+            <button type="button" class="oq-btn" id="wiz-next">Next</button>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ================= Confirm ================= -->
+  <section class="pv-section" id="confirm">
+    <header>
+      <div class="oq-overline">Form system</div>
+      <h2 class="oq-h2">Confirm</h2>
+      <p class="oq-muted"><code>const ok = await confirm({ title, message, danger, typeToConfirm })</code> — a promise, so the decision reads in line with the action.</p>
+    </header>
+    <div class="pv-demo">
+      <button class="oq-btn oq-btn--outline oq-neutral" data-confirm="plain">Restart node…</button>
+      <button class="oq-btn oq-btn--outline oq-danger" data-confirm="danger">Revoke key…</button>
+      <button class="oq-btn oq-danger" data-confirm="typed">Delete project…</button>
+      <span class="oq-small oq-muted" id="confirm-out">Result appears here.</span>
+    </div>
+  </section>
+
+  <!-- ================= Multi-select ================= -->
+  <section class="pv-section" id="multiselect">
+    <header>
+      <div class="oq-overline">Inputs</div>
+      <h2 class="oq-h2">Multi-select</h2>
+      <p class="oq-muted">Chips in the closed box, a checkbox list with search and “Select all” when open. Arrow keys move, Space or Enter toggles, Ctrl+A selects all, Esc closes.</p>
+    </header>
+    <div class="pv-cols">
+      <div class="oq-field"><label class="oq-label" for="ms-regions">Regions</label><div class="oq-multiselect" id="ms-regions-root"></div><div class="oq-help">Twelve options, so it has a search box.</div></div>
+      <div class="oq-field"><label class="oq-label" for="ms-levels">Log levels</label><div class="oq-multiselect" id="ms-levels-root"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= Password ================= -->
+  <section class="pv-section" id="password">
+    <header>
+      <div class="oq-overline">Inputs</div>
+      <h2 class="oq-h2">Password</h2>
+      <p class="oq-muted">Show/hide toggle, and an optional strength meter for choosing a password. The scorer rewards length and variety and marks down common words, sequences and repeats.</p>
+    </header>
+    <div class="pv-cols">
+      <div class="oq-field">
+        <label class="oq-label" for="pw-new">New password</label>
+        <div class="oq-input-group oq-password"><input class="oq-input" id="pw-new" type="password" autocomplete="new-password" aria-describedby="pw-new-help"><button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon oq-sm oq-password__toggle" aria-label="Show password" aria-pressed="false" data-toggle-for="pw-new"></button></div>
+        <div class="oq-strength" id="pw-meter" aria-live="polite"><span class="oq-strength__bars" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span class="oq-strength__label">Strength</span></div>
+        <div class="oq-help" id="pw-new-help">Try “password1”, “correct-horse-battery” and “T7#qv!mR2p@x”.</div>
+      </div>
+      <div class="oq-field">
+        <label class="oq-label" for="pw-login">Password (sign-in, no meter)</label>
+        <div class="oq-input-group oq-password"><input class="oq-input" id="pw-login" type="password" value="hunter2hunter2" autocomplete="current-password"><button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon oq-sm oq-password__toggle" aria-label="Show password" aria-pressed="false" data-toggle-for="pw-login"></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= OTP ================= -->
+  <section class="pv-section" id="otp">
+    <header>
+      <div class="oq-overline">Inputs</div>
+      <h2 class="oq-h2">One-time code</h2>
+      <p class="oq-muted">Typing moves forward, Backspace moves back, arrows move freely, and a pasted code fills every box. Paste <code>482913</code> to try it.</p>
+    </header>
+    <div class="pv-cols">
+      <div class="oq-field"><div class="oq-label" id="otp1-label">Verification code</div><div class="oq-otp" id="otp1" role="group" aria-labelledby="otp1-label"></div><div class="oq-help" id="otp1-out">6 digits, grouped 3 + 3.</div></div>
+      <div class="oq-field"><div class="oq-label" id="otp2-label">Recovery code (letters and digits)</div><div class="oq-otp" id="otp2" role="group" aria-labelledby="otp2-label"></div><div class="oq-help" id="otp2-out">8 characters.</div></div>
+    </div>
+  </section>
+
+  <!-- ================= Colour ================= -->
+  <section class="pv-section" id="color">
+    <header>
+      <div class="oq-overline">Inputs</div>
+      <h2 class="oq-h2">Colour</h2>
+      <p class="oq-muted">Swatch opening the system picker, a hex field (accepts <code>#abc</code>), and presets that default to the current theme’s intent colours — switch the theme and they follow.</p>
+    </header>
+    <div class="oq-field" style="max-width: 360px">
+      <label class="oq-label" for="col-hex">Label colour</label>
+      <div class="oq-color"><label class="oq-color__swatch" id="col-swatch"><input type="color" id="col-native" aria-label="Pick a colour"></label><input class="oq-input oq-input--mono oq-color__hex" id="col-hex" maxlength="7" spellcheck="false" aria-describedby="col-help"></div>
+      <div class="oq-color__presets" id="col-presets" role="group" aria-label="Preset colours"></div>
+      <div class="oq-help" id="col-help"></div>
+    </div>
+  </section>
+
+  <!-- ================= IP ================= -->
+  <section class="pv-section" id="ip">
+    <header>
+      <div class="oq-overline">Inputs</div>
+      <h2 class="oq-h2">IP address &amp; CIDR</h2>
+      <p class="oq-muted">IPv4 and IPv6 (compressed forms and an embedded IPv4 tail included). A CIDR block shows its range and size, and warns when host bits are set.</p>
+    </header>
+    <div class="pv-cols">
+      <div class="oq-field" data-ip="ip"><label class="oq-label" for="ip-a">Upstream address</label><div class="oq-input-group oq-ip"><input class="oq-input oq-input--mono" id="ip-a" value="2001:db8::8a2e:370:7334" spellcheck="false" aria-describedby="ip-a-help"><span class="oq-addon oq-ip__version"></span></div><div class="oq-help" id="ip-a-help"></div></div>
+      <div class="oq-field" data-ip="cidr"><label class="oq-label" for="ip-b">Trusted network</label><div class="oq-input-group oq-ip"><input class="oq-input oq-input--mono" id="ip-b" value="10.20.30.40/22" spellcheck="false" aria-describedby="ip-b-help"><span class="oq-addon oq-ip__version"></span></div><div class="oq-help" id="ip-b-help"></div></div>
+    </div>
+    <div class="pv-demo oq-small"><span class="oq-faint">Try:</span>
+      <button class="oq-chip oq-neutral" data-try="ip-a">192.168.1.300</button>
+      <button class="oq-chip oq-neutral" data-try="ip-a">::ffff:192.0.2.1</button>
+      <button class="oq-chip oq-neutral" data-try="ip-b">192.168.0.0/16</button>
+      <button class="oq-chip oq-neutral" data-try="ip-b">203.0.113.7/32</button>
+      <button class="oq-chip oq-neutral" data-try="ip-b">2001:db8::/48</button>
+      <button class="oq-chip oq-neutral" data-try="ip-b">10.0.0.0/33</button>
+    </div>
+  </section>
+
+  <!-- ================= Key-value ================= -->
+  <section class="pv-section" id="kv">
+    <header>
+      <div class="oq-overline">Inputs</div>
+      <h2 class="oq-h2">Key–value editor</h2>
+      <p class="oq-muted">Headers, environment variables, labels. Rows can be added, removed and moved; duplicate keys are flagged (case-insensitively for headers), and environment keys must be <code>UPPER_SNAKE</code>.</p>
+    </header>
+    <div class="pv-cols">
+      <div class="oq-field"><div class="oq-label">Request headers</div><div class="oq-kv" id="kv-headers" role="group" aria-label="Request headers"></div></div>
+      <div class="oq-field"><div class="oq-label">Environment</div><div class="oq-kv" id="kv-env" role="group" aria-label="Environment"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= Cron ================= -->
+  <section class="pv-section" id="cron">
+    <header>
+      <div class="oq-overline">Inputs</div>
+      <h2 class="oq-h2">Schedule (cron)</h2>
+      <p class="oq-muted">Five fields with names, ranges, lists and steps; a plain-English reading; and the next five runs in your local time.</p>
+    </header>
+    <div class="oq-card"><div class="oq-card__body">
+      <div class="oq-field">
+        <div class="oq-label">Backup schedule</div>
+        <div class="oq-cron">
+          <div class="oq-cron__fields" id="cron-fields"></div>
+          <div class="oq-cron__bar"><select class="oq-select oq-sm oq-cron__presets" id="cron-presets" aria-label="Common schedules"></select><code class="oq-cron__expr" id="cron-expr"></code></div>
+          <div class="oq-cron__desc" id="cron-desc" aria-live="polite"></div>
+          <ol class="oq-cron__runs" id="cron-runs" aria-label="Next runs"></ol>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ================= Query builder ================= -->
+  <section class="pv-section" id="query">
+    <header>
+      <div class="oq-overline">Search</div>
+      <h2 class="oq-h2">Query builder</h2>
+      <p class="oq-muted">Type <code>status:</code>, <code>p95&gt;250</code>, <code>-region:eu</code>, <code>path~/api</code> or plain words. Field names and values autocomplete; click an operator to cycle it, a chip to edit it, Backspace to pull the last one back. The output is a JQL query document.</p>
+    </header>
+    <div class="oq-field">
+      <label class="oq-label" for="qb-input">Filter requests</label>
+      <div class="oq-query" id="qb">
+        <div class="oq-query__box" id="qb-box">
+          <svg class="oq-query__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input class="oq-query__input" id="qb-input" role="combobox" aria-expanded="false" aria-controls="qb-list" aria-autocomplete="list" autocomplete="off" spellcheck="false">
+        </div>
+        <ul class="oq-listbox" id="qb-list" role="listbox" hidden></ul>
+      </div>
+    </div>
+    <div class="pv-cols">
+      <div class="oq-stack oq-gap-1"><div class="oq-overline">As text</div><pre class="oq-pre pv-out" id="qb-text"></pre></div>
+      <div class="oq-stack oq-gap-1"><div class="oq-overline">As JQL</div><pre class="oq-pre pv-out" id="qb-jql"></pre></div>
+    </div>
+  </section>
+
+  </div>
+  </main>
+</div>
+
+<dialog class="oq-dialog oq-confirm" id="confirm-dlg" style="--w: 440px">
+  <div class="oq-dialog__header"><h2 class="oq-dialog__title" id="confirm-title"></h2></div>
+  <div class="oq-dialog__body">
+    <div class="oq-confirm__message" id="confirm-msg"></div>
+    <div class="oq-field oq-confirm__type" id="confirm-type" hidden>
+      <label class="oq-label" for="confirm-input">Type <code id="confirm-word"></code> to confirm</label>
+      <input class="oq-input oq-input--mono" id="confirm-input" autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+  <div class="oq-dialog__footer"><button class="oq-btn oq-btn--ghost oq-neutral" id="confirm-cancel">Cancel</button><button class="oq-btn" id="confirm-ok">Confirm</button></div>
+</dialog>
+
+<div class="oq-toasts" id="toasts" aria-live="polite"></div>
+
+<!--
+  The forms logic below (cron, password scorer, IP/CIDR, filter text ⇄ JQL) is the library's own
+  src/react/forms/{cron,password,query,validators}.ts, bundled with esbuild so this page needs no
+  build step. tests/forms.test.tsx fails when it drifts; regenerate with
+    OQ_UPDATE_FORMS_DEMO=1 npx vitest run tests/forms.test.tsx
+-->
+<!-- FORMS-LOGIC:START -->
+<script>var OQForms=(()=>{var A=Object.defineProperty;var G=Object.getOwnPropertyDescriptor;var Q=Object.getOwnPropertyNames;var Z=Object.prototype.hasOwnProperty;var K=(e,n)=>{for(var r in n)A(e,r,{get:n[r],enumerable:!0})},X=(e,n,r,t)=>{if(n&&typeof n=="object"||typeof n=="function")for(let s of Q(n))!Z.call(e,s)&&s!==r&&A(e,s,{get:()=>n[s],enumerable:!(t=G(n,s))||t.enumerable});return e};var ee=e=>X(A({},"__esModule",{value:!0}),e);var Ee={};K(Ee,{CRON_DAY_NAMES:()=>P,CRON_FIELDS:()=>O,CRON_MONTH_NAMES:()=>E,CRON_PRESETS:()=>te,FILTER_OP_SYMBOL:()=>ce,describeCron:()=>se,filterOpsFor:()=>fe,filterTermToJql:()=>T,formatAddressCount:()=>Re,formatFilterTerm:()=>_,formatFilterText:()=>ye,formatIPv4:()=>F,ipVersion:()=>R,isEmptyValue:()=>g,isIPv6:()=>H,keyValueProblems:()=>qe,nextRuns:()=>ie,normalizeHex:()=>Y,parseCidr:()=>B,parseCron:()=>V,parseCronField:()=>D,parseFilterText:()=>pe,parseIPv4:()=>C,runValidators:()=>Te,scorePassword:()=>le,toJql:()=>he,validators:()=>Me});var O=[{name:"minute",label:"Minute",min:0,max:59},{name:"hour",label:"Hour",min:0,max:23},{name:"dayOfMonth",label:"Day",min:1,max:31},{name:"month",label:"Month",min:1,max:12},{name:"dayOfWeek",label:"Weekday",min:0,max:6}],E=["January","February","March","April","May","June","July","August","September","October","November","December"],P=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],ne={"@yearly":"0 0 1 1 *","@annually":"0 0 1 1 *","@monthly":"0 0 1 * *","@weekly":"0 0 * * 0","@daily":"0 0 * * *","@midnight":"0 0 * * *","@hourly":"0 * * * *"},te=[{label:"Every minute",expression:"* * * * *"},{label:"Every 5 minutes",expression:"*/5 * * * *"},{label:"Every hour",expression:"0 * * * *"},{label:"Every day at 02:00",expression:"0 2 * * *"},{label:"Weekdays at 09:30",expression:"30 9 * * 1-5"},{label:"Every Sunday at 03:00",expression:"0 3 * * 0"},{label:"First of the month",expression:"0 0 1 * *"}],re={month:["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"],dayOfWeek:["SUN","MON","TUE","WED","THU","FRI","SAT"]};function N(e,n){let r=re[n.name],t=e.toUpperCase();if(r?.includes(t))return r.indexOf(t)+(n.name==="month"?1:0);if(!/^\d+$/.test(e))return null;let s=Number(e);return n.name==="dayOfWeek"&&s===7&&(s=0),s>=n.min&&s<=n.max?s:null}function D(e,n){let r=O.find(f=>f.name===n),t=`${r.min}\u2013${n==="dayOfWeek"?7:r.max}`;if(e.trim()==="")return"Empty.";let s=new Set,o=[];for(let f of e.split(",")){let[a="",u]=f.split("/"),d=1;if(u!==void 0){if(!/^[1-9]\d*$/.test(u))return`Bad step \u201C${u}\u201D.`;d=Number(u)}let m,l;if(a==="*")m=r.min,l=r.max,o.push({kind:"all",step:d});else if(a.includes("-")){let[c="",p=""]=a.split("-"),h=N(c,r),i=N(p,r),b=n==="dayOfWeek"&&(p==="7"||p.toUpperCase()==="SUN")&&h!==null&&h>0?7:i;if(h===null||b===null)return`\u201C${a}\u201D is outside ${t}.`;if(h>b)return`Range \u201C${a}\u201D runs backwards.`;m=h,l=b,o.push({kind:"range",from:m,to:l,step:d})}else{let c=N(a,r);if(c===null)return`\u201C${a}\u201D is not a value in ${t}.`;m=c,l=u!==void 0?r.max:c,o.push(u!==void 0?{kind:"range",from:m,to:l,step:d}:{kind:"value",value:c})}for(let c=m;c<=l;c+=d)s.add(n==="dayOfWeek"?c%7:c)}return{any:e.trim()==="*",values:[...s].sort((f,a)=>f-a),parts:o}}function V(e){let r=(ne[e.trim().toLowerCase()]??e.trim()).split(/\s+/).filter(Boolean);if(r.length!==5)return{ok:!1,errors:{expression:`Expected 5 fields, got ${r.length}.`}};let t={},s={};return O.forEach((o,f)=>{let a=D(r[f],o.name);typeof a=="string"?t[o.name]=a:s[o.name]=a}),Object.keys(t).length?{ok:!1,errors:t}:{ok:!0,cron:s,errors:t}}var S=e=>String(e).padStart(2,"0");function I(e){return e.length<=1?e[0]??"":`${e.slice(0,-1).join(", ")} and ${e[e.length-1]}`}function k(e,n,r){let t=e.parts.map(s=>{if(s.kind==="value")return n(s.value);if(s.kind==="all")return s.step===1?`every ${r}`:`every ${s.step} ${r}s`;let o=`${n(s.from)} through ${n(s.to===7?0:s.to)}`;return s.step===1?o:`every ${s.step} ${r}s from ${n(s.from)} through ${n(s.to===7?0:s.to)}`});return I(t)}var x=e=>e.parts.length===1&&e.parts[0]?.kind==="value",w=e=>e.parts.length===1&&e.parts[0]?.kind==="all"?e.parts[0].step:0;function se(e){let{ok:n,cron:r}=V(e);if(!n||!r)return"";let{minute:t,hour:s,dayOfMonth:o,month:f,dayOfWeek:a}=r,u;if(x(t)&&x(s))u=`At ${S(s.values[0])}:${S(t.values[0])}`;else if(x(t)&&s.parts.every(c=>c.kind==="value"))u=`At ${I(s.values.map(c=>`${S(c)}:${S(t.values[0])}`))}`;else if(t.any&&s.any)u="Every minute";else if(w(t)>1&&s.any)u=`Every ${w(t)} minutes`;else if(x(t)&&s.any)u=t.values[0]===0?"At the start of every hour":`At minute ${t.values[0]} past every hour`;else if(x(t)&&w(s)>1)u=`At minute ${t.values[0]} past every ${w(s)} hours`;else{let c=t.any?"Every minute":`At minute ${k(t,String,"minute")}`;u=s.any?c:`${c}, past hour ${k(s,String,"hour")}`}let d=[],m=o.any?"":`on day ${k(o,String,"day")} of the month`,l=a.any?"":k(a,c=>P[c%7],"day");return m&&l?d.push(`${m} or on ${l}`):m?d.push(m):l?d.push(l.includes("through")||l.startsWith("every")?l:`on ${l}`):x(t)&&x(s)&&d.push("every day"),f.any||d.push(`in ${k(f,c=>E[c-1],"month")}`),d.length===0?u:`${u}${d[0]==="every day"?" ":", "}${d.join(", ")}`}function ie(e,n,r=5,t={}){let{ok:s,cron:o}=V(e);if(!s||!o)return[];let f=t.utc??!1,a=i=>f?{y:i.getUTCFullYear(),mo:i.getUTCMonth(),d:i.getUTCDate(),h:i.getUTCHours(),mi:i.getUTCMinutes(),wd:i.getUTCDay()}:{y:i.getFullYear(),mo:i.getMonth(),d:i.getDate(),h:i.getHours(),mi:i.getMinutes(),wd:i.getDay()},u=(i,b,$,v,q)=>f?new Date(Date.UTC(i,b,$,v,q)):new Date(i,b,$,v,q),d={minute:new Set(o.minute.values),hour:new Set(o.hour.values),dom:new Set(o.dayOfMonth.values),month:new Set(o.month.values),dow:new Set(o.dayOfWeek.values)},m=(i,b)=>{let $=o.dayOfMonth.any,v=o.dayOfWeek.any;return $&&v?!0:$?d.dow.has(b):v?d.dom.has(i):d.dom.has(i)||d.dow.has(b)},l=a(n),c=u(l.y,l.mo,l.d,l.h,l.mi+1),p=l.y+(t.horizonYears??5),h=[];for(;h.length<r;){let i=a(c);if(i.y>p)break;d.month.has(i.mo+1)?m(i.d,i.wd)?d.hour.has(i.h)?(d.minute.has(i.mi)&&h.push(c),c=u(i.y,i.mo,i.d,i.h,i.mi+1)):c=u(i.y,i.mo,i.d,i.h+1,0):c=u(i.y,i.mo,i.d+1,0,0):c=u(i.y,i.mo+1,1,0,0)}return h}var U=["Too weak","Weak","Fair","Good","Strong"],oe=["password","passw0rd","qwerty","letmein","welcome","admin","login","dragon","monkey","iloveyou","abc123","123456","football","secret","changeme"],ae=["qwertyuiop","asdfghjkl","zxcvbnm","1234567890","abcdefghijklmnopqrstuvwxyz"];function ue(e){let n=e.toLowerCase(),r=1;for(let t of ae)for(let s of[t,[...t].reverse().join("")]){let o=1;for(let f=1;f<n.length;f++){let a=s.indexOf(n[f-1]);o=a>=0&&s[a+1]===n[f]?o+1:1,r=Math.max(r,o)}}return r}function le(e){let n=[];if(e.length===0)return{score:0,label:U[0],hints:["Enter a password."]};let r=[/[a-z]/,/[A-Z]/,/\d/,/[^A-Za-z0-9]/].filter(u=>u.test(e)).length,t=0;t+=Math.min(e.length,20)*4,t+=(r-1)*8,e.length>=16&&(t+=10);let s=e.toLowerCase();oe.some(u=>s.includes(u))&&(t-=40,n.push("Avoid common passwords and words like \u201Cpassword\u201D."));let o=ue(e);o>=4&&(t-=o*5,n.push("Avoid sequences like \u201Cabcd\u201D or \u201C1234\u201D.")),/(.)\1{2,}/.test(e)&&(t-=15,n.push("Avoid repeating the same character.")),new Set(e).size<=e.length/3&&(t-=15),e.length<12&&n.unshift(`Use at least 12 characters (${e.length} now).`),r<3&&n.push("Mix upper and lower case, digits and symbols.");let a=t<30?0:t<45?1:t<60?2:t<80?3:4;return{score:a,label:U[a],hints:n}}var ce={eq:"=",ne:"\u2260",gt:">",gte:"\u2265",lt:"<",lte:"\u2264",contains:"contains",in:"in",text:""};function fe(e){if(e?.ops)return e.ops;switch(e?.type){case"number":return["eq","ne","gt","gte","lt","lte","in"];case"boolean":return["eq","ne"];case"enum":return["eq","ne","in"];default:return["eq","ne","contains","in"]}}function de(e){let n=[],r="",t=null;for(let s of e)t?(r+=s,(s===t||t==="\u201C"&&s==="\u201D")&&(t=null)):s==='"'||s==="\u201C"?(t=s,r+=s):/\s/.test(s)?(r&&n.push(r),r=""):r+=s;return r&&n.push(r),n}var W=e=>{let n=/^["“](.*)["”]$/.exec(e);return n?n[1]??"":e},z=e=>/^["“].*["”]$/.test(e);function me(e){let n=[],r="",t=!1;for(let s of e)s==='"'&&(t=!t),s===","&&!t?(n.push(r),r=""):r+=s;return n.push(r),n.filter(s=>s!=="")}function L(e,n){let r=z(e),t=W(e);return r?t:n?.type==="number"&&t!==""&&Number.isFinite(Number(t))?Number(t):n?.type==="boolean"&&(t==="true"||t==="false")?t==="true":t}var ge=/^(-|!)?([A-Za-z_][\w.]*)(!=|>=|<=|:|>|<|~)(.*)$/s;function pe(e,n=[]){let r=new Map(n.map(s=>[s.name,s])),t=[];for(let s of de(e)){let o=z(s)?null:ge.exec(s);if(!o){let p=W(s);p&&t.push({op:"text",value:p});continue}let[,f,a="",u,d=""]=o;if(d==="")continue;let m=r.get(a),l;switch(u){case"!=":l="ne";break;case">":l="gt";break;case">=":l="gte";break;case"<":l="lt";break;case"<=":l="lte";break;case"~":l="contains";break;default:l="eq"}let c=me(d);if(l==="eq"&&c.length>1){t.push({field:a,op:f?"ne":"in",value:c.map(p=>L(p,m))});continue}f&&l==="eq"&&(l="ne"),t.push({field:a,op:l,value:L(d,m)})}return t}var M=e=>{let n=String(e);return n===""||/[\s,"]/.test(n)||/^[-!]/.test(n)||/[:<>~=]/.test(n)?`"${n.replace(/"/g,"")}"`:n};function _(e){if(e.op==="text")return M(e.value);let n=Array.isArray(e.value)?e.value.map(M).join(","):M(e.value);switch(e.op){case"eq":case"in":return`${e.field}:${n}`;case"ne":return`-${e.field}:${n}`;case"gt":return`${e.field}>${n}`;case"gte":return`${e.field}>=${n}`;case"lt":return`${e.field}<${n}`;case"lte":return`${e.field}<=${n}`;case"contains":return`${e.field}~${n}`}}function ye(e){return e.map(_).join(" ")}function T(e){if(e.op==="text")return{$text:String(e.value)};let n=e.field,r=Array.isArray(e.value)?e.value:[e.value];switch(e.op){case"eq":return{[n]:Array.isArray(e.value)?{$in:r}:{$eq:e.value}};case"ne":return{[n]:Array.isArray(e.value)?{$nin:r}:{$ne:e.value}};case"in":return{[n]:{$in:r}};case"contains":return{[n]:{$contains:Array.isArray(e.value)?r.map(String):String(e.value),$options:"i"}};default:return{[n]:{[`$${e.op}`]:e.value}}}}function he(e){return e.length===0?{}:e.length===1?T(e[0]):{$and:e.map(T)}}var g=e=>e==null||typeof e=="string"&&e.trim()===""||Array.isArray(e)&&e.length===0,y=e=>typeof e=="string"?e.trim():String(e);function be(e="Required."){return n=>g(n)||n===!1?e:void 0}function xe(e,n){return r=>g(r)||y(r).length>=e?void 0:n??`At least ${e} characters.`}function $e(e,n){return r=>g(r)||y(r).length<=e?void 0:n??`At most ${e} characters.`}function J(e){return typeof e=="number"?e:Number(y(e))}function ve(e,n){return r=>{if(g(r))return;let t=J(r);return Number.isFinite(t)&&t>=e?void 0:n??`Must be ${e} or more.`}}function ke(e,n){return r=>{if(g(r))return;let t=J(r);return Number.isFinite(t)&&t<=e?void 0:n??`Must be ${e} or less.`}}function Fe(e="Must be a whole number."){return n=>g(n)||/^-?\d+$/.test(y(n))?void 0:e}function j(e,n="Invalid format."){return r=>g(r)||e.test(y(r))?void 0:n}function Se(e="Not an e-mail address."){return j(/^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/,e)}function we(e="Not a URL (http:// or https://).",n=["http:","https:"]){return r=>{if(!g(r))try{let t=new URL(y(r));return n.includes(t.protocol)&&t.hostname?void 0:e}catch{return e}}}function Ce(e="Must be a whole number between 1 and 65535."){return n=>{if(g(n))return;let r=y(n);return/^\d{1,5}$/.test(r)&&+r>=1&&+r<=65535?void 0:e}}function Ae(e={},n){return r=>{if(g(r))return;let t=R(y(r));if(!(t&&(!e.version||e.version===t)))return n??(e.version?`Not an IPv${e.version} address.`:"Not an IP address.")}}function Ne(e={},n){return r=>{if(g(r))return;let t=B(y(r));if(!(t&&(!e.version||e.version===t.version)))return n??(e.version?`Not an IPv${e.version} CIDR (e.g. 10.0.0.0/8).`:"Not a CIDR block (e.g. 10.0.0.0/8).")}}function Oe(e="Use #rgb or #rrggbb."){return n=>g(n)||Y(y(n))?void 0:e}function Ve(e,n){return(r,t)=>e(r,t)?void 0:n}var Me={required:be,minLength:xe,maxLength:$e,min:ve,max:ke,integer:Fe,pattern:j,email:Se,url:we,port:Ce,ip:Ae,cidr:Ne,hexColor:Oe,custom:Ve};function Te(e,n,r){if(e)for(let t of e){let s=t(n,r);if(s)return s}}function C(e){let n=e.split(".");if(n.length!==4)return null;let r=0;for(let t of n){if(!/^(0|[1-9]\d{0,2})$/.test(t))return null;let s=Number(t);if(s>255)return null;r=r*256+s}return r}function F(e){return[e>>>24,e>>>16&255,e>>>8&255,e&255].join(".")}function H(e){if(!/^[0-9a-fA-F:.]+$/.test(e))return!1;let n=e.split("::");if(n.length>2)return!1;let r=a=>a===""?[]:a.split(":"),t=r(n[0]??""),s=n.length===2?r(n[1]??""):[],o=[...t,...s],f=0;for(let a=0;a<o.length;a++){let u=o[a]??"";if(a===o.length-1&&u.includes(".")){if(C(u)===null)return!1;f+=2}else if(/^[0-9a-fA-F]{1,4}$/.test(u))f+=1;else return!1}return n.length===2?f<=7:f===8}function R(e){return C(e)!==null?4:H(e)?6:null}function B(e){let n=/^([^/\s]+)\/(0|[1-9]\d{0,2})$/.exec(e.trim());if(!n)return null;let r=n[1]??"",t=Number(n[2]),s=R(r);if(s===4){if(t>32)return null;let o=C(r),f=t===0?0:4294967295<<32-t>>>0,a=(o&f)>>>0,u=(a|~f>>>0)>>>0,d=2n**BigInt(32-t),m=t>=31?[a,u]:[a+1,u-1];return{version:s,address:r,prefix:t,size:d,network:F(a),broadcast:F(u),firstHost:F(m[0]),lastHost:F(m[1]),hostBitsSet:a!==o}}return s===6?t>128?null:{version:s,address:r,prefix:t,size:2n**BigInt(128-t)}:null}function Re(e){if(e<10000n)return e.toLocaleString("en-US");if(e<10n**12n){let n=Number(e),r=[[1e9,"G"],[1e6,"M"],[1e3,"k"]];for(let[t,s]of r)if(n>=t)return`${(n/t).toFixed(n/t>=100?0:1)} ${s}`}return`2^${e.toString(2).length-1}`}function Y(e){let n=e.trim().replace(/^#?/,"#").toLowerCase();return/^#[0-9a-f]{6}$/.test(n)?n:/^#[0-9a-f]{3}$/.test(n)?`#${[...n.slice(1)].map(r=>r+r).join("")}`:null}function qe(e,n={}){let r=s=>n.caseInsensitive?s.trim().toLowerCase():s.trim(),t=new Map;for(let s of e)s.key.trim()&&t.set(r(s.key),(t.get(r(s.key))??0)+1);return e.map(s=>{let o=s.key.trim();if(!o)return s.value.trim()?"Key is missing.":void 0;if((t.get(r(o))??0)>1)return`Duplicate key \u201C${o}\u201D.`;if(n.keyPattern&&!n.keyPattern.test(o))return n.keyPatternMessage??"Invalid key."})}return ee(Ee);})();</script>
+<!-- FORMS-LOGIC:END -->
+
+<script>
+(() => {
+  const F = window.OQForms;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const html = document.documentElement;
+  const ICON = {
+    eye: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    eyeOff: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-2.7 3.6M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7c1.9 0 3.6-.6 5-1.5"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
+    up: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>',
+    down: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>',
+    trash: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+    plus: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    close: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+    chevron: '<svg class="oq-multiselect__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
+    check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>',
+    error: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>',
+  };
+
+  /* ---------- Theme ---------- */
+  const themeListeners = [];
+  const setTheme = (t) => {
+    html.dataset.theme = t;
+    $("#theme-switch").value = t;
+    try { localStorage.setItem("oq-preview-theme", t); } catch {}
+    themeListeners.forEach((fn) => fn());
+  };
+  $("#theme-switch").addEventListener("change", (e) => setTheme(e.target.value));
+
+  /* ---------- Toasts ---------- */
+  function toast(title, kind = "success", message = "") {
+    const el = document.createElement("div");
+    el.className = `oq-toast oq-${kind}`;
+    el.setAttribute("role", kind === "danger" ? "alert" : "status");
+    el.innerHTML = `<div class="oq-toast__body"><div class="oq-toast__title">${esc(title)}</div>${message ? `<div class="oq-toast__message">${esc(message)}</div>` : ""}</div>`;
+    $("#toasts").append(el);
+    setTimeout(() => el.remove(), 3500);
+  }
+
+  /* ---------- Form & validation ---------- */
+  {
+    const v = F.validators;
+    const rules = {
+      name: [v.required(), v.minLength(3), v.pattern(/^[a-z0-9-]+$/, "Only lowercase letters, digits and dashes.")],
+      owner: [v.required(), v.email()],
+      port: [v.required(), v.port()],
+      health: [v.url()],
+      allow: [v.cidr()],
+      timeout: [v.integer(), v.min(100), v.max(60000)],
+      terms: [v.required("Confirm you have read the runbook.")],
+    };
+    const labels = { name: "Name", owner: "Owner e-mail", port: "Port", health: "Health check URL", allow: "Allowed network", timeout: "Timeout", terms: "Runbook" };
+    const form = $("#demo-form");
+    const read = () => Object.fromEntries(Object.keys(rules).map((k) => {
+      const el = form.elements[k];
+      return [k, el.type === "checkbox" ? el.checked : el.value];
+    }));
+    let baseline = JSON.stringify(read());
+    const touched = new Set();
+    let submitted = false;
+    let errors = {};
+
+    const show = (name) => {
+      const box = $(`[data-field="${name}"]`, form);
+      const el = form.elements[name];
+      const help = $(".oq-help", box);
+      const msg = (touched.has(name) || submitted) ? errors[name] : undefined;
+      box.classList.toggle("is-invalid", Boolean(msg));
+      el.setAttribute("aria-invalid", String(Boolean(msg)));
+      help.textContent = msg ?? help.dataset.help;
+    };
+    const check = (name) => {
+      const values = read();
+      const m = F.runValidators(rules[name], values[name], values);
+      if (m) errors[name] = m; else delete errors[name];
+      show(name);
+    };
+    const renderSummary = () => {
+      const entries = Object.entries(errors);
+      const box = $("#summary");
+      if (!submitted || entries.length === 0) { box.innerHTML = ""; return; }
+      box.innerHTML = `<div class="oq-error-summary" role="alert" tabindex="-1">
+        <div class="oq-error-summary__title">${ICON.error}${entries.length} ${entries.length === 1 ? "field needs" : "fields need"} attention</div>
+        <ul class="oq-error-summary__list">${entries.map(([k, m]) => `<li><a href="#f-${k}" data-focus="${k}"><strong>${labels[k]}</strong> — ${esc(m)}</a></li>`).join("")}</ul></div>`;
+    };
+    const renderBar = () => {
+      const dirty = JSON.stringify(read()) !== baseline;
+      $("#savebar").hidden = !dirty;
+      const n = submitted ? Object.keys(errors).length : 0;
+      $(".oq-savebar__errors", form).textContent = n ? ` · ${n} to fix` : "";
+      $("#savebar .oq-dot").className = `oq-dot ${n ? "oq-danger" : "oq-warning"}`;
+    };
+    form.addEventListener("input", (e) => {
+      const name = e.target.name;
+      if (name && (touched.has(name) || submitted)) { check(name); renderSummary(); }
+      renderBar();
+    });
+    form.addEventListener("change", (e) => { if (e.target.type === "checkbox") { touched.add(e.target.name); check(e.target.name); renderSummary(); } renderBar(); });
+    form.addEventListener("focusout", (e) => { const name = e.target.name; if (name && rules[name]) { touched.add(name); check(name); renderBar(); } });
+    $("#summary").addEventListener("click", (e) => {
+      const a = e.target.closest("[data-focus]"); if (!a) return;
+      e.preventDefault();
+      const el = form.elements[a.dataset.focus];
+      el.focus(); el.scrollIntoView({ block: "center", behavior: "smooth" });
+    });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const btn = e.submitter ?? $("#create");
+      submitted = true;
+      Object.keys(rules).forEach(check);
+      renderSummary(); renderBar();
+      const first = Object.keys(rules).find((k) => errors[k]);
+      if (first) { form.elements[first].focus(); return; }
+      btn.setAttribute("aria-busy", "true");
+      setTimeout(() => {
+        btn.removeAttribute("aria-busy");
+        baseline = JSON.stringify(read());
+        submitted = false; touched.clear(); errors = {};
+        renderSummary(); renderBar();
+        toast("Service saved", "success", `${read().name} on port ${read().port}`);
+      }, 700);
+    });
+    const discard = () => {
+      const b = JSON.parse(baseline);
+      for (const [k, val] of Object.entries(b)) { const el = form.elements[k]; if (el.type === "checkbox") el.checked = val; else el.value = val; }
+      submitted = false; touched.clear(); errors = {};
+      Object.keys(rules).forEach(show); renderSummary(); renderBar();
+    };
+    $("#discard").addEventListener("click", discard);
+    $("#reset").addEventListener("click", discard);
+    // Start with a change so the save bar is visible.
+    form.elements.name.value = "edge-gateway";
+    renderBar();
+  }
+
+  /* ---------- Wizard ---------- */
+  {
+    const data = { name: "", env: "production", port: "443", cidr: "", alerts: ["down"] };
+    const steps = [
+      { label: "Service", desc: "Name and environment", body: () => `
+          <div class="oq-field" id="wz-name-f"><label class="oq-label" for="wz-name">Service name<span class="oq-req">*</span></label><input class="oq-input oq-input--mono" id="wz-name" value="${esc(data.name)}" placeholder="billing-api"><div class="oq-help" id="wz-name-h">Lowercase, digits and dashes.</div></div>
+          <div class="oq-field"><span class="oq-label">Environment</span><div class="oq-row oq-wrap oq-gap-4">${["production", "staging", "development"].map((e) => `<label class="oq-check"><input type="radio" class="oq-radio" name="wz-env" value="${e}" ${data.env === e ? "checked" : ""}> ${e}</label>`).join("")}</div></div>`,
+        save: () => { data.name = $("#wz-name").value.trim(); data.env = $('input[name="wz-env"]:checked').value; },
+        validate: () => {
+          const m = F.runValidators([F.validators.required(), F.validators.pattern(/^[a-z0-9-]+$/, "Only lowercase letters, digits and dashes.")], data.name, data);
+          $("#wz-name-f").classList.toggle("is-invalid", Boolean(m)); $("#wz-name-h").textContent = m ?? "Lowercase, digits and dashes.";
+          return m ? "Give the service a valid name." : true;
+        } },
+      { label: "Network", desc: "Port and allowlist", body: () => `
+          <div class="oq-grid" style="--min: 220px">
+            <div class="oq-field" id="wz-port-f"><label class="oq-label" for="wz-port">Port<span class="oq-req">*</span></label><input class="oq-input" id="wz-port" value="${esc(data.port)}" inputmode="numeric"><div class="oq-help" id="wz-port-h">1–65535.</div></div>
+            <div class="oq-field" id="wz-cidr-f"><label class="oq-label" for="wz-cidr">Allowed network</label><input class="oq-input oq-input--mono" id="wz-cidr" value="${esc(data.cidr)}" placeholder="10.0.0.0/8"><div class="oq-help" id="wz-cidr-h">Optional CIDR block.</div></div>
+          </div>`,
+        save: () => { data.port = $("#wz-port").value.trim(); data.cidr = $("#wz-cidr").value.trim(); },
+        validate: () => {
+          const p = F.runValidators([F.validators.required(), F.validators.port()], data.port, data);
+          const c = F.runValidators([F.validators.cidr()], data.cidr, data);
+          $("#wz-port-f").classList.toggle("is-invalid", Boolean(p)); $("#wz-port-h").textContent = p ?? "1–65535.";
+          $("#wz-cidr-f").classList.toggle("is-invalid", Boolean(c)); $("#wz-cidr-h").textContent = c ?? "Optional CIDR block.";
+          return p || c ? false : true;
+        } },
+      { label: "Alerts", desc: "Who hears about what", body: () => `
+          <div class="oq-stack oq-gap-2">${[["down", "Service goes down"], ["latency", "p95 above 500 ms for 10 minutes"], ["deploy", "Every deploy"]].map(([k, t]) =>
+            `<label class="oq-check"><input type="checkbox" class="oq-checkbox" name="wz-alert" value="${k}" ${data.alerts.includes(k) ? "checked" : ""}> ${t}</label>`).join("")}</div>`,
+        save: () => { data.alerts = $$('input[name="wz-alert"]:checked').map((x) => x.value); },
+        validate: () => (data.alerts.length ? true : "Pick at least one alert.") },
+      { label: "Review", desc: "Check and create", body: () => `
+          <dl class="oq-dl"><dt>Service</dt><dd class="oq-mono">${esc(data.name)}</dd><dt>Environment</dt><dd>${esc(data.env)}</dd>
+          <dt>Port</dt><dd class="oq-mono">${esc(data.port)}</dd><dt>Allowed network</dt><dd class="oq-mono">${esc(data.cidr || "anywhere")}</dd>
+          <dt>Alerts</dt><dd>${data.alerts.map((a) => `<span class="oq-chip oq-sm oq-neutral">${a}</span>`).join(" ")}</dd></dl>`,
+        save: () => {}, validate: () => true },
+    ];
+    let active = 0, errorStep = -1;
+    const render = () => {
+      $("#wiz-steps").innerHTML = steps.map((s, i) => {
+        const state = i === errorStep ? "error" : i < active ? "done" : i === active ? "current" : "upcoming";
+        const marker = state === "done" ? ICON.check : state === "error" ? ICON.close : "";
+        return `<li class="oq-step" data-state="${state}" ${state === "current" ? 'aria-current="step"' : ""}><span class="oq-step__marker">${marker}</span><span class="oq-step__label">${s.label}</span><span class="oq-step__desc">${s.desc}</span></li>`;
+      }).join("");
+      $("#wiz-body").innerHTML = `<h3 class="oq-wizard__title" id="wiz-title">${steps[active].label}</h3>${steps[active].body()}`;
+      $("#wiz-count").textContent = `Step ${active + 1} of ${steps.length}`;
+      $("#wiz-back").disabled = active === 0;
+      $("#wiz-next").textContent = active === steps.length - 1 ? "Create service" : "Next";
+    };
+    const message = (m) => { $("#wiz-msg").innerHTML = m ? `<div class="oq-alert oq-danger" role="alert"><div class="oq-alert__content">${esc(m)}</div></div>` : ""; };
+    $("#wiz-next").addEventListener("click", () => {
+      steps[active].save();
+      const r = steps[active].validate();
+      if (r !== true) { errorStep = active; message(typeof r === "string" ? r : "Fix the highlighted fields to continue."); render(); steps[active].validate(); return; }
+      errorStep = -1; message("");
+      if (active === steps.length - 1) {
+        const b = $("#wiz-next"); b.setAttribute("aria-busy", "true");
+        setTimeout(() => { b.removeAttribute("aria-busy"); toast("Service created", "success", data.name); active = 0; Object.assign(data, { name: "", cidr: "", alerts: ["down"] }); render(); }, 700);
+        return;
+      }
+      active++; render(); $("#wiz-body").focus();
+    });
+    $("#wiz-back").addEventListener("click", () => { steps[active].save(); errorStep = -1; message(""); active = Math.max(0, active - 1); render(); $("#wiz-body").focus(); });
+    $("#wiz-cancel").addEventListener("click", () => { active = 0; errorStep = -1; message(""); render(); });
+    render();
+  }
+
+  /* ---------- Confirm ---------- */
+  const dlg = $("#confirm-dlg");
+  let resolver = null;
+  function confirmDialog({ title, message = "", danger = false, confirmLabel, typeToConfirm }) {
+    resolver?.(false);
+    $("#confirm-title").textContent = title;
+    $("#confirm-msg").textContent = message;
+    const ok = $("#confirm-ok");
+    ok.className = `oq-btn ${danger ? "oq-danger" : ""}`;
+    ok.textContent = confirmLabel ?? (danger ? "Delete" : "Confirm");
+    $("#confirm-type").hidden = !typeToConfirm;
+    $("#confirm-word").textContent = typeToConfirm ?? "";
+    $("#confirm-input").value = "";
+    ok.disabled = Boolean(typeToConfirm);
+    dlg.dataset.word = typeToConfirm ?? "";
+    dlg.showModal();
+    (typeToConfirm ? $("#confirm-input") : ok).focus();
+    return new Promise((resolve) => { resolver = resolve; });
+  }
+  const finish = (v) => { dlg.close(); resolver?.(v); resolver = null; };
+  $("#confirm-input").addEventListener("input", (e) => { $("#confirm-ok").disabled = e.target.value !== dlg.dataset.word; });
+  $("#confirm-input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !$("#confirm-ok").disabled) finish(true); });
+  $("#confirm-ok").addEventListener("click", () => finish(true));
+  $("#confirm-cancel").addEventListener("click", () => finish(false));
+  dlg.addEventListener("cancel", (e) => { e.preventDefault(); finish(false); });
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) finish(false); });
+  const presets = {
+    plain: { title: "Restart fra-02?", message: "Requests in flight are drained first; the node is back in about 20 seconds.", confirmLabel: "Restart" },
+    danger: { title: "Revoke key ci-deployer?", message: "Anything using this key stops working immediately.", danger: true, confirmLabel: "Revoke" },
+    typed: { title: "Delete project edge-production?", message: "This removes the project, its nodes and 14 days of history. It cannot be undone.", danger: true, typeToConfirm: "edge-production" },
+  };
+  $$("[data-confirm]").forEach((b) => b.addEventListener("click", async () => {
+    const ok = await confirmDialog(presets[b.dataset.confirm]);
+    $("#confirm-out").innerHTML = `confirm() resolved <code>${ok}</code>`;
+  }));
+
+  /* ---------- Multi-select ---------- */
+  function multiSelect(root, id, options, selected, { placeholder = "Select…", searchable = options.length >= 8, maxChips = 2 } = {}) {
+    let open = false, query = "", active = 0;
+    root.innerHTML = `<button type="button" class="oq-multiselect__trigger" id="${id}" aria-haspopup="listbox" aria-expanded="false"></button>`;
+    const trigger = root.firstElementChild;
+    const renderTrigger = () => {
+      const chosen = options.filter((o) => selected.includes(o));
+      trigger.innerHTML = (chosen.length === 0 ? `<span class="oq-multiselect__placeholder">${placeholder}</span>` :
+        `<span class="oq-multiselect__chips">${chosen.slice(0, maxChips).map((o) => `<span class="oq-chip oq-sm oq-neutral">${esc(o)}</span>`).join("")}${chosen.length > maxChips ? `<span class="oq-multiselect__more">+${chosen.length - maxChips}</span>` : ""}</span>`) + ICON.chevron;
+      trigger.setAttribute("aria-expanded", String(open));
+    };
+    const visible = () => options.filter((o) => o.toLowerCase().includes(query.trim().toLowerCase()));
+    let panel;
+    const renderList = () => {
+      const vis = visible();
+      const allOn = vis.length > 0 && vis.every((o) => selected.includes(o));
+      const all = $(".oq-multiselect__all input", panel);
+      all.checked = allOn; all.indeterminate = !allOn && vis.some((o) => selected.includes(o));
+      $(".oq-multiselect__all span", panel).textContent = query ? `Select all matching (${vis.length})` : `Select all (${vis.length})`;
+      $(".oq-multiselect__list", panel).innerHTML = vis.length ? vis.map((o, i) => `<li class="oq-multiselect__option" role="option" id="${id}-o${i}" data-i="${i}" aria-selected="${selected.includes(o)}" ${i === active ? 'data-active="true"' : ""}><input type="checkbox" class="oq-checkbox" ${selected.includes(o) ? "checked" : ""} tabindex="-1" aria-hidden="true"><span class="oq-truncate">${esc(o)}</span></li>`).join("")
+        : `<li class="oq-listbox__empty">No options match “${esc(query)}”</li>`;
+      $(".oq-multiselect__footer span", panel).textContent = `${selected.length} selected`;
+      const focusTarget = searchable ? $(".oq-multiselect__search", panel) : $(".oq-multiselect__list", panel);
+      focusTarget.setAttribute("aria-activedescendant", vis[active] ? `${id}-o${active}` : "");
+      $(`[data-i="${active}"]`, panel)?.scrollIntoView({ block: "nearest" });
+      renderTrigger();
+    };
+    const toggle = (o) => { const i = selected.indexOf(o); i >= 0 ? selected.splice(i, 1) : selected.push(o); selected.sort((a, b) => options.indexOf(a) - options.indexOf(b)); renderList(); };
+    let scrim;
+    const close = (focus) => { open = false; query = ""; panel?.remove(); scrim?.remove(); panel = null; scrim = null; renderTrigger(); if (focus) trigger.focus(); };
+    const openPanel = () => {
+      open = true; active = 0;
+      panel = document.createElement("div");
+      panel.className = "oq-multiselect__panel";
+      panel.innerHTML = `${searchable ? `<input class="oq-input oq-sm oq-multiselect__search" placeholder="Search…" aria-label="Search options" aria-controls="${id}-list">` : ""}
+        <label class="oq-check oq-multiselect__all"><input type="checkbox" class="oq-checkbox"><span></span></label>
+        <ul class="oq-multiselect__list" id="${id}-list" role="listbox" aria-multiselectable="true" ${searchable ? 'tabindex="-1"' : 'tabindex="0"'}></ul>
+        <div class="oq-multiselect__footer"><span></span><span class="oq-spacer"></span><button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-sm" data-clear>Clear</button><button type="button" class="oq-btn oq-btn--soft oq-sm" data-done>Done</button></div>`;
+      // A scrim behind the panel: shown only on phones, where the panel is a bottom sheet.
+      scrim = document.createElement("div");
+      scrim.className = "oq-multiselect__scrim";
+      scrim.setAttribute("aria-hidden", "true");
+      scrim.addEventListener("click", () => close(true));
+      root.append(scrim, panel);
+      renderList();
+      (searchable ? $(".oq-multiselect__search", panel) : $(".oq-multiselect__list", panel)).focus();
+      $(".oq-multiselect__search", panel)?.addEventListener("input", (e) => { query = e.target.value; active = 0; renderList(); });
+      $(".oq-multiselect__all input", panel).addEventListener("change", () => {
+        const vis = visible();
+        const allOn = vis.every((o) => selected.includes(o));
+        vis.forEach((o) => { const i = selected.indexOf(o); if (allOn && i >= 0) selected.splice(i, 1); if (!allOn && i < 0) selected.push(o); });
+        selected.sort((a, b) => options.indexOf(a) - options.indexOf(b)); renderList();
+      });
+      $(".oq-multiselect__list", panel).addEventListener("mousedown", (e) => e.preventDefault());
+      $(".oq-multiselect__list", panel).addEventListener("click", (e) => { const li = e.target.closest("[data-i]"); if (li) { active = +li.dataset.i; toggle(visible()[active]); } });
+      $(".oq-multiselect__list", panel).addEventListener("mousemove", (e) => { const li = e.target.closest("[data-i]"); if (li && +li.dataset.i !== active) { active = +li.dataset.i; renderList(); } });
+      $("[data-clear]", panel).addEventListener("click", () => { selected.length = 0; renderList(); });
+      $("[data-done]", panel).addEventListener("click", () => close(true));
+      panel.addEventListener("keydown", (e) => {
+        const vis = visible();
+        if (e.key === "Escape") { e.preventDefault(); close(true); }
+        else if (e.key === "ArrowDown") { e.preventDefault(); active = Math.min(active + 1, vis.length - 1); renderList(); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); active = Math.max(active - 1, 0); renderList(); }
+        else if ((e.key === "Enter" || (e.key === " " && !e.target.matches(".oq-multiselect__search"))) && e.target.closest(".oq-multiselect__search, .oq-multiselect__list")) { e.preventDefault(); if (vis[active]) toggle(vis[active]); }
+        else if (e.key === "a" && (e.ctrlKey || e.metaKey) && !e.target.matches(".oq-multiselect__search")) { e.preventDefault(); $(".oq-multiselect__all input", panel).click(); }
+      });
+    };
+    trigger.addEventListener("click", () => (open ? close() : openPanel()));
+    trigger.addEventListener("keydown", (e) => { if (e.key === "ArrowDown" && !open) { e.preventDefault(); openPanel(); } });
+    document.addEventListener("pointerdown", (e) => { if (open && !root.contains(e.target)) close(); });
+    renderTrigger();
+  }
+  multiSelect($("#ms-regions-root"), "ms-regions", ["eu-central-1", "eu-west-1", "eu-west-2", "eu-north-1", "eu-south-1", "us-east-1", "us-east-2", "us-west-1", "us-west-2", "ap-south-1", "ap-northeast-1", "sa-east-1"], ["eu-central-1", "eu-west-1", "us-east-1"]);
+  multiSelect($("#ms-levels-root"), "ms-levels", ["debug", "info", "warn", "error", "fatal"], ["warn", "error", "fatal"], { maxChips: 3 });
+
+  /* ---------- Password ---------- */
+  $$("[data-toggle-for]").forEach((b) => {
+    const input = document.getElementById(b.dataset.toggleFor);
+    b.innerHTML = ICON.eye;
+    b.addEventListener("click", () => {
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      b.setAttribute("aria-pressed", String(show));
+      b.setAttribute("aria-label", show ? "Hide password" : "Show password");
+      b.innerHTML = show ? ICON.eyeOff : ICON.eye;
+    });
+  });
+  $("#pw-new").addEventListener("input", (e) => {
+    const value = e.target.value;
+    const s = F.scorePassword(value);
+    const meter = $("#pw-meter");
+    if (value) meter.dataset.score = s.score; else delete meter.dataset.score;
+    const lit = value ? Math.max(s.score, 1) : 0;
+    $$(".oq-strength__bars > span", meter).forEach((bar, i) => bar.toggleAttribute("data-on", i < lit));
+    $(".oq-strength__label", meter).textContent = value ? s.label : "Strength";
+    $("#pw-new-help").textContent = value ? (s.hints[0] ?? "Looks good.") : "Try “password1”, “correct-horse-battery” and “T7#qv!mR2p@x”.";
+  });
+
+  /* ---------- OTP ---------- */
+  function otp(root, out, { length = 6, groupSize, mode = "numeric" } = {}) {
+    const allowed = mode === "numeric" ? /\d/ : /[a-z0-9]/i;
+    root.innerHTML = Array.from({ length }, (_, i) =>
+      `${groupSize && i > 0 && i % groupSize === 0 ? '<span class="oq-otp__sep" aria-hidden="true"></span>' : ""}<input class="oq-otp__cell" inputmode="${mode === "numeric" ? "numeric" : "text"}" autocomplete="${i === 0 ? "one-time-code" : "off"}" maxlength="${length}" aria-label="Character ${i + 1} of ${length}">`).join("");
+    const cells = $$(".oq-otp__cell", root);
+    const value = () => cells.map((c) => c.value || " ").join("").trimEnd();
+    const report = () => {
+      const v = value();
+      out.innerHTML = v.length === length && !v.includes(" ") ? `Complete: <code>${esc(v)}</code>` : `${v.replace(/ /g, "").length} of ${length} entered.`;
+    };
+    const fill = (i, text) => {
+      const chars = [...text].filter((c) => allowed.test(c)).map((c) => c.toUpperCase());
+      let j = i;
+      for (const c of chars) { if (j >= length) break; cells[j++].value = c; }
+      cells[Math.min(j, length - 1)].focus();
+      report();
+    };
+    cells.forEach((cell, i) => {
+      cell.addEventListener("focus", () => cell.select());
+      cell.addEventListener("input", () => { const typed = cell.value; cell.value = ""; fill(i, typed); });
+      cell.addEventListener("paste", (e) => { e.preventDefault(); fill(i, e.clipboardData.getData("text")); });
+      cell.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace") {
+          e.preventDefault();
+          const target = cell.value ? i : i - 1;
+          if (target < 0) return;
+          cells[target].value = ""; cells[target].focus(); report();
+        } else if (e.key === "ArrowLeft" && i > 0) { e.preventDefault(); cells[i - 1].focus(); }
+        else if (e.key === "ArrowRight" && i < length - 1) { e.preventDefault(); cells[i + 1].focus(); }
+      });
+    });
+  }
+  otp($("#otp1"), $("#otp1-out"), { length: 6, groupSize: 3 });
+  otp($("#otp2"), $("#otp2-out"), { length: 8, groupSize: 4, mode: "alphanumeric" });
+
+  /* ---------- Colour ---------- */
+  {
+    let current = "#ab9df2";
+    const setColor = (hex) => {
+      current = hex;
+      $("#col-swatch").style.setProperty("--swatch", hex);
+      $("#col-native").value = hex;
+      $("#col-hex").value = hex;
+      $("#col-hex").removeAttribute("aria-invalid");
+      $("#col-help").textContent = `Selected ${hex}.`;
+      $("#col-help").closest(".oq-field").classList.remove("is-invalid");
+      renderPresets();
+    };
+    const renderPresets = () => {
+      const cs = getComputedStyle(html);
+      $("#col-presets").innerHTML = ["primary", "secondary", "success", "warning", "danger", "info", "neutral"].map((k) => {
+        const hex = F.normalizeHex ? F.normalizeHex(cs.getPropertyValue(`--oq-${k}`)) : cs.getPropertyValue(`--oq-${k}`).trim();
+        return `<button type="button" class="oq-color__preset" style="--swatch:${hex}" aria-pressed="${hex === current}" aria-label="${k} ${hex}" title="${k} ${hex}" data-hex="${hex}"></button>`;
+      }).join("");
+    };
+    $("#col-presets").addEventListener("click", (e) => { const b = e.target.closest("[data-hex]"); if (b) setColor(b.dataset.hex); });
+    $("#col-native").addEventListener("input", (e) => setColor(e.target.value));
+    $("#col-hex").addEventListener("input", (e) => {
+      const raw = e.target.value.trim().replace(/^#?/, "#").toLowerCase();
+      const ok = /^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(raw);
+      e.target.setAttribute("aria-invalid", String(!ok));
+      $("#col-help").closest(".oq-field").classList.toggle("is-invalid", !ok);
+      $("#col-help").textContent = ok ? `Selected ${raw}.` : "Use #rgb or #rrggbb.";
+      if (ok && raw.length === 7) { current = raw; $("#col-swatch").style.setProperty("--swatch", raw); $("#col-native").value = raw; renderPresets(); }
+    });
+    $("#col-hex").addEventListener("blur", (e) => {
+      const raw = e.target.value.trim().replace(/^#?/, "#").toLowerCase();
+      if (/^#[0-9a-f]{3}$/.test(raw)) setColor(`#${[...raw.slice(1)].map((c) => c + c).join("")}`);
+    });
+    themeListeners.push(renderPresets);
+    setColor(current);
+  }
+
+  /* ---------- IP & CIDR ---------- */
+  {
+    const update = (box) => {
+      const input = $("input", box);
+      const tag = $(".oq-ip__version", box);
+      const help = $(".oq-help", box);
+      const raw = input.value.trim();
+      let ok = false, msg = "", info = "";
+      if (box.dataset.ip === "ip") {
+        const v = raw ? F.ipVersion(raw) : null;
+        ok = v !== null;
+        tag.textContent = v ? `IPv${v}` : "IP";
+        msg = raw && !ok ? "Not an IPv4 or IPv6 address." : "";
+        info = ok ? (v === 4 ? "IPv4 address." : "IPv6 address.") : "IPv4 or IPv6.";
+      } else {
+        const c = raw ? F.parseCidr(raw) : null;
+        ok = c !== null;
+        tag.textContent = c ? `IPv${c.version}` : "CIDR";
+        msg = raw && !ok ? (raw.includes("/") ? "Not a valid CIDR block — the prefix goes up to /32 (IPv4) or /128 (IPv6)." : "Add a prefix length, e.g. /24.") : "";
+        if (c) {
+          const count = F.formatAddressCount(c.size);
+          info = c.version === 4
+            ? `<span class="oq-mono">${c.network} – ${c.broadcast}</span> · ${count} ${c.size === 1n ? "address" : "addresses"}${c.hostBitsSet ? ` <span class="oq-ip__warn">· host bits set; the network is <span class="oq-mono">${c.network}/${c.prefix}</span></span>` : ""}`
+            : `IPv6 /${c.prefix} · ${count} addresses`;
+        } else info = "e.g. 10.0.0.0/8";
+      }
+      tag.classList.toggle("is-ok", ok);
+      box.classList.toggle("is-invalid", Boolean(msg));
+      input.setAttribute("aria-invalid", String(Boolean(msg)));
+      help.innerHTML = msg ? esc(msg) : info;
+    };
+    $$("[data-ip]").forEach((box) => { $("input", box).addEventListener("input", () => update(box)); update(box); });
+    $$("[data-try]").forEach((b) => b.addEventListener("click", () => {
+      const input = document.getElementById(b.dataset.try);
+      input.value = b.textContent; update(input.closest("[data-ip]")); input.focus();
+    }));
+  }
+
+  /* ---------- Key–value ---------- */
+  function kvEditor(root, pairs, { caseInsensitive = false, keyPattern, keyPatternMessage, keyPlaceholder = "KEY", valuePlaceholder = "value" } = {}) {
+    const render = (focus) => {
+      const problems = F.keyValueProblems ? F.keyValueProblems(pairs, { caseInsensitive, keyPattern, keyPatternMessage }) : [];
+      root.innerHTML = (pairs.length ? '<div class="oq-kv__head" aria-hidden="true"><span>Key</span><span>Value</span></div>' : "") +
+        pairs.map((p, i) => `<div class="oq-kv__row ${problems[i] ? "is-invalid" : ""}">
+          <input class="oq-input oq-sm oq-input--mono oq-kv__key" data-i="${i}" data-k="key" value="${esc(p.key)}" placeholder="${keyPlaceholder}" aria-label="Key ${i + 1}" ${problems[i] ? 'aria-invalid="true"' : ""}>
+          <input class="oq-input oq-sm oq-input--mono oq-kv__value" data-i="${i}" data-k="value" value="${esc(p.value)}" placeholder="${valuePlaceholder}" aria-label="Value ${i + 1}">
+          <span class="oq-kv__actions">
+            <button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon oq-sm" data-move="-1" data-i="${i}" aria-label="Move row ${i + 1} up" ${i === 0 ? "disabled" : ""}>${ICON.up}</button>
+            <button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon oq-sm" data-move="1" data-i="${i}" aria-label="Move row ${i + 1} down" ${i === pairs.length - 1 ? "disabled" : ""}>${ICON.down}</button>
+            <button type="button" class="oq-btn oq-btn--ghost oq-danger oq-btn--icon oq-sm" data-remove data-i="${i}" aria-label="Remove row ${i + 1}">${ICON.trash}</button>
+          </span>
+          ${problems[i] ? `<span class="oq-kv__problem">${esc(problems[i])}</span>` : ""}
+        </div>`).join("") +
+        `<button type="button" class="oq-btn oq-btn--ghost oq-sm oq-kv__add" data-add>${ICON.plus}Add row</button>`;
+      if (focus) { const el = $(focus, root); if (el) { el.focus(); const n = el.value.length; el.setSelectionRange?.(n, n); } }
+    };
+    root.addEventListener("input", (e) => {
+      const el = e.target; if (!el.dataset.k) return;
+      pairs[+el.dataset.i][el.dataset.k] = el.value;
+      render(`[data-i="${el.dataset.i}"][data-k="${el.dataset.k}"]`);
+    });
+    root.addEventListener("click", (e) => {
+      const b = e.target.closest("button"); if (!b) return;
+      const i = +b.dataset.i;
+      if (b.dataset.add !== undefined) { pairs.push({ key: "", value: "" }); render(`[data-i="${pairs.length - 1}"][data-k="key"]`); }
+      else if (b.dataset.remove !== undefined) { pairs.splice(i, 1); render(); }
+      else if (b.dataset.move) { const j = i + +b.dataset.move; [pairs[i], pairs[j]] = [pairs[j], pairs[i]]; render(`[data-i="${j}"][data-move="${b.dataset.move}"]`); }
+    });
+    render();
+  }
+  kvEditor($("#kv-headers"), [{ key: "Authorization", value: "Bearer ••••••" }, { key: "X-Request-Id", value: "{{uuid}}" }, { key: "content-type", value: "application/json" }, { key: "Content-Type", value: "text/plain" }], { caseInsensitive: true, keyPlaceholder: "Header", valuePlaceholder: "value" });
+  kvEditor($("#kv-env"), [{ key: "NODE_ENV", value: "production" }, { key: "PORT", value: "9110" }, { key: "redis-url", value: "redis://10.0.0.4:6379" }], { keyPattern: /^[A-Z_][A-Z0-9_]*$/, keyPatternMessage: "Use UPPER_SNAKE_CASE." });
+
+  /* ---------- Cron ---------- */
+  {
+    let tokens = "30 9 * * 1-5".split(" ");
+    $("#cron-presets").innerHTML = `<option value="">Custom</option>` + F.CRON_PRESETS.map((p) => `<option value="${p.expression}">${p.label}</option>`).join("");
+    $("#cron-fields").innerHTML = F.CRON_FIELDS.map((f, i) => `<label class="oq-cron__field"><input class="oq-input oq-input--mono oq-sm" data-i="${i}" spellcheck="false" aria-label="${f.label}"><span class="oq-cron__name">${f.label}</span></label>`).join("");
+    const fmt = new Intl.DateTimeFormat(undefined, { weekday: "short", year: "numeric", month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+    const render = (fromInput) => {
+      const expr = tokens.join(" ");
+      if (!fromInput) $$("#cron-fields input").forEach((el, i) => (el.value = tokens[i]));
+      const parsed = F.parseCron(expr);
+      $$("#cron-fields input").forEach((el, i) => el.setAttribute("aria-invalid", String(Boolean(parsed.errors[F.CRON_FIELDS[i].name]))));
+      $("#cron-expr").textContent = expr;
+      $("#cron-presets").value = F.CRON_PRESETS.some((p) => p.expression === expr) ? expr : "";
+      const desc = $("#cron-desc");
+      if (parsed.ok) {
+        desc.className = "oq-cron__desc"; desc.textContent = F.describeCron(expr);
+        $("#cron-runs").innerHTML = F.nextRuns(expr, new Date(), 5).map((d) => `<li>${fmt.format(d)}</li>`).join("");
+        $("#cron-runs").hidden = false;
+      } else {
+        const [k, m] = Object.entries(parsed.errors)[0];
+        desc.className = "oq-cron__desc is-error";
+        desc.textContent = `${F.CRON_FIELDS.find((f) => f.name === k)?.label ?? "Schedule"}: ${m}`;
+        $("#cron-runs").hidden = true;
+      }
+    };
+    $("#cron-fields").addEventListener("input", (e) => { tokens[+e.target.dataset.i] = e.target.value.replace(/\s+/g, "") || ""; render(true); });
+    $("#cron-presets").addEventListener("change", (e) => { if (e.target.value) { tokens = e.target.value.split(" "); render(); } });
+    render();
+  }
+
+  /* ---------- Query builder ---------- */
+  {
+    const fields = [
+      { name: "status", label: "Status", type: "enum", options: ["allowed", "blocked", "challenged"] },
+      { name: "method", label: "Method", type: "enum", options: ["GET", "POST", "PUT", "DELETE"] },
+      { name: "region", label: "Region", type: "enum", options: ["eu", "us", "ap"] },
+      { name: "path", label: "Path", type: "string" },
+      { name: "p95", label: "p95 ms", type: "number" },
+      { name: "score", label: "Score", type: "number" },
+      { name: "bot", label: "Bot", type: "boolean", options: ["true", "false"] },
+    ];
+    let terms = F.parseFilterText('status:blocked p95>250 -region:ap "connection reset"', fields);
+    let draft = "", open = false, active = 0;
+    const box = $("#qb-box"), input = $("#qb-input"), list = $("#qb-list");
+    const DRAFT = /^(-|!)?([A-Za-z_][\w.]*)?$/;
+    const DRAFT_VALUE = /^(-|!)?([A-Za-z_][\w.]*)(!=|>=|<=|:|>|<|~)(.*)$/;
+    const suggestions = () => {
+      const out = [];
+      const vm = DRAFT_VALUE.exec(draft);
+      if (vm) {
+        const [, neg = "", name, sym, raw] = vm;
+        const field = fields.find((f) => f.name === name);
+        const parts = raw.split(","); const partial = parts.pop().toLowerCase();
+        for (const o of field?.options ?? []) if (!parts.includes(o) && o.toLowerCase().includes(partial))
+          out.push({ label: esc(o), hint: field.label, draft: `${neg}${name}${sym}${[...parts, o].join(",")}`, commit: true });
+        return out;
+      }
+      const m = DRAFT.exec(draft);
+      if (m) {
+        const [, neg = "", partial = ""] = m;
+        for (const f of fields) {
+          if (partial && !f.name.toLowerCase().startsWith(partial.toLowerCase()) && !f.label.toLowerCase().startsWith(partial.toLowerCase())) continue;
+          const sym = f.type === "number" ? ">" : ":";
+          out.push({ label: `<span class="oq-mono">${neg}${f.name}${sym}</span><span class="oq-faint"> ${f.label}</span>`, hint: f.type, draft: `${neg}${f.name}${sym}` });
+        }
+      }
+      if (draft.trim() && !draft.trim().startsWith("-")) out.push({ label: `Search all text for “${esc(draft.trim())}”`, hint: "text", draft: draft.includes(" ") ? `"${draft.trim()}"` : draft.trim(), commit: true });
+      return out;
+    };
+    const valueText = (v) => (Array.isArray(v) ? v.join(", ") : String(v));
+    const render = () => {
+      $$(".oq-query__term", box).forEach((el) => el.remove());
+      const html = terms.map((t, i) => {
+        const field = fields.find((f) => f.name === t.field);
+        const unknown = t.op !== "text" && !field;
+        const opLabel = t.op === "ne" && Array.isArray(t.value) ? "not in" : F.FILTER_OP_SYMBOL[t.op];
+        return `<span class="oq-query__term ${t.op === "text" ? "oq-query__term--text" : ""} ${unknown ? "is-unknown" : ""}" ${unknown ? `title="Unknown field “${esc(t.field)}”"` : ""}>
+          ${t.op !== "text" ? `<button type="button" class="oq-query__field" data-edit="${i}">${esc(field?.label ?? t.field)}</button><button type="button" class="oq-query__op" data-op="${i}" aria-label="Operator ${opLabel}. Click to change.">${opLabel}</button>` : ""}
+          <button type="button" class="oq-query__value" data-edit="${i}">${t.op === "text" ? `“${esc(valueText(t.value))}”` : esc(valueText(t.value))}</button>
+          <button type="button" class="oq-query__remove" data-remove="${i}" aria-label="Remove filter ${esc(F.formatFilterTerm(t))}">${ICON.close}</button></span>`;
+      }).join("");
+      input.insertAdjacentHTML("beforebegin", html);
+      input.placeholder = terms.length ? "" : "Filter… e.g. status:blocked p95>250";
+      input.value = draft;
+      $("#qb-text").textContent = F.formatFilterText(terms) || "(empty)";
+      $("#qb-jql").textContent = JSON.stringify(F.toJql(terms), null, 2);
+      renderList();
+    };
+    const renderList = () => {
+      const s = suggestions();
+      const show = open && s.length > 0;
+      list.hidden = !show;
+      input.setAttribute("aria-expanded", String(show));
+      list.innerHTML = s.map((x, i) => `<li class="oq-option" role="option" id="qb-s${i}" data-s="${i}" aria-selected="${i === active}" ${i === active ? 'data-active="true"' : ""}><span class="oq-truncate">${x.label}</span><span class="oq-option__hint">${esc(x.hint)}</span></li>`).join("");
+      if (show) input.setAttribute("aria-activedescendant", `qb-s${active}`); else input.removeAttribute("aria-activedescendant");
+    };
+    const commitDraft = (text) => { const parsed = F.parseFilterText(text, fields); if (parsed.length) terms = [...terms, ...parsed]; draft = ""; active = 0; render(); };
+    const apply = (s) => { if (s.commit) commitDraft(s.draft); else { draft = s.draft; active = 0; render(); } input.focus(); };
+    const editAt = (i) => { draft = F.formatFilterTerm(terms[i]); terms = terms.filter((_, j) => j !== i); open = true; render(); input.focus(); };
+    box.addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (!b) { input.focus(); return; }
+      if (b.dataset.remove) { terms = terms.filter((_, j) => j !== +b.dataset.remove); render(); }
+      else if (b.dataset.edit) editAt(+b.dataset.edit);
+      else if (b.dataset.op) {
+        const i = +b.dataset.op, t = terms[i];
+        const ops = F.filterOpsFor(fields.find((f) => f.name === t.field));
+        const op = ops[(ops.indexOf(t.op) + 1) % ops.length];
+        let value = t.value;
+        if (op === "in" && !Array.isArray(value)) value = [value];
+        else if (op !== "in" && op !== "ne" && Array.isArray(value)) value = value[0] ?? "";
+        terms = terms.map((x, j) => (j === i ? { ...x, op, value } : x)); render();
+      }
+    });
+    input.addEventListener("input", () => { draft = input.value; open = true; active = 0; renderList(); });
+    input.addEventListener("focus", () => { open = true; renderList(); });
+    input.addEventListener("keydown", (e) => {
+      const s = suggestions();
+      if (e.key === "ArrowDown") { e.preventDefault(); open = true; active = Math.min(active + 1, s.length - 1); renderList(); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); active = Math.max(active - 1, 0); renderList(); }
+      else if (e.key === "Enter") {
+        e.preventDefault();
+        const x = open ? s[active] : undefined;
+        if (x && (active > 0 || !DRAFT_VALUE.test(draft) || x.commit)) apply(x); else commitDraft(draft);
+      } else if (e.key === "Tab" && open && draft && s[active] && !s[active].commit) { e.preventDefault(); apply(s[active]); }
+      else if (e.key === "Escape") { open = false; renderList(); }
+      else if (e.key === "Backspace" && draft === "" && terms.length) { e.preventDefault(); editAt(terms.length - 1); }
+    });
+    list.addEventListener("mousedown", (e) => e.preventDefault());
+    list.addEventListener("click", (e) => { const li = e.target.closest("[data-s]"); if (li) apply(suggestions()[+li.dataset.s]); });
+    document.addEventListener("pointerdown", (e) => { if (!$("#qb").contains(e.target)) { open = false; renderList(); } });
+    render();
+  }
+
+  /* ---------- Section nav ---------- */
+  const links = $$("#toc a");
+  const spy = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    links.forEach((a) => (a.hash === `#${en.target.id}` ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
+  }), { rootMargin: "-15% 0px -75% 0px" });
+  $$(".pv-section").forEach((s) => spy.observe(s));
+
+  let saved = "dark";
+  try { saved = localStorage.getItem("oq-preview-theme") || "dark"; } catch {}
+  setTheme(saved);
+})();
+</script>
+</body>
+</html>

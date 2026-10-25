@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSQD UI — data</title>
+<link rel="stylesheet" href="styles/index.css">
+<style>
+  /* Preview-page layout only; nothing here is part of the kit. */
+  html, body { margin: 0; }
+  .pv-section { scroll-margin-top: 64px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid var(--oq-border); }
+  .pv-section:last-child { border-bottom: 0; }
+  .pv-section > header { display: flex; flex-direction: column; gap: 4px; }
+  .pv-main { max-width: 1080px; }
+  .pv-sidebar { position: sticky; top: 48px; height: calc(100vh - 48px); }
+  .pv-notes { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+</style>
+</head>
+<body class="oq">
+
+<div class="oq-shell">
+  <header class="oq-appbar oq-appbar--sticky pv-appbar">
+    <a class="oq-appbar__brand" href="preview.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+      OSQD&nbsp;UI <span class="oq-chip oq-sm oq-neutral">0.4.0</span>
+    </a>
+    <nav class="pv-galleries" aria-label="Galleries">
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview.html">Core</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-charts.html">Charts</a>
+      <a class="oq-btn oq-btn--soft oq-neutral oq-sm" href="preview-data.html" aria-current="page">Data</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-forms.html">Forms</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-layout.html">Layout</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="elements.html">Elements</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="icons.html">Icons</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="theme-builder.html">Theme builder</a>
+    </nav>
+    <oq-dropdown class="pv-galleries-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Data <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Galleries">
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html" aria-current="page">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <oq-dropdown class="pv-samples-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Samples <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Sample sites">
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <div class="oq-spacer"></div>
+    <oq-theme-select storage-key="oq-preview-theme" default="dark">
+      <select class="oq-select oq-sm" id="theme-switch" aria-label="Theme" style="width: 132px">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="graphite">Graphite</option>
+        <option value="midnight">Midnight</option>
+        <option value="contrast">Contrast</option>
+        <option value="paper">Paper</option>
+        <option value="slate">Slate</option>
+        <option value="auto">Auto (system)</option>
+      </select>
+    </oq-theme-select>
+    <oq-dropdown class="pv-site-menu">
+      <details class="oq-dropdown oq-dropdown--end">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon" aria-label="Menu"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+        <nav class="oq-menu" aria-label="Galleries and samples">
+          <div class="oq-menu__label oq-overline">Galleries</div>
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html" aria-current="page">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <div class="oq-menu__label oq-overline">Samples</div>
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <style data-pv-appbar>
+      /* Gallery app bar (the same on every gallery page). */
+      .pv-appbar { gap: 8px; min-width: 0; }
+      .pv-appbar .oq-appbar__brand { flex: none; }
+      .pv-galleries { display: flex; flex: none; gap: 2px; }
+      .pv-appbar > * { white-space: nowrap; }
+      .pv-galleries-menu, .pv-site-menu { display: none; }
+      .pv-appbar .oq-dropdown > summary { gap: 4px; }
+      .pv-appbar .oq-menu { min-width: 200px; }
+      .pv-appbar-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .pv-appbar .oq-input-group { flex: 0 1 240px; min-width: 0; width: auto !important; }
+      @media (max-width: 1359.98px) { .pv-galleries { display: none; } .pv-galleries-menu { display: inline-block; } }
+      /* Phones: brand, theme and one menu; the page's own tools move to a second row that scrolls. */
+      @media (max-width: 720px) {
+        .pv-appbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 4px 8px; row-gap: 0; gap: 4px; }
+        .pv-appbar .oq-appbar__brand .oq-chip, .pv-appbar .pv-hide-sm, .pv-galleries-menu, .pv-samples-menu { display: none; }
+        .pv-site-menu { display: inline-block; }
+        .pv-appbar #theme-switch { width: 108px !important; }
+        .pv-appbar-tools { order: 10; flex: 1 0 100%; padding: 4px 0 8px; overflow-x: auto; scrollbar-width: none; }
+        .pv-appbar-tools .oq-input-group { flex: 1 1 auto; }
+        .pv-site-menu .oq-menu { position: fixed; top: 52px; left: 8px; right: 8px; max-width: none; max-height: calc(100dvh - 64px); }
+      }
+    </style>
+    <script src="assets/osqd-ui-elements.js" defer></script>
+  </header>
+
+  <aside class="oq-sidebar pv-sidebar">
+    <nav class="oq-nav" id="toc">
+      <div class="oq-nav__section oq-overline">Data</div>
+      <a class="oq-nav__item" href="#vtable">Virtual table</a>
+      <a class="oq-nav__item" href="#log">Log viewer</a>
+      <a class="oq-nav__item" href="#json">JSON inspector</a>
+      <a class="oq-nav__item" href="#diff">Diff view</a>
+    </nav>
+  </aside>
+
+  <main class="oq-shell__main">
+  <div class="pv-main">
+
+  <!-- ================= Virtual table ================= -->
+  <section class="pv-section" id="vtable">
+    <header>
+      <div class="oq-overline">Data</div>
+      <h2 class="oq-h2">Virtual table</h2>
+      <p class="oq-muted">100 000 rows; only the ones in view are in the page. React: <code>&lt;VirtualTable rows columns selectable stickyFirstColumn exportCsv /&gt;</code>. Classes: <code>.oq-vtable</code>, <code>__head</code>, <code>__row</code>, <code>__cell</code>, <code>__resize</code>, <code>--dense</code>, <code>--striped</code>, <code>--sticky-first</code>.</p>
+      <div class="pv-notes oq-small oq-faint">
+        <span>Click a header to sort</span><span>Drag a header edge to resize</span><span><kbd class="oq-kbd">↑</kbd><kbd class="oq-kbd">↓</kbd><kbd class="oq-kbd">←</kbd><kbd class="oq-kbd">→</kbd> move</span><span><kbd class="oq-kbd">Space</kbd> select</span><span><kbd class="oq-kbd">Enter</kbd> / double-click edits the Owner and Note cells</span><span><kbd class="oq-kbd">Ctrl</kbd> <kbd class="oq-kbd">A</kbd> all</span>
+      </div>
+    </header>
+    <div id="vt"></div>
+  </section>
+
+  <!-- ================= Log viewer ================= -->
+  <section class="pv-section" id="log">
+    <header>
+      <div class="oq-overline">Data</div>
+      <h2 class="oq-h2">Log viewer</h2>
+      <p class="oq-muted">A live stream: it follows the tail until you scroll up, then counts new lines in a pill. Search with <kbd class="oq-kbd">Enter</kbd> / <kbd class="oq-kbd">Shift</kbd> <kbd class="oq-kbd">Enter</kbd>, filter by level, wrap, jump to the next error, copy a line. React: <code>&lt;LogViewer lines /&gt;</code>. Classes: <code>.oq-log</code>, <code>__line[data-level]</code>, <code>__pill</code>, <code>--wrap</code>.</p>
+    </header>
+    <div id="lv"></div>
+  </section>
+
+  <!-- ================= JSON inspector ================= -->
+  <section class="pv-section" id="json">
+    <header>
+      <div class="oq-overline">Data</div>
+      <h2 class="oq-h2">JSON inspector</h2>
+      <p class="oq-muted">Collapsible, type-coloured, with sizes. The filter keeps matching branches open. Hover a row to copy its value or path. Keyboard: arrows, <kbd class="oq-kbd">c</kbd> copies the value, <kbd class="oq-kbd">p</kbd> the path. React: <code>&lt;JsonInspector value defaultExpandDepth={1} /&gt;</code>. Classes: <code>.oq-json</code>, <code>__row</code>, <code>__key</code>, <code>__value.is-string|number|boolean|null</code>.</p>
+    </header>
+    <div id="ji"></div>
+    <div class="oq-small oq-muted">Last copied: <code id="ji-copied">—</code></div>
+  </section>
+
+  <!-- ================= Diff view ================= -->
+  <section class="pv-section" id="diff">
+    <header>
+      <div class="oq-overline">Data</div>
+      <h2 class="oq-h2">Diff view</h2>
+      <p class="oq-muted">Line diff (shortest edit script) with changed words marked inside each line; long unchanged runs fold behind a button. React: <code>&lt;DiffView oldText newText /&gt;</code>; the diff itself is <code>diffLines(a, b)</code>. Classes: <code>.oq-diff</code>, <code>--split</code>, <code>__line.is-add|is-del</code>, <code>__skip</code>, <code>ins/del.oq-diff__word</code>.</p>
+    </header>
+    <div id="dv"></div>
+  </section>
+
+  </div>
+  </main>
+</div>
+
+<div class="oq-toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const fmt = new Intl.NumberFormat("en-US").format;
+
+  // Theme switch — shared with the other gallery pages.
+  const html = document.documentElement;
+  const setTheme = (t) => {
+    html.dataset.theme = t;
+    $("#theme-switch").value = t;
+    try { localStorage.setItem("oq-preview-theme", t); } catch {}
+  };
+  $("#theme-switch").addEventListener("change", (e) => setTheme(e.target.value));
+  let saved = "dark";
+  try { saved = localStorage.getItem("oq-preview-theme") || "dark"; } catch {}
+  setTheme(saved);
+
+  const toast = (title, kind = "success") => {
+    const el = document.createElement("div");
+    el.className = `oq-toast oq-${kind}`;
+    el.innerHTML = `<div class="oq-toast__body"><div class="oq-toast__title">${esc(title)}</div></div>`;
+    $("#toasts").append(el);
+    setTimeout(() => el.remove(), 2200);
+  };
+  const copyText = async (t) => { try { await navigator.clipboard.writeText(t); return true; } catch { return false; } };
+  const findAll = (text, q) => {
+    if (!q) return [];
+    const hay = text.toLowerCase(), n = q.toLowerCase(), out = [];
+    for (let i = hay.indexOf(n); i !== -1; i = hay.indexOf(n, i + n.length)) out.push(i);
+    return out;
+  };
+  const mark = (text, q, cls, current = -1) => {
+    const hits = findAll(text, q);
+    if (!hits.length) return esc(text);
+    let out = "", at = 0;
+    hits.forEach((s, i) => { out += esc(text.slice(at, s)) + `<mark class="${cls}${i === current ? " is-current" : ""}">${esc(text.slice(s, s + q.length))}</mark>`; at = s + q.length; });
+    return out + esc(text.slice(at));
+  };
+  const rng = (seed) => () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+  /* ================= Virtual table ================= */
+  (() => {
+    const r = rng(11);
+    const regions = ["eu-central-1", "eu-west-1", "us-east-1", "us-west-2", "ap-south-1"];
+    const statuses = ["healthy", "degraded", "down"];
+    const owners = ["MP", "AK", "JN", "BOT"];
+    const rows = Array.from({ length: 100000 }, (_, i) => ({
+      id: i,
+      node: `node-${String(i + 1).padStart(6, "0")}`,
+      region: regions[Math.floor(r() * regions.length)],
+      status: statuses[r() < 0.86 ? 0 : r() < 0.7 ? 1 : 2],
+      rps: Math.floor(r() * 5000),
+      p95: Math.floor(8 + r() * 600),
+      owner: owners[Math.floor(r() * owners.length)],
+      note: r() < 0.1 ? "check cert" : "",
+    }));
+    const intent = { healthy: "success", degraded: "warning", down: "danger" };
+    const columns = [
+      { key: "node", header: "Node", width: 150, sortable: true, mono: true },
+      { key: "region", header: "Region", width: 140, sortable: true },
+      { key: "status", header: "Status", width: 120, sortable: true, render: (v) => `<span class="oq-status"><span class="oq-dot oq-${intent[v]}"></span>${v}</span>` },
+      { key: "rps", header: "Req/s", width: 110, sortable: true, align: "right", render: (v) => fmt(v) },
+      { key: "p95", header: "p95 ms", width: 110, sortable: true, align: "right", render: (v) => (v > 400 ? `<span class="oq-text-c oq-warning">${fmt(v)}</span>` : fmt(v)) },
+      { key: "owner", header: "Owner", width: 110, editable: true },
+      { key: "note", header: "Note", width: 220, editable: true },
+    ];
+    // Touch screens get finger-sized rows, as in the React VirtualTable.
+    const RH = window.matchMedia("(pointer: coarse)").matches ? 44 : 34, H = 420, CHECK = 40;
+    let order = rows.map((_, i) => i), sort = null, scrollTop = 0, active = { row: 0, col: 0 }, editing = null;
+    const selected = new Set(), hidden = new Set(), widths = {};
+    const host = $("#vt");
+    host.innerHTML = `
+      <div class="oq-vtable oq-vtable--sticky-first oq-vtable--striped">
+        <div class="oq-vtable__toolbar">
+          <div class="oq-input-group" style="width: 220px; height: var(--oq-control-sm)"><input class="oq-input oq-sm" id="vt-q" placeholder="Filter by node or region" aria-label="Filter rows"></div>
+          <label class="oq-check oq-small"><input type="checkbox" role="switch" class="oq-switch" id="vt-dense"> Dense</label>
+          <span class="oq-spacer"></span>
+          <span class="oq-small oq-faint" id="vt-count"></span>
+          <details class="oq-dropdown oq-dropdown--end" id="vt-cols">
+            <summary class="oq-btn oq-btn--outline oq-neutral oq-sm">Columns</summary>
+            <div class="oq-menu" role="menu"><div class="oq-menu__label oq-overline">Show columns</div>
+              ${columns.map((c) => `<label class="oq-menu__item oq-check"><input type="checkbox" class="oq-checkbox" data-col="${c.key}" checked> ${c.header}</label>`).join("")}
+            </div>
+          </details>
+          <button class="oq-btn oq-btn--outline oq-neutral oq-sm" id="vt-csv">Export CSV</button>
+        </div>
+        <div class="oq-vtable__grid" role="grid" tabindex="0" aria-multiselectable="true">
+          <div class="oq-vtable__viewport" style="height:${H}px">
+            <div class="oq-vtable__head" role="row"></div>
+            <div class="oq-vtable__body"><div class="oq-vtable__rows"></div></div>
+          </div>
+        </div>
+      </div>`;
+    const table = $(".oq-vtable", host), grid = $(".oq-vtable__grid", host), vp = $(".oq-vtable__viewport", host);
+    const head = $(".oq-vtable__head", host), body = $(".oq-vtable__body", host), rowsEl = $(".oq-vtable__rows", host);
+    const visible = () => columns.filter((c) => !hidden.has(c.key));
+    const rh = () => (table.classList.contains("oq-vtable--dense") ? (RH > 34 ? 36 : 28) : RH);
+    const widthOf = (c) => widths[c.key] ?? c.width;
+
+    function layout() {
+      const v = visible();
+      table.style.setProperty("--oq-vt-cols", [`${CHECK}px`, ...v.map((c) => `${widthOf(c)}px`)].join(" "));
+      table.style.setProperty("--oq-vt-width", `${CHECK + v.reduce((s, c) => s + widthOf(c), 0)}px`);
+      table.style.setProperty("--oq-vt-row", `${rh()}px`);
+      table.style.setProperty("--oq-vt-sticky", `${CHECK}px`);
+    }
+    function renderHead() {
+      const v = visible();
+      const all = order.length > 0 && order.every((i) => selected.has(i));
+      head.innerHTML = `<div class="oq-vtable__th oq-vtable__check" role="columnheader"><input type="checkbox" class="oq-checkbox" id="vt-all" aria-label="Select all rows" ${all ? "checked" : ""}></div>` +
+        v.map((c, ci) => {
+          const dir = sort?.key === c.key ? (sort.dir > 0 ? "ascending" : "descending") : "none";
+          return `<div role="columnheader" data-key="${c.key}" ${c.sortable ? `aria-sort="${dir}"` : ""} class="oq-vtable__th${ci === 0 ? " is-first" : ""}${c.align === "right" ? " oq-num" : ""}${c.sortable ? " is-sortable" : ""}"><span class="oq-truncate">${c.header}</span><span class="oq-vtable__resize" data-resize="${c.key}"></span></div>`;
+        }).join("");
+      $("#vt-all").indeterminate = !all && selected.size > 0;
+    }
+    function renderBody() {
+      const h = rh(), v = visible();
+      const top = Math.max(0, scrollTop - h);
+      const count = order.length;
+      const first = Math.floor(Math.min(top, Math.max(0, count * h - (H - h))) / h);
+      const start = Math.max(0, first - 8), end = Math.min(count, first + Math.ceil(H / h) + 9);
+      body.style.height = `${count * h}px`;
+      rowsEl.style.transform = `translateY(${start * h}px)`;
+      let out = "";
+      for (let rI = start; rI < end; rI++) {
+        const idx = order[rI], row = rows[idx], sel = selected.has(idx);
+        out += `<div class="oq-vtable__row${rI % 2 ? " is-odd" : ""}${rI === active.row ? " is-active" : ""}" role="row" aria-selected="${sel}" data-r="${rI}">` +
+          `<div class="oq-vtable__cell oq-vtable__check" role="gridcell"><input type="checkbox" class="oq-checkbox" tabindex="-1" aria-label="Select row" data-sel="${idx}" ${sel ? "checked" : ""}></div>` +
+          v.map((c, ci) => {
+            const val = row[c.key];
+            const isEd = editing && editing.row === rI && editing.col === ci;
+            const cls = `oq-vtable__cell${ci === 0 ? " is-first" : ""}${c.align === "right" ? " oq-num" : ""}${c.mono ? " oq-mono" : ""}${c.editable ? " is-editable" : ""}${rI === active.row && ci === active.col ? " is-active" : ""}`;
+            const content = isEd ? `<input class="oq-vtable__editor" value="${esc(val)}" aria-label="Edit ${c.header}">` : `<span class="oq-truncate">${c.render ? c.render(val) : esc(val)}</span>`;
+            return `<div class="${cls}" role="gridcell" data-c="${ci}">${content}</div>`;
+          }).join("") + `</div>`;
+      }
+      rowsEl.innerHTML = out;
+      $("#vt-count").textContent = `${fmt(order.length)} rows${selected.size ? ` · ${fmt(selected.size)} selected` : ""}`;
+      const ed = $(".oq-vtable__editor", rowsEl);
+      if (ed) { ed.focus(); ed.select(); }
+    }
+    const render = () => { layout(); renderHead(); renderBody(); };
+    function applyOrder() {
+      const q = $("#vt-q").value.trim().toLowerCase();
+      order = rows.map((_, i) => i);
+      if (q) order = order.filter((i) => rows[i].node.includes(q) || rows[i].region.includes(q));
+      if (sort) order.sort((a, b) => { const x = rows[a][sort.key], y = rows[b][sort.key]; return (typeof x === "number" ? x - y : String(x).localeCompare(String(y), undefined, { numeric: true })) * sort.dir; });
+      active.row = Math.min(active.row, Math.max(0, order.length - 1));
+      render();
+    }
+    function ensureVisible() {
+      const h = rh(), t = active.row * h;
+      if (t < vp.scrollTop) vp.scrollTop = t;
+      else if (t + h > vp.scrollTop + vp.clientHeight - h) vp.scrollTop = t + h - (vp.clientHeight - h);
+    }
+    vp.addEventListener("scroll", () => { scrollTop = vp.scrollTop; renderBody(); });
+    head.addEventListener("click", (e) => {
+      if (e.target.closest("[data-resize]")) return;
+      const th = e.target.closest("[data-key]");
+      const c = th && columns.find((x) => x.key === th.dataset.key);
+      if (!c?.sortable) return;
+      sort = !sort || sort.key !== c.key ? { key: c.key, dir: 1 } : sort.dir > 0 ? { key: c.key, dir: -1 } : null;
+      applyOrder();
+    });
+    head.addEventListener("change", (e) => {
+      if (e.target.id !== "vt-all") return;
+      if (e.target.checked) order.forEach((i) => selected.add(i)); else selected.clear();
+      render();
+    });
+    head.addEventListener("pointerdown", (e) => {
+      const h = e.target.closest("[data-resize]"); if (!h) return;
+      e.preventDefault();
+      const c = columns.find((x) => x.key === h.dataset.resize), x0 = e.clientX, w0 = widthOf(c);
+      const move = (ev) => { widths[c.key] = Math.max(48, Math.round(w0 + ev.clientX - x0)); layout(); };
+      const up = () => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); };
+      window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
+    });
+    rowsEl.addEventListener("change", (e) => {
+      const i = e.target.dataset.sel; if (i === undefined) return;
+      if (e.target.checked) selected.add(+i); else selected.delete(+i);
+      renderHead(); renderBody();
+    });
+    rowsEl.addEventListener("click", (e) => {
+      const cell = e.target.closest("[data-c]"), row = e.target.closest("[data-r]");
+      if (!cell || !row || editing) return;
+      active = { row: +row.dataset.r, col: +cell.dataset.c };
+      renderBody(); grid.focus({ preventScroll: true });
+    });
+    rowsEl.addEventListener("dblclick", (e) => {
+      const cell = e.target.closest("[data-c]"), row = e.target.closest("[data-r]");
+      if (!cell || !row) return;
+      active = { row: +row.dataset.r, col: +cell.dataset.c };
+      startEdit();
+    });
+    const startEdit = () => { if (visible()[active.col]?.editable) { editing = { ...active }; renderBody(); } };
+    const commit = (value) => {
+      if (!editing) return;
+      const c = visible()[editing.col], idx = order[editing.row];
+      if (rows[idx][c.key] !== value) { rows[idx][c.key] = value; toast(`${rows[idx].node}: ${c.header} = "${value}"`); }
+      editing = null; renderBody(); grid.focus({ preventScroll: true });
+    };
+    rowsEl.addEventListener("keydown", (e) => {
+      if (!e.target.classList.contains("oq-vtable__editor")) return;
+      e.stopPropagation();
+      if (e.key === "Enter") commit(e.target.value);
+      if (e.key === "Escape") { editing = null; renderBody(); grid.focus({ preventScroll: true }); }
+    });
+    rowsEl.addEventListener("focusout", (e) => { if (e.target.classList.contains("oq-vtable__editor") && editing) commit(e.target.value); });
+    grid.addEventListener("keydown", (e) => {
+      if (editing) return;
+      const last = order.length - 1, page = Math.floor(H / rh()) - 2, v = visible();
+      let { row, col } = active;
+      if (e.key === "ArrowDown") row = Math.min(last, row + 1);
+      else if (e.key === "ArrowUp") row = Math.max(0, row - 1);
+      else if (e.key === "PageDown") row = Math.min(last, row + page);
+      else if (e.key === "PageUp") row = Math.max(0, row - page);
+      else if (e.key === "Home") (e.ctrlKey || e.metaKey ? (row = 0) : (col = 0));
+      else if (e.key === "End") (e.ctrlKey || e.metaKey ? (row = last) : (col = v.length - 1));
+      else if (e.key === "ArrowLeft") col = Math.max(0, col - 1);
+      else if (e.key === "ArrowRight") col = Math.min(v.length - 1, col + 1);
+      else if (e.key === " ") { const i = order[row]; selected.has(i) ? selected.delete(i) : selected.add(i); }
+      else if (e.key === "Enter" || e.key === "F2") { e.preventDefault(); return startEdit(); }
+      else if (e.key === "a" && (e.ctrlKey || e.metaKey)) { const all = order.every((i) => selected.has(i)); all ? selected.clear() : order.forEach((i) => selected.add(i)); }
+      else return;
+      e.preventDefault();
+      active = { row, col };
+      ensureVisible(); renderHead(); renderBody();
+    });
+    $("#vt-q").addEventListener("input", applyOrder);
+    $("#vt-dense").addEventListener("change", (e) => { table.classList.toggle("oq-vtable--dense", e.target.checked); render(); });
+    $("#vt-cols").addEventListener("change", (e) => {
+      const k = e.target.dataset.col; if (!k) return;
+      if (e.target.checked) hidden.delete(k); else if (visible().length > 1) hidden.add(k); else e.target.checked = true;
+      active.col = Math.min(active.col, visible().length - 1);
+      render();
+    });
+    document.addEventListener("click", (e) => { const d = $("#vt-cols"); if (d.open && !d.contains(e.target)) d.open = false; });
+    $("#vt-csv").addEventListener("click", () => {
+      const v = visible(), field = (x) => { const s = String(x ?? ""); return /[",\r\n]|^\s|\s$/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+      const list = (selected.size ? order.filter((i) => selected.has(i)) : order).slice(0, 5000);
+      const csv = [v.map((c) => field(c.header)).join(","), ...list.map((i) => v.map((c) => field(rows[i][c.key])).join(","))].join("\r\n");
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+      a.download = "nodes.csv"; a.click();
+      toast(`Exported ${fmt(list.length)} rows${list.length === 5000 ? " (demo cap)" : ""}`);
+    });
+    applyOrder();
+  })();
+
+  /* ================= Log viewer ================= */
+  (() => {
+    const levels = ["debug", "info", "warn", "error", "fatal"];
+    const sources = ["edge", "store", "reload", "ratelim", "auth", "detector"];
+    const msgs = {
+      debug: ["cache hit key=%k", "tick %n ms", "worker %n idle"],
+      info: ["GET /api/nodes 200 %n ms", "config reloaded, %n keys changed", "deployed ruleset edge-v%n", "session started for user %k"],
+      warn: ["rate limit reached on /api/login (%n/60s)", "slow query %n ms on events", "retrying store connection (attempt %n)"],
+      error: ["ECONNREFUSED 10.0.0.4:6379", "POST /api/nodes 503 after %n ms", "certificate for %k expires in %n days"],
+      fatal: ["worker %n crashed: out of memory"],
+    };
+    const r = rng(5);
+    const pick = (a) => a[Math.floor(r() * a.length)];
+    const level = () => { const x = r(); return x < 0.25 ? "debug" : x < 0.8 ? "info" : x < 0.93 ? "warn" : x < 0.995 ? "error" : "fatal"; };
+    const make = (t) => { const l = level(); return { t, level: l, source: pick(sources), msg: pick(msgs[l]).replace("%n", Math.floor(r() * 900) + 1).replace("%k", Math.random().toString(36).slice(2, 8)) }; };
+    const pad = (n, w = 2) => String(n).padStart(w, "0");
+    const ts = (t) => { const d = new Date(t); return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`; };
+    let now = Date.now() - 600000;
+    const lines = Array.from({ length: 2000 }, () => make((now += Math.floor(r() * 300))));
+    // Same as the React LogViewer: taller lines on touch, one value for JS and CSS (--oq-log-line).
+    const LH = window.matchMedia("(pointer: coarse)").matches ? 30 : 22, H = 340;
+    let follow = true, wrap = false, query = "", matchI = 0, activeLine = -1, unseen = 0, scrollTop = 0, programmatic = false, shown = [], matches = [];
+    const on = new Set(levels);
+    const host = $("#lv");
+    host.innerHTML = `
+      <div class="oq-log" style="--oq-log-line: ${LH}px">
+        <div class="oq-log__toolbar">
+          <div class="oq-input-group oq-log__search">
+            <input class="oq-input oq-sm" type="search" placeholder="Search…" aria-label="Search log" id="lv-q">
+            <span class="oq-addon oq-addon--plain oq-mono" id="lv-n"></span>
+            <button class="oq-btn oq-btn--ghost oq-neutral oq-sm" aria-label="Previous match" id="lv-prev"><svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></button>
+            <button class="oq-btn oq-btn--ghost oq-neutral oq-sm" aria-label="Next match" id="lv-next"><svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          </div>
+          <div class="oq-log__levels" role="group" aria-label="Levels" id="lv-levels"></div>
+          <span class="oq-spacer"></span>
+          <button class="oq-btn oq-btn--ghost oq-danger oq-sm" id="lv-err">Next error</button>
+          <label class="oq-check oq-small"><input type="checkbox" role="switch" class="oq-switch" id="lv-wrap"> Wrap</label>
+          <label class="oq-check oq-small"><input type="checkbox" role="switch" class="oq-switch" id="lv-follow" checked> Follow</label>
+          <button class="oq-btn oq-btn--outline oq-neutral oq-sm" id="lv-pause">Pause stream</button>
+        </div>
+        <div class="oq-log__frame">
+          <div class="oq-log__viewport" role="log" style="height:${H}px"><div class="lv-inner" style="position:relative"><div class="lv-rows"></div></div></div>
+        </div>
+      </div>`;
+    const log = $(".oq-log", host), vp = $(".oq-log__viewport", host), inner = $(".lv-inner", host), rowsEl = $(".lv-rows", host), frame = $(".oq-log__frame", host);
+    const lineHtml = (l, i) => {
+      const occ = matches.length && matches[matchI] && matches[matchI][0] === i ? matches[matchI][1] : -1;
+      return `<div class="oq-log__line${i === activeLine ? " is-active" : ""}" data-level="${l.level}" data-line="${i}"${wrap ? "" : ` style="height:${LH}px"`}>` +
+        `<span class="oq-log__time">${ts(l.t)}</span><span class="oq-log__level">${l.level}</span><span class="oq-log__source">${l.source}</span>` +
+        `<span class="oq-log__msg">${mark(l.msg, query, "oq-log__match", occ)}</span><button class="oq-log__copy" data-copy="${i}">Copy</button></div>`;
+    };
+    function recompute() {
+      // Remember the current match by its line object, not its position: when the buffer trims
+      // old lines, positions shift and the highlight would otherwise jump to another match.
+      const cur = matches[matchI];
+      const keep = cur && [shown[cur[0]], cur[1]];
+      shown = lines.filter((l) => on.has(l.level));
+      matches = [];
+      if (query) shown.forEach((l, i) => findAll(l.msg, query).forEach((_, k) => matches.push([i, k])));
+      if (keep) {
+        const again = matches.findIndex(([i, k]) => shown[i] === keep[0] && k === keep[1]);
+        if (again >= 0) matchI = again;
+      }
+      if (matchI >= matches.length) matchI = Math.max(0, matches.length - 1);
+      const counts = Object.fromEntries(levels.map((lv) => [lv, 0]));
+      lines.forEach((l) => counts[l.level]++);
+      $("#lv-levels").innerHTML = levels.map((lv) => `<button class="oq-chip oq-sm oq-log__chip" data-level="${lv}" aria-pressed="${on.has(lv)}">${lv} <span class="oq-log__count">${fmt(counts[lv])}</span></button>`).join("");
+      $("#lv-n").textContent = query ? `${matches.length ? matchI + 1 : 0}/${matches.length}` : "";
+    }
+    function paint() {
+      if (wrap) { inner.style.height = ""; rowsEl.style.transform = ""; rowsEl.innerHTML = shown.map(lineHtml).join(""); return; }
+      const total = shown.length * LH, first = Math.floor(Math.min(scrollTop, Math.max(0, total - H)) / LH);
+      const start = Math.max(0, first - 12), end = Math.min(shown.length, first + Math.ceil(H / LH) + 13);
+      inner.style.height = `${total}px`;
+      rowsEl.style.transform = `translateY(${start * LH}px)`;
+      let out = ""; for (let i = start; i < end; i++) out += lineHtml(shown[i], i);
+      rowsEl.innerHTML = out;
+    }
+    const pill = () => {
+      let p = $(".oq-log__pill", frame);
+      if (!follow && unseen > 0) {
+        if (!p) { p = document.createElement("button"); p.className = "oq-log__pill"; p.onclick = resume; frame.append(p); }
+        p.innerHTML = `${fmt(unseen)} new line${unseen === 1 ? "" : "s"} <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>`;
+      } else p?.remove();
+    };
+    const toBottom = () => { programmatic = true; vp.scrollTop = vp.scrollHeight; scrollTop = vp.scrollTop; };
+    const resume = () => { follow = true; unseen = 0; $("#lv-follow").checked = true; paint(); toBottom(); paint(); pill(); };
+    const goLine = (i) => {
+      activeLine = i;
+      if (wrap) { paint(); $(`[data-line="${i}"]`, rowsEl)?.scrollIntoView({ block: "center" }); return; }
+      const t = i * LH;
+      if (t < vp.scrollTop || t + LH > vp.scrollTop + H) { programmatic = true; vp.scrollTop = Math.max(0, t - H / 2); scrollTop = vp.scrollTop; }
+      paint();
+    };
+    const stopFollow = () => { follow = false; $("#lv-follow").checked = false; };
+    vp.addEventListener("scroll", () => {
+      scrollTop = vp.scrollTop;
+      if (!wrap) paint();
+      if (programmatic) { programmatic = false; return; }
+      const atBottom = vp.scrollHeight - vp.scrollTop - vp.clientHeight < 4;
+      if (atBottom && !follow) resume();
+      else if (!atBottom && follow) { stopFollow(); pill(); }
+    });
+    $("#lv-q").addEventListener("input", (e) => { query = e.target.value; matchI = 0; matches = []; recompute(); if (matches.length) { stopFollow(); goLine(matches[0][0]); } else paint(); });
+    const step = (d) => { if (!matches.length) return; stopFollow(); matchI = (matchI + d + matches.length) % matches.length; recompute(); goLine(matches[matchI][0]); };
+    $("#lv-q").addEventListener("keydown", (e) => { if (e.key === "Enter") step(e.shiftKey ? -1 : 1); });
+    $("#lv-prev").onclick = () => step(-1);
+    $("#lv-next").onclick = () => step(1);
+    $("#lv-levels").addEventListener("click", (e) => { const b = e.target.closest("[data-level]"); if (!b) return; on.has(b.dataset.level) ? on.delete(b.dataset.level) : on.add(b.dataset.level); activeLine = -1; recompute(); paint(); if (follow) toBottom(); });
+    $("#lv-err").onclick = () => {
+      const isErr = (l) => l.level === "error" || l.level === "fatal";
+      let i = shown.findIndex((l, k) => k > activeLine && isErr(l));
+      if (i === -1) i = shown.findIndex(isErr);
+      if (i !== -1) { stopFollow(); goLine(i); }
+    };
+    $("#lv-wrap").onchange = (e) => { wrap = e.target.checked; log.classList.toggle("oq-log--wrap", wrap); paint(); if (follow) toBottom(); };
+    $("#lv-follow").onchange = (e) => (e.target.checked ? resume() : (stopFollow(), pill()));
+    rowsEl.addEventListener("click", async (e) => {
+      const b = e.target.closest("[data-copy]"); if (!b) return;
+      const l = shown[+b.dataset.copy];
+      await copyText(`${ts(l.t)} ${l.level.toUpperCase()} [${l.source}] ${l.msg}`);
+      b.textContent = "Copied"; setTimeout(() => (b.textContent = "Copy"), 1200);
+    });
+    let paused = false;
+    $("#lv-pause").onclick = (e) => { paused = !paused; e.target.textContent = paused ? "Resume stream" : "Pause stream"; };
+    setInterval(() => {
+      if (paused) return;
+      const n = 1 + Math.floor(r() * 3);
+      for (let k = 0; k < n; k++) lines.push(make((now = Math.max(now + 1, Date.now()) + k)));
+      if (lines.length > 20000) lines.splice(0, lines.length - 20000);
+      recompute();
+      if (follow) { paint(); toBottom(); paint(); }
+      else { unseen += n; paint(); pill(); }
+    }, 700);
+    recompute(); paint(); toBottom(); paint();
+  })();
+
+  /* ================= JSON inspector ================= */
+  (() => {
+    const value = {
+      id: "req_8f2c41a7",
+      receivedAt: "2026-10-25T11:05:02.114Z",
+      request: {
+        method: "POST",
+        path: "/api/login",
+        headers: { host: "edge.osqd.local", "user-agent": "python-requests/2.32", "content-type": "application/json", "x-forwarded-for": "185.220.101.42, 10.0.0.1" },
+        query: {},
+        bodyBytes: 512,
+      },
+      client: { ip: "185.220.101.42", asn: 4224, country: "DE", tor: true },
+      score: 82.5,
+      findings: [
+        { detector: "tor-exit", score: 40, reason: "listed exit node" },
+        { detector: "user-agent", score: 20, reason: "automation library" },
+        { detector: "rate", score: 22.5, reason: "31 requests in 60 s", window: { size: 60, limit: 30 } },
+      ],
+      decision: { action: "challenge", blocked: false, ruleset: "edge-v14", note: null },
+    };
+    const host = $("#ji");
+    host.innerHTML = `
+      <div class="oq-json">
+        <div class="oq-json__toolbar">
+          <div class="oq-input-group oq-json__search"><span class="oq-addon oq-addon--plain"><svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.4-4.4"/></svg></span><input class="oq-input oq-sm" type="search" placeholder="Filter keys and values" aria-label="Filter JSON" id="ji-q"></div>
+          <span class="oq-spacer"></span>
+          <span class="oq-small oq-faint">Expand</span>
+          <div class="oq-segmented" role="group" aria-label="Expand to depth" id="ji-depth"><button data-d="1">1</button><button data-d="2">2</button><button data-d="3">3</button><button data-d="99">All</button></div>
+          <button class="oq-btn oq-btn--ghost oq-neutral oq-sm" data-d="0" id="ji-collapse">Collapse</button>
+        </div>
+        <ul class="oq-json__tree" role="tree" aria-label="JSON" style="max-height: 420px"></ul>
+      </div>`;
+    const tree = $(".oq-json__tree", host);
+    const type = (v) => (v === null ? "null" : Array.isArray(v) ? "array" : typeof v);
+    const path = (segs) => "$" + segs.map((s) => (typeof s === "number" ? `[${s}]` : /^[A-Za-z_$][\w$]*$/.test(s) ? `.${s}` : `[${JSON.stringify(s)}]`)).join("");
+    const kids = (v) => (Array.isArray(v) ? v.map((x, i) => [i, x]) : v && typeof v === "object" ? Object.entries(v) : []);
+    const prev = (v) => (typeof v === "string" ? JSON.stringify(v) : String(v));
+    let expanded = new Set(), q = "", focus = 0, rows = [];
+    const expandTo = (depth) => {
+      expanded = new Set(["$"]);
+      const walk = (v, segs, d) => { const t = type(v); if (d >= depth || (t !== "object" && t !== "array")) return; expanded.add(path(segs)); kids(v).forEach(([k, c]) => walk(c, [...segs, k], d + 1)); };
+      walk(value, [], -1);
+    };
+    expandTo(1);
+    const matchesNode = (k, v) => (k !== null && String(k).toLowerCase().includes(q)) || (type(v) !== "object" && type(v) !== "array" && prev(v).toLowerCase().includes(q));
+    function build() {
+      rows = [];
+      let keep = null;
+      if (q) {
+        keep = new Set();
+        const walk = (v, segs, k) => { let any = matchesNode(k, v); kids(v).forEach(([kk, c]) => { if (walk(c, [...segs, kk], kk)) any = true; }); if (any) keep.add(path(segs)); return any; };
+        walk(value, [], null);
+      }
+      const visit = (v, segs, k, depth) => {
+        const id = path(segs);
+        if (keep && !keep.has(id)) return;
+        const t = type(v);
+        if (depth >= 0) rows.push({ id, segs, k, v, t, depth });
+        if ((keep || expanded.has(id)) && (t === "object" || t === "array")) kids(v).forEach(([kk, c]) => visit(c, [...segs, kk], kk, depth + 1));
+      };
+      visit(value, [], null, -1);
+    }
+    function render() {
+      build();
+      focus = Math.min(focus, rows.length - 1);
+      tree.innerHTML = rows.length ? rows.map((n, i) => {
+        const cont = (n.t === "object" || n.t === "array") && kids(n.v).length > 0;
+        const open = q || expanded.has(n.id);
+        const size = kids(n.v).length;
+        const val = n.t === "object" || n.t === "array"
+          ? `<span class="oq-json__meta"><span class="oq-json__brace">${open && size ? (n.t === "array" ? "[" : "{") : n.t === "array" ? "[ ]" : "{ }"}</span>${size} ${n.t === "array" ? (size === 1 ? "item" : "items") : size === 1 ? "key" : "keys"}</span>`
+          : `<span class="oq-json__value is-${n.t}">${mark(prev(n.v), q, "oq-json__match")}</span>`;
+        return `<li role="treeitem" aria-level="${n.depth + 1}" ${cont ? `aria-expanded="${!!open}"` : ""} tabindex="${i === focus ? 0 : -1}" data-i="${i}" class="oq-json__row${q && matchesNode(n.k, n.v) ? " is-hit" : ""}" style="padding-left: calc(${n.depth} * var(--oq-json-indent, 16px) + 6px)">` +
+          `<span class="oq-json__twisty" aria-hidden="true">${cont ? '<svg class="oq-icon" style="width:12px;height:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>' : ""}</span>` +
+          `<span class="oq-json__key${typeof n.k === "number" ? " is-index" : ""}">${mark(String(n.k), q, "oq-json__match")}</span><span class="oq-json__colon">:</span>${val}` +
+          `<span class="oq-json__actions"><button class="oq-json__action" tabindex="-1" data-act="path">Path</button><button class="oq-json__action" tabindex="-1" data-act="value">Copy</button></span></li>`;
+      }).join("") : `<li class="oq-json__empty">Nothing matches</li>`;
+      $$("#ji-depth button, #ji-collapse").forEach((b) => (b.disabled = !!q));
+    }
+    const copy = async (kind, n, btn) => {
+      const text = kind === "path" ? n.id : typeof n.v === "string" ? n.v : JSON.stringify(n.v, null, 2);
+      await copyText(text);
+      $("#ji-copied").textContent = kind === "path" ? text : `${n.id} (value)`;
+      if (btn) { btn.textContent = "Copied"; setTimeout(() => (btn.textContent = kind === "path" ? "Path" : "Copy"), 1200); }
+    };
+    const focusRow = (i) => { focus = Math.max(0, Math.min(rows.length - 1, i)); render(); tree.querySelector(`[data-i="${focus}"]`)?.focus(); };
+    const toggle = (n, open) => { const isOpen = expanded.has(n.id); if (open ?? !isOpen) expanded.add(n.id); else expanded.delete(n.id); };
+    tree.addEventListener("click", (e) => {
+      const li = e.target.closest("[data-i]"); if (!li) return;
+      const n = rows[+li.dataset.i];
+      const act = e.target.closest("[data-act]");
+      if (act) return copy(act.dataset.act, n, act);
+      focus = +li.dataset.i;
+      if (!q && kids(n.v).length) toggle(n);
+      render(); tree.querySelector(`[data-i="${focus}"]`)?.focus();
+    });
+    tree.addEventListener("keydown", (e) => {
+      const n = rows[focus]; if (!n) return;
+      const cont = kids(n.v).length > 0 && (n.t === "object" || n.t === "array"), open = q || expanded.has(n.id);
+      if (e.key === "ArrowDown") focusRow(focus + 1);
+      else if (e.key === "ArrowUp") focusRow(focus - 1);
+      else if (e.key === "Home") focusRow(0);
+      else if (e.key === "End") focusRow(rows.length - 1);
+      else if (e.key === "ArrowRight") { if (cont && !open) { toggle(n, true); focusRow(focus); } else if (cont) focusRow(focus + 1); }
+      else if (e.key === "ArrowLeft") { if (cont && open && !q) { toggle(n, false); focusRow(focus); } else { for (let i = focus - 1; i >= 0; i--) if (rows[i].depth < n.depth) { focusRow(i); break; } } }
+      else if (e.key === "Enter" || e.key === " ") { if (cont && !q) { toggle(n); focusRow(focus); } }
+      else if (e.key === "c") copy("value", n);
+      else if (e.key === "p") copy("path", n);
+      else return;
+      e.preventDefault();
+    });
+    tree.addEventListener("focusin", (e) => { const li = e.target.closest("[data-i]"); if (li) focus = +li.dataset.i; });
+    $("#ji-q").addEventListener("input", (e) => { q = e.target.value.trim().toLowerCase(); render(); });
+    host.addEventListener("click", (e) => { const b = e.target.closest("button[data-d]"); if (!b) return; expandTo(+b.dataset.d); render(); });
+    render();
+  })();
+
+  /* ================= Diff view ================= */
+  (() => {
+    // Myers' shortest edit script — the same algorithm as diffSequences in the React layer.
+    function diff(a, b) {
+      let pre = 0; while (pre < a.length && pre < b.length && a[pre] === b[pre]) pre++;
+      let suf = 0; while (suf < a.length - pre && suf < b.length - pre && a[a.length - 1 - suf] === b[b.length - 1 - suf]) suf++;
+      const A = a.slice(pre, a.length - suf), B = b.slice(pre, b.length - suf), n = A.length, m = B.length;
+      const mid = [];
+      if (!n) B.forEach((v) => mid.push({ t: "add", v }));
+      else if (!m) A.forEach((v) => mid.push({ t: "del", v }));
+      else {
+        const max = n + m, off = max, v = new Int32Array(2 * max + 2), trace = [];
+        outer: for (let d = 0; d <= max; d++) {
+          trace.push(v.slice());
+          for (let k = -d; k <= d; k += 2) {
+            const down = k === -d || (k !== d && v[off + k - 1] < v[off + k + 1]);
+            let x = down ? v[off + k + 1] : v[off + k - 1] + 1, y = x - k;
+            while (x < n && y < m && A[x] === B[y]) { x++; y++; }
+            v[off + k] = x;
+            if (x >= n && y >= m) break outer;
+          }
+        }
+        let x = n, y = m;
+        for (let d = trace.length - 1; d >= 0; d--) {
+          const vd = trace[d], k = x - y, down = k === -d || (k !== d && vd[off + k - 1] < vd[off + k + 1]);
+          const pk = down ? k + 1 : k - 1, px = vd[off + pk], py = px - pk;
+          while (x > px && y > py) { mid.push({ t: "eq", v: A[x - 1] }); x--; y--; }
+          if (d > 0) mid.push(down ? { t: "add", v: B[y - 1] } : { t: "del", v: A[x - 1] });
+          x = px; y = py;
+        }
+        mid.reverse();
+      }
+      return [...a.slice(0, pre).map((v) => ({ t: "eq", v })), ...mid, ...a.slice(a.length - suf).map((v) => ({ t: "eq", v }))];
+    }
+    const tokens = (s) => s.match(/\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu) ?? [];
+    const words = (oldL, newL, side) => diff(tokens(oldL), tokens(newL)).map((o) => (o.t === "eq" ? esc(o.v) : o.t === side ? `<${side === "add" ? "ins" : "del"} class="oq-diff__word">${esc(o.v)}</${side === "add" ? "ins" : "del"}>` : "")).join("");
+
+    const before = `# edge.toml — production
+[server]
+port = 9110
+host = "0.0.0.0"
+timeout_ms = 2500
+max_body_kb = 512
+
+[store]
+kind = "redis"
+url = "redis://10.0.0.4:6379"
+pool = 8
+
+[tls]
+enabled = true
+cert = "/etc/osqd/tls/edge.crt"
+key = "/etc/osqd/tls/edge.key"
+min_version = "1.2"
+ciphers = "default"
+
+[notify]
+channel = "ops"
+on_down = true
+on_block_rate = 0.05
+quiet_hours = "22:00-07:00"
+
+[detectors]
+user_agent = { enabled = true, weight = 20 }
+rate = { enabled = true, weight = 35, window = 60, limit = 30 }
+tor_exit = { enabled = true, weight = 40 }
+headers = { enabled = false, weight = 15 }
+
+[policy]
+mode = "challenge"
+threshold = 60
+
+[log]
+level = "info"
+format = "json"
+retention_days = 14
+
+[dashboard]
+enabled = true
+path = "/_osqd"
+
+[metrics]
+enabled = true
+path = "/metrics"
+interval_s = 15
+histogram_buckets = [5, 10, 25, 50, 100, 250, 500, 1000]
+labels = ["region", "node"]
+`;
+    const after = `# edge.toml — production
+[server]
+port = 9110
+host = "0.0.0.0"
+timeout_ms = 3000
+max_body_kb = 512
+trusted_proxies = ["10.0.0.0/8"]
+
+[store]
+kind = "redis"
+url = "redis://10.0.0.5:6379"
+pool = 8
+
+[tls]
+enabled = true
+cert = "/etc/osqd/tls/edge.crt"
+key = "/etc/osqd/tls/edge.key"
+min_version = "1.2"
+ciphers = "default"
+
+[notify]
+channel = "ops"
+on_down = true
+on_block_rate = 0.05
+quiet_hours = "22:00-07:00"
+
+[detectors]
+user_agent = { enabled = true, weight = 20 }
+rate = { enabled = true, weight = 35, window = 60, limit = 30 }
+tor_exit = { enabled = true, weight = 40 }
+headers = { enabled = true, weight = 15 }
+
+[policy]
+mode = "block"
+threshold = 70
+
+[log]
+level = "info"
+format = "json"
+retention_days = 30
+
+[dashboard]
+enabled = true
+path = "/_osqd"
+
+[metrics]
+enabled = true
+path = "/metrics"
+interval_s = 15
+histogram_buckets = [5, 10, 25, 50, 100, 250, 500, 1000]
+labels = ["region", "node"]
+`;
+    const split = (t) => t.replace(/\n$/, "").split("\n");
+    let o = 0, n = 0;
+    const lines = diff(split(before), split(after)).map((op) => (op.t === "eq" ? { type: "equal", text: op.v, oldNo: ++o, newNo: ++n } : op.t === "del" ? { type: "del", text: op.v, oldNo: ++o } : { type: "add", text: op.v, newNo: ++n }));
+    // Pair removals with additions inside each change block, for the word highlight.
+    const pairs = new Map();
+    for (let i = 0; i < lines.length;) {
+      if (lines[i].type !== "del") { i++; continue; }
+      const d = [], a = [];
+      while (i < lines.length && lines[i].type === "del") d.push(lines[i++]);
+      while (i < lines.length && lines[i].type === "add") a.push(lines[i++]);
+      for (let k = 0; k < Math.min(d.length, a.length); k++) { pairs.set(d[k], a[k]); pairs.set(a[k], d[k]); }
+    }
+    const added = lines.filter((l) => l.type === "add").length, removed = lines.filter((l) => l.type === "del").length;
+    // Same rule as the React DiffView: below 720px it is always unified and the switch hides.
+    let chosen = "unified";
+    const narrowDiff = window.matchMedia("(max-width: 720px)");
+    const open = new Set();
+    const text = (l) => (l.type === "equal" ? esc(l.text) : pairs.has(l) ? (l.type === "del" ? words(l.text, pairs.get(l).text, "del") : words(pairs.get(l).text, l.text, "add")) : esc(l.text));
+    function rowsWithFolds(ctx = 3, minHidden = 4) {
+      const out = []; let id = 0;
+      for (let i = 0; i < lines.length;) {
+        if (lines[i].type !== "equal") { out.push({ line: lines[i++] }); continue; }
+        let j = i; while (j < lines.length && lines[j].type === "equal") j++;
+        const run = lines.slice(i, j), head = i === 0 ? 0 : ctx, tail = j === lines.length ? 0 : ctx, hidden = run.length - head - tail, fid = id++;
+        if (hidden >= minHidden && !open.has(fid)) { run.slice(0, head).forEach((l) => out.push({ line: l })); out.push({ skip: fid, count: hidden }); run.slice(head + hidden).forEach((l) => out.push({ line: l })); }
+        else run.forEach((l) => out.push({ line: l }));
+        i = j;
+      }
+      return out;
+    }
+    const sign = { equal: " ", add: "+", del: "−" };
+    function render() {
+      const mode = narrowDiff.matches ? "unified" : chosen;
+      const rows = rowsWithFolds();
+      const skip = (r) => `<tr class="oq-diff__skip"><td colspan="4"><button data-fold="${r.skip}">… ${r.count} unchanged line${r.count === 1 ? "" : "s"}</button></td></tr>`;
+      let body = "";
+      if (mode === "unified") {
+        body = rows.map((r) => (r.skip !== undefined ? skip(r) : `<tr class="oq-diff__line is-${r.line.type}"><td class="oq-diff__num">${r.line.oldNo ?? ""}</td><td class="oq-diff__num">${r.line.newNo ?? ""}</td><td class="oq-diff__sign">${sign[r.line.type]}</td><td class="oq-diff__code">${text(r.line)}</td></tr>`)).join("");
+      } else {
+        for (let i = 0; i < rows.length;) {
+          const r = rows[i];
+          if (r.skip !== undefined) { body += skip(r); i++; continue; }
+          if (r.line.type === "equal") { body += `<tr class="oq-diff__line is-equal"><td class="oq-diff__num">${r.line.oldNo}</td><td class="oq-diff__code">${esc(r.line.text)}</td><td class="oq-diff__num">${r.line.newNo}</td><td class="oq-diff__code">${esc(r.line.text)}</td></tr>`; i++; continue; }
+          const d = [], a = [];
+          while (i < rows.length && rows[i].line && rows[i].line.type !== "equal") (rows[i].line.type === "del" ? d : a).push(rows[i++].line);
+          for (let k = 0; k < Math.max(d.length, a.length); k++) {
+            const x = d[k], y = a[k];
+            body += `<tr class="oq-diff__line"><td class="oq-diff__num ${x ? "is-del" : "is-blank"}">${x?.oldNo ?? ""}</td><td class="oq-diff__code ${x ? "is-del" : "is-blank"}">${x ? text(x) : ""}</td><td class="oq-diff__num ${y ? "is-add" : "is-blank"}">${y?.newNo ?? ""}</td><td class="oq-diff__code ${y ? "is-add" : "is-blank"}">${y ? text(y) : ""}</td></tr>`;
+          }
+        }
+      }
+      const cols = mode === "unified" ? '<col class="oq-diff__numcol"><col class="oq-diff__numcol"><col class="oq-diff__signcol"><col>' : '<col class="oq-diff__numcol"><col><col class="oq-diff__numcol"><col>';
+      $("#dv").innerHTML = `
+        <div class="oq-diff${mode === "split" ? " oq-diff--split" : ""}">
+          <div class="oq-diff__header">
+            ${mode === "split" ? '<span class="oq-diff__label">edge.toml @ v14</span><span class="oq-diff__label">edge.toml (working copy)</span>' : '<span class="oq-diff__label">edge.toml @ v14 → working copy</span>'}
+            <span class="oq-spacer"></span>
+            <span class="oq-diff__stat is-add">+${added}</span><span class="oq-diff__stat is-del">−${removed}</span>
+            ${narrowDiff.matches ? "" : `<div class="oq-segmented" role="group" aria-label="Diff layout"><button aria-pressed="${mode === "unified"}" data-mode="unified">Unified</button><button aria-pressed="${mode === "split"}" data-mode="split">Split</button></div>`}
+          </div>
+          <div class="oq-diff__body"><table class="oq-diff__table"><colgroup>${cols}</colgroup><tbody>${body}</tbody></table></div>
+        </div>`;
+    }
+    $("#dv").addEventListener("click", (e) => {
+      const m = e.target.closest("[data-mode]"); if (m) { chosen = m.dataset.mode; return render(); }
+      const f = e.target.closest("[data-fold]"); if (f) { open.add(+f.dataset.fold); render(); }
+    });
+    narrowDiff.addEventListener("change", render);
+    render();
+  })();
+
+  // Active section in the sidebar.
+  const links = $$("#toc a");
+  const spy = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    links.forEach((a) => (a.hash === `#${en.target.id}` ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
+  }), { rootMargin: "-15% 0px -75% 0px" });
+  $$(".pv-section").forEach((s) => spy.observe(s));
+})();
+</script>
+</body>
+</html>

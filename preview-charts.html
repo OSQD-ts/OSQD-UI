@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSQD UI — charts</title>
+<link rel="stylesheet" href="styles/index.css">
+<style>
+  /* Preview-page layout only; nothing here is part of the kit. */
+  html, body { margin: 0; }
+  .pv-section { scroll-margin-top: 64px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid var(--oq-border); }
+  .pv-section:last-child { border-bottom: 0; }
+  .pv-section > header { display: flex; flex-direction: column; gap: 4px; }
+  .pv-demo { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px; }
+  .pv-main { max-width: 1080px; }
+  .pv-sidebar { position: sticky; top: 48px; height: calc(100vh - 48px); }
+  .pv-swatch { display: flex; flex-direction: column; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-md); overflow: hidden; background: var(--oq-surface); }
+  .pv-swatch > div:first-child { height: 40px; }
+  .pv-swatch > div:last-child { padding: 6px 10px; font-size: 12px; display: flex; justify-content: space-between; gap: 8px; }
+</style>
+</head>
+<body class="oq">
+
+<div class="oq-shell">
+  <header class="oq-appbar oq-appbar--sticky pv-appbar">
+    <a class="oq-appbar__brand" href="preview.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+      OSQD&nbsp;UI <span class="oq-chip oq-sm oq-neutral">0.4.0</span>
+    </a>
+    <nav class="pv-galleries" aria-label="Galleries">
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview.html">Core</a>
+      <a class="oq-btn oq-btn--soft oq-neutral oq-sm" href="preview-charts.html" aria-current="page">Charts</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-data.html">Data</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-forms.html">Forms</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-layout.html">Layout</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="elements.html">Elements</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="icons.html">Icons</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="theme-builder.html">Theme builder</a>
+    </nav>
+    <oq-dropdown class="pv-galleries-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Charts <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Galleries">
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html" aria-current="page">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <oq-dropdown class="pv-samples-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Samples <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Sample sites">
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <div class="oq-spacer"></div>
+    <oq-theme-select storage-key="oq-preview-theme" default="dark">
+      <select class="oq-select oq-sm" id="theme-switch" aria-label="Theme" style="width: 132px">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="graphite">Graphite</option>
+        <option value="midnight">Midnight</option>
+        <option value="contrast">Contrast</option>
+        <option value="paper">Paper</option>
+        <option value="slate">Slate</option>
+        <option value="auto">Auto (system)</option>
+      </select>
+    </oq-theme-select>
+    <oq-dropdown class="pv-site-menu">
+      <details class="oq-dropdown oq-dropdown--end">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon" aria-label="Menu"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+        <nav class="oq-menu" aria-label="Galleries and samples">
+          <div class="oq-menu__label oq-overline">Galleries</div>
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html" aria-current="page">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <div class="oq-menu__label oq-overline">Samples</div>
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <style data-pv-appbar>
+      /* Gallery app bar (the same on every gallery page). */
+      .pv-appbar { gap: 8px; min-width: 0; }
+      .pv-appbar .oq-appbar__brand { flex: none; }
+      .pv-galleries { display: flex; flex: none; gap: 2px; }
+      .pv-appbar > * { white-space: nowrap; }
+      .pv-galleries-menu, .pv-site-menu { display: none; }
+      .pv-appbar .oq-dropdown > summary { gap: 4px; }
+      .pv-appbar .oq-menu { min-width: 200px; }
+      .pv-appbar-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .pv-appbar .oq-input-group { flex: 0 1 240px; min-width: 0; width: auto !important; }
+      @media (max-width: 1359.98px) { .pv-galleries { display: none; } .pv-galleries-menu { display: inline-block; } }
+      /* Phones: brand, theme and one menu; the page's own tools move to a second row that scrolls. */
+      @media (max-width: 720px) {
+        .pv-appbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 4px 8px; row-gap: 0; gap: 4px; }
+        .pv-appbar .oq-appbar__brand .oq-chip, .pv-appbar .pv-hide-sm, .pv-galleries-menu, .pv-samples-menu { display: none; }
+        .pv-site-menu { display: inline-block; }
+        .pv-appbar #theme-switch { width: 108px !important; }
+        .pv-appbar-tools { order: 10; flex: 1 0 100%; padding: 4px 0 8px; overflow-x: auto; scrollbar-width: none; }
+        .pv-appbar-tools .oq-input-group { flex: 1 1 auto; }
+        .pv-site-menu .oq-menu { position: fixed; top: 52px; left: 8px; right: 8px; max-width: none; max-height: calc(100dvh - 64px); }
+      }
+    </style>
+    <script src="assets/osqd-ui-elements.js" defer></script>
+  </header>
+
+  <aside class="oq-sidebar pv-sidebar">
+    <nav class="oq-nav" id="toc">
+      <div class="oq-nav__section oq-overline">Charts</div>
+      <a class="oq-nav__item" href="#series">Series palette</a>
+      <a class="oq-nav__item" href="#bar">Bar chart</a>
+      <a class="oq-nav__item" href="#line">Line &amp; area</a>
+      <a class="oq-nav__item" href="#donut">Donut</a>
+      <a class="oq-nav__item" href="#heatmap">Heatmap</a>
+      <div class="oq-nav__section oq-overline">Dates</div>
+      <a class="oq-nav__item" href="#datepicker">Date picker</a>
+      <a class="oq-nav__item" href="#rangepicker">Date range picker</a>
+      <a class="oq-nav__item" href="#calendar">Calendar</a>
+      <div class="oq-nav__section oq-overline">Together</div>
+      <a class="oq-nav__item" href="#together">Range-driven chart</a>
+    </nav>
+  </aside>
+
+  <main class="oq-shell__main">
+  <div class="pv-main">
+
+  <!-- ================= Series ================= -->
+  <section class="pv-section" id="series">
+    <header>
+      <div class="oq-overline">Charts</div>
+      <h2 class="oq-h2">Series palette</h2>
+      <p class="oq-muted">Eight categorical slots, <code>--oq-series-1</code> … <code>--oq-series-8</code>, assigned in order and never cycled. They are separate from the intents: success, warning and danger mean <em>state</em> and stay reserved for it. Dark themes get one set of steps and light themes another; both are checked for colour-blind separation against every theme's surface. Every chart also has a legend, a tooltip and a table, so colour is never the only cue.</p>
+    </header>
+    <div class="oq-grid" style="--min: 110px" id="series-swatches"></div>
+    <pre class="oq-pre">import { BarChart } from "@osqd/ui";
+
+&lt;BarChart
+  label="Requests per region"
+  data={rows}            // [{ region: "eu-central", allowed: 4210, blocked: 312 }, …]
+  x="region"
+  series={[{ key: "allowed", label: "Allowed" }, { key: "blocked", label: "Blocked" }]}
+  stacked
+  table="toggle"
+/&gt;</pre>
+  </section>
+
+  <!-- ================= Bar ================= -->
+  <section class="pv-section" id="bar">
+    <header>
+      <div class="oq-overline">Charts</div>
+      <h2 class="oq-h2">Bar chart</h2>
+      <p class="oq-muted">Grouped or stacked, vertical or horizontal. Bars are rounded only at their data end, with a 2px gap between neighbours. Hover anywhere in a band for its values; click a legend item to hide a series. <code>.oq-chart</code>, <code>.oq-chart__bar</code>, <code>.oq-chart__legend</code>, <code>.oq-chart__tooltip</code>.</p>
+    </header>
+    <div class="oq-grid" style="--min: min(420px, 100%)">
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Requests by region</h3><span class="oq-card__subtitle">grouped</span></div><div class="oq-card__body"><div id="c-bar-grouped"></div></div></div>
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Responses per day</h3><span class="oq-card__subtitle">stacked</span></div><div class="oq-card__body"><div id="c-bar-stacked"></div></div></div>
+    </div>
+    <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Slowest endpoints</h3><span class="oq-card__subtitle">horizontal · p95 ms</span></div><div class="oq-card__body"><div id="c-bar-horizontal"></div></div></div>
+  </section>
+
+  <!-- ================= Line ================= -->
+  <section class="pv-section" id="line">
+    <header>
+      <div class="oq-overline">Charts</div>
+      <h2 class="oq-h2">Line &amp; area</h2>
+      <p class="oq-muted">2px lines, a crosshair and tooltip that snap to the nearest point, and arrow-key navigation once the plot has focus. <code>.oq-chart__line</code>, <code>.oq-chart__area</code>, <code>.oq-chart__crosshair</code>.</p>
+    </header>
+    <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Latency, last 24 hours</h3><span class="oq-card__subtitle">ms</span></div><div class="oq-card__body"><div id="c-line"></div></div></div>
+    <div class="oq-grid" style="--min: min(420px, 100%)">
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Traffic by region</h3><span class="oq-card__subtitle">stacked area · req/s</span></div><div class="oq-card__body"><div id="c-area-stacked"></div></div></div>
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Memory</h3><span class="oq-card__subtitle">area · single series</span></div><div class="oq-card__body"><div id="c-area"></div></div></div>
+    </div>
+  </section>
+
+  <!-- ================= Donut ================= -->
+  <section class="pv-section" id="donut">
+    <header>
+      <div class="oq-overline">Charts</div>
+      <h2 class="oq-h2">Donut</h2>
+      <p class="oq-muted">Part-to-whole for a handful of categories; five or fewer reads best, fold the rest into "Other". The legend shows the share and toggles slices. <code>.oq-donut</code>, <code>.oq-donut__slice</code>, <code>.oq-donut__center</code>.</p>
+    </header>
+    <div class="oq-grid" style="--min: min(300px, 100%)">
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Blocks by detector</h3></div><div class="oq-card__body"><div id="c-donut"></div></div></div>
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Traffic by region</h3></div><div class="oq-card__body"><div id="c-donut-2"></div></div></div>
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Empty state</h3></div><div class="oq-card__body"><div id="c-empty"></div></div></div>
+    </div>
+  </section>
+
+  <!-- ================= Heatmap ================= -->
+  <section class="pv-section" id="heatmap">
+    <header>
+      <div class="oq-overline">Charts</div>
+      <h2 class="oq-h2">Heatmap</h2>
+      <p class="oq-muted">One hue, light to dark, in six quantised steps: the primary mixed into the surface. Dashed cells have no data. <code>.oq-heatmap__cell</code>, <code>.oq-heatmap__scale</code>.</p>
+    </header>
+    <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Requests by hour and weekday</h3><span class="oq-card__subtitle">last 4 weeks</span></div><div class="oq-card__body"><div id="c-heat"></div></div></div>
+  </section>
+
+  <!-- ================= Date picker ================= -->
+  <section class="pv-section" id="datepicker">
+    <header>
+      <div class="oq-overline">Dates</div>
+      <h2 class="oq-h2">Date picker</h2>
+      <p class="oq-muted">An input-like trigger and a popover calendar. Weeks start on Monday by default. Keyboard: arrows move by a day or a week, <kbd class="oq-kbd">PgUp</kbd>/<kbd class="oq-kbd">PgDn</kbd> by a month (with <kbd class="oq-kbd">Shift</kbd>, a year), <kbd class="oq-kbd">Home</kbd>/<kbd class="oq-kbd">End</kbd> to the start or end of the week, <kbd class="oq-kbd">Enter</kbd> picks and <kbd class="oq-kbd">Esc</kbd> closes. <code>.oq-datepicker</code>, <code>.oq-calendar</code>.</p>
+    </header>
+    <div class="pv-demo">
+      <div class="oq-field" style="width: 220px"><span class="oq-label">Deploy date</span><div id="dp-1"></div></div>
+      <div class="oq-field" style="width: 240px"><span class="oq-label">With time</span><div id="dp-2"></div></div>
+      <div class="oq-field" style="width: 220px"><span class="oq-label">Weekdays, next 60 days</span><div id="dp-3"></div><span class="oq-help">Weekends and past days are disabled.</span></div>
+    </div>
+  </section>
+
+  <!-- ================= Range picker ================= -->
+  <section class="pv-section" id="rangepicker">
+    <header>
+      <div class="oq-overline">Dates</div>
+      <h2 class="oq-h2">Date range picker</h2>
+      <p class="oq-muted">Quick ranges beside two months. Click a start, move the pointer to preview, click an end. With times, pick both ends and press Apply. <code>.oq-rangepicker</code>, <code>.oq-datepicker__presets</code>.</p>
+    </header>
+    <div class="pv-demo" style="min-height: 60px">
+      <div class="oq-field" style="width: 280px"><span class="oq-label">Period</span><div id="rp-1"></div></div>
+      <div class="oq-field" style="width: 340px"><span class="oq-label">With times</span><div id="rp-2"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= Calendar ================= -->
+  <section class="pv-section" id="calendar">
+    <header>
+      <div class="oq-overline">Dates</div>
+      <h2 class="oq-h2">Calendar</h2>
+      <p class="oq-muted">The grid on its own, for an always-visible schedule or a side panel.</p>
+    </header>
+    <div class="pv-demo">
+      <div class="oq-paper oq-p-4" id="cal-inline"></div>
+      <div class="oq-stack oq-gap-1"><span class="oq-label">Selected</span><span class="oq-mono" id="cal-out">—</span></div>
+    </div>
+  </section>
+
+  <!-- ================= Together ================= -->
+  <section class="pv-section" id="together">
+    <header>
+      <div class="oq-overline">Together</div>
+      <h2 class="oq-h2">Range-driven chart</h2>
+      <p class="oq-muted">Filters sit in one row above the charts they control.</p>
+    </header>
+    <div class="oq-card">
+      <div class="oq-card__header">
+        <h3 class="oq-card__title">Blocked requests</h3>
+        <div class="oq-card__actions"><div id="rp-together" class="oq-datepicker--end-host"></div></div>
+      </div>
+      <div class="oq-card__body"><div id="c-together"></div></div>
+    </div>
+  </section>
+
+  </div>
+  </main>
+</div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+  /* ---------- Theme switch (shared with the other galleries) ---------- */
+  const html = document.documentElement;
+  const setTheme = (t) => {
+    html.dataset.theme = t;
+    $("#theme-switch").value = t;
+    try { localStorage.setItem("oq-preview-theme", t); } catch {}
+  };
+  $("#theme-switch").addEventListener("change", (e) => setTheme(e.target.value));
+
+  $("#series-swatches").innerHTML = Array.from({ length: 8 }, (_, i) =>
+    `<div class="pv-swatch"><div style="background:var(--oq-series-${i + 1})"></div><div><span>series-${i + 1}</span></div></div>`).join("");
+
+  /* ---------- Chart maths: the same as src/react/charts/scale.ts ---------- */
+  function niceTicks(min, max, count = 5) {
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return { ticks: [0, 1], min: 0, max: 1 };
+    if (min > max) [min, max] = [max, min];
+    if (min === max) { if (min > 0) min = 0; else if (max < 0) max = 0; else max = 1; }
+    const raw = (max - min) / Math.max(1, count);
+    const mag = 10 ** Math.floor(Math.log10(raw));
+    const norm = raw / mag;
+    const step = (norm >= Math.sqrt(50) ? 10 : norm >= Math.sqrt(10) ? 5 : norm >= Math.sqrt(2) ? 2 : 1) * mag;
+    const lo = Math.floor(min / step + 1e-9) * step, hi = Math.ceil(max / step - 1e-9) * step;
+    const digits = Math.max(0, -Math.floor(Math.log10(step)) + 1);
+    const ticks = [];
+    for (let v = lo; v <= hi + step / 2; v += step) ticks.push(Number(v.toFixed(digits)));
+    return { ticks, min: ticks[0], max: ticks[ticks.length - 1] };
+  }
+  const lin = ([d0, d1], [r0, r1]) => (v) => r0 + (v - d0) * (d1 === d0 ? 0 : (r1 - r0) / (d1 - d0));
+  const band = (n, [r0, r1], pad = 0.28) => { const step = n ? (r1 - r0) / n : 0, w = step * (1 - pad); return { step, width: w, start: (i) => r0 + i * step + (step - w) / 2 }; };
+  const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format;
+  const full = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format;
+  const colorOf = (s, i) => s.color ?? `var(--oq-series-${(i % 8) + 1})`;
+  const axisW = (labels) => Math.max(28, Math.ceil(Math.max(...labels.map((l) => String(l).length), 1) * 6.5) + 10);
+  function barPath(vertical, cross, t, from, to) {
+    const r = Math.min(4, t / 2, Math.abs(to - from)), d = to < from ? -1 : 1;
+    if (vertical) { const x = cross, w = t; return `M${x},${from} L${x},${to - d * r} Q${x},${to} ${x + r},${to} L${x + w - r},${to} Q${x + w},${to} ${x + w},${to - d * r} L${x + w},${from} Z`; }
+    const y = cross, h = t; return `M${from},${y} L${to - d * r},${y} Q${to},${y} ${to},${y + r} L${to},${y + h - r} Q${to},${y + h} ${to - d * r},${y + h} L${from},${y + h} Z`;
+  }
+
+  /* ---------- Shared chart pieces (markup identical to the React components) ---------- */
+  const legendHTML = (items, hidden) => `<div class="oq-chart__legend">${items.map((it) =>
+    `<button type="button" class="oq-chart__legend-item" aria-pressed="${!hidden.has(it.key)}" data-legend="${esc(it.key)}"><span class="oq-chart__swatch" style="background:${it.color}"></span>${esc(it.label)}${it.value !== undefined ? `<span class="oq-chart__legend-value">${esc(it.value)}</span>` : ""}</button>`).join("")}</div>`;
+  // Below 420px of plot the tooltip docks across the top (the React ChartTooltip does the same).
+  const narrowMQ = window.matchMedia("(max-width: 640px)");
+  const tooltipHTML = (tip, width, pinned = width < 420) => {
+    if (!tip) return "";
+    const flip = tip.flip ?? tip.x > width / 2;
+    return `<div class="oq-chart__tooltip${pinned ? " oq-chart__tooltip--pinned" : ""}" role="presentation"${pinned ? "" : ` style="left:${tip.x}px;top:${tip.y}px;transform:translate(${flip ? "calc(-100% - 12px)" : "12px"},-50%)"`}><div class="oq-chart__tooltip-title">${esc(tip.title)}</div>${tip.rows.map((r) =>
+      `<div class="oq-chart__tooltip-row"><span class="oq-chart__swatch" style="background:${r.color}"></span><span class="oq-chart__tooltip-label">${esc(r.label)}</span><span class="oq-chart__tooltip-value">${esc(r.value)}</span></div>`).join("")}</div>`;
+  };
+  const tableHTML = (caption, cols, rows) => `<details class="oq-chart__table"><summary>View as table</summary><div class="oq-table-wrap"><table class="oq-table oq-table--dense"><caption class="oq-sr-only">${esc(caption)}</caption><thead><tr>${cols.map((c, i) => `<th scope="col"${i ? ' class="oq-num"' : ""}>${esc(c)}</th>`).join("")}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td class="oq-num">${esc(c)}</td>` : `<th scope="row">${esc(c)}</th>`)).join("")}</tr>`).join("")}</tbody></table></div></details>`;
+
+  /**
+   * Mounts a chart: the plot redraws on hover and resize, the legend on toggle, the table once.
+   * `renderPlot(state, width)` returns { svg, tip } and gets `state.hidden` / `state.active`.
+   */
+  function mount(el, { kind, label, legend, table, renderPlot, onPointer }) {
+    const state = { hidden: new Set(), active: null };
+    el.className = `oq-chart oq-chart--${kind}`;
+    el.innerHTML = `<div class="oq-chart__plot"${onPointer?.keys ? ' tabindex="0"' : ""}></div>${legend ? '<div data-legend-host></div>' : ""}${table}`;
+    const plot = el.firstElementChild;
+    let width = el.clientWidth || 600;
+    const draw = () => {
+      const { svg, tip, w } = renderPlot(state, width);
+      const scroller = $(".oq-heatmap__scroll", plot), left = scroller?.scrollLeft ?? 0;
+      plot.innerHTML = svg + tooltipHTML(tip, w ?? width, kind === "donut" ? narrowMQ.matches : (w ?? width) < 420);
+      const again = $(".oq-heatmap__scroll", plot);
+      if (again) again.scrollLeft = left;
+      $("svg", plot)?.setAttribute("aria-label", label);
+    };
+    const renderLegend = () => { const host = $("[data-legend-host]", el); if (host) host.innerHTML = legend(state); };
+    draw(); renderLegend();
+    el.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-legend]"); if (!b) return;
+      const k = b.dataset.legend;
+      state.hidden.has(k) ? state.hidden.delete(k) : state.hidden.add(k);
+      draw(); renderLegend();
+    });
+    // Hover with a mouse, tap on touch: pointerleave fires right after a tap, so it only clears
+    // for a mouse; on touch a tap outside the plot clears instead.
+    plot.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse" && state.active !== null) { state.active = null; draw(); } });
+    // composedPath, not contains(): the tap itself may have just redrawn (and detached) its target.
+    document.addEventListener("pointerdown", (e) => { if (state.active !== null && !e.composedPath().includes(plot)) { state.active = null; draw(); } });
+    if (onPointer) {
+      const track = (e) => { const a = onPointer.move(e, plot, state, width); if (a !== state.active) { state.active = a; draw(); } };
+      plot.addEventListener("pointermove", track);
+      plot.addEventListener("pointerdown", track);
+      if (onPointer.keys) {
+        plot.addEventListener("keydown", (e) => { const a = onPointer.keys(e, state); if (a !== undefined) { e.preventDefault(); state.active = a; draw(); } });
+        plot.addEventListener("blur", () => { state.active = null; draw(); });
+      }
+    }
+    new ResizeObserver(() => { const w = Math.round(el.clientWidth); if (w && w !== width) { width = w; draw(); } }).observe(el);
+    return { redraw: (next) => { if (next) Object.assign(state, next); draw(); renderLegend(); }, state };
+  }
+
+  /* ---------- Bar chart ---------- */
+  function barChart(el, { data, x, series, label, height = 240, stacked = false, orientation = "vertical", fmt = full }) {
+    const vertical = orientation === "vertical";
+    const cats = data.map((r) => r[x]);
+    const legend = series.length > 1 ? (st) => legendHTML(series.map((s, i) => ({ key: s.key, label: s.label, color: colorOf(s, i) })), st.hidden) : null;
+    let geo = null;
+    const renderPlot = (st, width) => {
+      const shown = series.map((s, i) => ({ ...s, fill: colorOf(s, i) })).filter((s) => !st.hidden.has(s.key));
+      let lo = 0, hi = 0;
+      for (const r of data) {
+        if (stacked) { const sum = shown.reduce((a, s) => a + Math.max(0, r[s.key]), 0); hi = Math.max(hi, sum); }
+        else for (const s of shown) { hi = Math.max(hi, r[s.key]); lo = Math.min(lo, r[s.key]); }
+      }
+      const t = niceTicks(lo, hi, vertical ? Math.max(3, Math.round(height / 50)) : Math.max(3, Math.round(width / 110)));
+      const tl = t.ticks.map(compact);
+      const m = vertical ? { top: 10, right: 12, bottom: 26, left: axisW(tl) } : { top: 6, right: 16, bottom: 24, left: Math.min(160, Math.round(width * 0.4), axisW(cats)) };
+      const catChars = Math.max(3, Math.floor((m.left - 10) / 6.5));
+      const pw = Math.max(10, width - m.left - m.right), ph = Math.max(10, height - m.top - m.bottom);
+      const val = vertical ? lin([t.min, t.max], [m.top + ph, m.top]) : lin([t.min, t.max], [m.left, m.left + pw]);
+      const b = vertical ? band(data.length, [m.left, m.left + pw]) : band(data.length, [m.top, m.top + ph]);
+      geo = { vertical, b, m, pw, ph };
+      const every = vertical ? Math.max(1, Math.ceil((Math.max(...cats.map((c) => String(c).length)) * 6.5 + 8) / b.step)) : 1;
+      let svg = `<svg class="oq-chart__svg" width="${width}" height="${height}" role="img"><g class="oq-chart__grid" aria-hidden="true">`;
+      t.ticks.forEach((v, i) => {
+        svg += vertical
+          ? `<line x1="${m.left}" x2="${m.left + pw}" y1="${val(v)}" y2="${val(v)}"${v === 0 ? " data-zero" : ""}/><text class="oq-chart__tick" x="${m.left - 8}" y="${val(v)}" dy="0.32em" text-anchor="end">${tl[i]}</text>`
+          : `<line y1="${m.top}" y2="${m.top + ph}" x1="${val(v)}" x2="${val(v)}"${v === 0 ? " data-zero" : ""}/><text class="oq-chart__tick" y="${m.top + ph + 16}" x="${val(v)}" text-anchor="middle">${tl[i]}</text>`;
+      });
+      svg += "</g>";
+      data.forEach((r, i) => {
+        const start = b.start(i);
+        const gw = stacked ? b.width : (b.width - 2 * (shown.length - 1)) / Math.max(1, shown.length);
+        const hov = vertical ? `x="${start - (b.step - b.width) / 2}" y="${m.top}" width="${b.step}" height="${ph}"` : `y="${start - (b.step - b.width) / 2}" x="${m.left}" height="${b.step}" width="${pw}"`;
+        svg += `<g class="oq-chart__band"${st.active === i ? " data-active" : ""}><rect class="oq-chart__hover" ${hov}/>`;
+        let pos = 0;
+        shown.forEach((s, j) => {
+          const v = r[s.key];
+          let from, to, cross;
+          if (stacked) { from = val(pos); to = val(pos + v); if (pos !== 0) from += (to > from ? 1 : -1) * 2; pos += v; cross = start; }
+          else { from = val(0); to = val(v); cross = start + j * (gw + 2); }
+          if (v && Math.abs(to - from) >= 0.5) svg += `<path class="oq-chart__bar" d="${barPath(vertical, cross, gw, from, to)}" style="fill:${s.fill}"/>`;
+        });
+        if (i % every === 0) svg += vertical
+          ? `<text class="oq-chart__tick" x="${start + b.width / 2}" y="${m.top + ph + 17}" text-anchor="middle">${esc(cats[i])}</text>`
+          : `<text class="oq-chart__tick" x="${m.left - 8}" y="${start + b.width / 2}" dy="0.32em" text-anchor="end">${esc(String(cats[i]).length > catChars ? `${String(cats[i]).slice(0, catChars - 1)}…` : cats[i])}${String(cats[i]).length > catChars ? `<title>${esc(cats[i])}</title>` : ""}</text>`;
+        svg += "</g>";
+      });
+      svg += "</svg>";
+      let tip = null;
+      if (st.active !== null) {
+        const r = data[st.active], along = b.start(st.active) + b.width / 2;
+        const vals = shown.map((s) => r[s.key]);
+        const end = stacked ? vals.reduce((a, v) => a + Math.max(0, v), 0) : Math.max(0, ...vals);
+        const flip = along > width / 2;
+        const edge = flip ? b.start(st.active) - (b.step - b.width) / 2 : b.start(st.active) + b.width + (b.step - b.width) / 2;
+        tip = { flip: vertical ? flip : undefined, x: vertical ? edge : Math.min(width - 8, val(end)), y: vertical ? m.top + 16 : along, title: cats[st.active], rows: shown.map((s) => ({ label: s.label, color: s.fill, value: fmt(r[s.key]) })) };
+      }
+      return { svg, tip };
+    };
+    return mount(el, {
+      kind: "bar", label, legend,
+      table: tableHTML(label, [x, ...series.map((s) => s.label)], data.map((r) => [r[x], ...series.map((s) => fmt(r[s.key]))])),
+      renderPlot,
+      onPointer: {
+        move: (e, plot) => {
+          if (!geo) return null;
+          const box = plot.getBoundingClientRect();
+          const p = geo.vertical ? e.clientX - box.left - geo.m.left : e.clientY - box.top - geo.m.top;
+          const i = Math.floor(p / geo.b.step);
+          return i >= 0 && i < data.length ? i : null;
+        },
+      },
+    });
+  }
+
+  /* ---------- Line / area ---------- */
+  function xyChart(el, { mode = "line", data, x, series, label, height = 240, stacked = false, fmt = full, points }) {
+    const cats = data.map((r) => r[x]);
+    const n = data.length;
+    const legend = series.length > 1 ? (st) => legendHTML(series.map((s, i) => ({ key: s.key, label: s.label, color: colorOf(s, i) })), st.hidden) : null;
+    let geo = null;
+    const renderPlot = (st, width) => {
+      const shown = series.map((s, i) => ({ ...s, fill: colorOf(s, i) })).filter((s) => !st.hidden.has(s.key));
+      const stack = mode === "area" && stacked;
+      const tops = shown.map(() => []), bots = shown.map(() => []);
+      for (let i = 0; i < n; i++) { let acc = 0; shown.forEach((s, j) => { bots[j][i] = stack ? acc : 0; acc = stack ? acc + data[i][s.key] : data[i][s.key]; tops[j][i] = acc; }); }
+      const flat = tops.flat();
+      const t = niceTicks(Math.min(0, ...flat), Math.max(0, ...flat), Math.max(3, Math.round(height / 50)));
+      const tl = t.ticks.map(compact);
+      const m = { top: 10, right: 14, bottom: 26, left: axisW(tl) };
+      const pw = Math.max(10, width - m.left - m.right), ph = Math.max(10, height - m.top - m.bottom);
+      const xs = (i) => m.left + (n > 1 ? (i / (n - 1)) * pw : pw / 2);
+      const ys = lin([t.min, t.max], [m.top + ph, m.top]);
+      geo = { m, pw };
+      const path = (vals) => vals.map((v, i) => `${i ? "L" : "M"}${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).join(" ");
+      const every = Math.max(1, Math.ceil((Math.max(...cats.map((c) => String(c).length)) * 6.5 + 10) / (n > 1 ? pw / (n - 1) : pw)));
+      let svg = `<svg class="oq-chart__svg" width="${width}" height="${height}" role="img"><g class="oq-chart__grid" aria-hidden="true">`;
+      t.ticks.forEach((v, i) => { svg += `<line x1="${m.left}" x2="${m.left + pw}" y1="${ys(v)}" y2="${ys(v)}"${v === 0 ? " data-zero" : ""}/><text class="oq-chart__tick" x="${m.left - 8}" y="${ys(v)}" dy="0.32em" text-anchor="end">${tl[i]}</text>`; });
+      cats.forEach((c, i) => { if (i % every === 0) svg += `<text class="oq-chart__tick" x="${xs(i)}" y="${m.top + ph + 17}" text-anchor="middle">${esc(c)}</text>`; });
+      svg += "</g>";
+      if (mode === "area") shown.forEach((s, j) => {
+        const back = bots[j].map((v, i) => [i, v]).reverse().map(([i, v]) => `L${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).join(" ");
+        svg += `<path class="oq-chart__area${stack ? " oq-chart__area--stacked" : ""}" d="${path(tops[j])} ${back} Z" style="fill:${s.fill}"/>`;
+      });
+      shown.forEach((s, j) => { svg += `<path class="oq-chart__line" d="${path(tops[j])}" style="stroke:${s.fill}"/>`; });
+      if (points ?? n <= 24) shown.forEach((s, j) => tops[j].forEach((v, i) => { svg += `<circle class="oq-chart__point" cx="${xs(i)}" cy="${ys(v)}" r="2.5" style="fill:${s.fill}"/>`; }));
+      let tip = null;
+      if (st.active !== null) {
+        const a = st.active;
+        svg += `<g class="oq-chart__focus" aria-hidden="true"><line class="oq-chart__crosshair" x1="${xs(a)}" x2="${xs(a)}" y1="${m.top}" y2="${m.top + ph}"/>${shown.map((s, j) => `<circle class="oq-chart__dot" cx="${xs(a)}" cy="${ys(tops[j][a])}" r="4.5" style="fill:${s.fill}"/>`).join("")}</g>`;
+        tip = { x: xs(a), y: m.top + ph / 2, title: cats[a], rows: shown.map((s) => ({ label: s.label, color: s.fill, value: fmt(data[a][s.key]) })) };
+      }
+      return { svg: svg + "</svg>", tip };
+    };
+    return mount(el, {
+      kind: mode, label, legend,
+      table: tableHTML(label, [x, ...series.map((s) => s.label)], data.map((r) => [r[x], ...series.map((s) => fmt(r[s.key]))])),
+      renderPlot,
+      onPointer: {
+        move: (e, plot) => {
+          if (!geo || n < 1) return null;
+          const px = e.clientX - plot.getBoundingClientRect().left;
+          return Math.max(0, Math.min(n - 1, Math.round(((px - geo.m.left) / geo.pw) * (n - 1))));
+        },
+        keys: (e, st) => {
+          if (e.key === "ArrowRight") return Math.min(n - 1, (st.active ?? -1) + 1);
+          if (e.key === "ArrowLeft") return Math.max(0, (st.active ?? n) - 1);
+          if (e.key === "Escape") return null;
+          return undefined;
+        },
+      },
+    });
+  }
+
+  /* ---------- Donut ---------- */
+  function arc(c, r, inner, a0, a1) {
+    const end = a1 - a0 >= Math.PI * 2 ? a0 + Math.PI * 2 - 1e-4 : a1;
+    const pt = (rad, a) => `${(c + rad * Math.sin(a)).toFixed(2)},${(c - rad * Math.cos(a)).toFixed(2)}`;
+    const large = end - a0 > Math.PI ? 1 : 0;
+    return `M${pt(r, a0)} A${r},${r} 0 ${large} 1 ${pt(r, end)} L${pt(inner, end)} A${inner},${inner} 0 ${large} 0 ${pt(inner, a0)} Z`;
+  }
+  function donut(el, { data, label, size = 200, thickness = 28, centerLabel, fmt = full }) {
+    const slices = data.map((d, i) => ({ ...d, fill: colorOf(d, i) }));
+    const totalOf = (st) => slices.filter((s) => !st.hidden.has(s.key)).reduce((a, s) => a + s.value, 0);
+    const pct = (v, tot) => (tot ? `${((v / tot) * 100).toFixed(v / tot < 0.1 ? 1 : 0)} %` : "–");
+    const api = mount(el, {
+      kind: "donut", label,
+      legend: (st) => { const tot = totalOf(st); return legendHTML(slices.map((s) => ({ key: s.key, label: s.label, color: s.fill, value: st.hidden.has(s.key) ? "" : pct(s.value, tot) })), st.hidden); },
+      table: tableHTML(label, ["Category", "Value", "Share"], slices.map((s) => [s.label, fmt(s.value), pct(s.value, slices.reduce((a, x) => a + x.value, 0))])),
+      renderPlot: (st) => {
+        const r = size / 2, inner = r - thickness, tot = totalOf(st);
+        let a = 0, tip = null;
+        let svg = `<svg class="oq-chart__svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img"><circle class="oq-donut__track" cx="${r}" cy="${r}" r="${r - thickness / 2}" style="stroke-width:${thickness}"/>`;
+        for (const s of slices) {
+          if (st.hidden.has(s.key) || s.value <= 0) continue;
+          const a0 = a; a += tot ? (s.value / tot) * Math.PI * 2 : 0;
+          svg += `<path class="oq-donut__slice" data-slice="${esc(s.key)}" d="${arc(r, r, inner, a0, a)}" style="fill:${s.fill}"${st.active && st.active !== s.key ? " data-dim" : ""}/>`;
+          if (st.active === s.key) { const mid = (a0 + a) / 2; tip = { x: r + (r - thickness / 2) * Math.sin(mid), y: r - (r - thickness / 2) * Math.cos(mid), title: s.label, rows: [{ label: pct(s.value, tot), color: s.fill, value: fmt(s.value) }] }; }
+        }
+        svg += `</svg><div class="oq-donut__center" aria-hidden="true"><div class="oq-donut__value">${fmt(tot)}</div>${centerLabel ? `<div class="oq-donut__label">${esc(centerLabel)}</div>` : ""}</div>`;
+        return { svg, tip, w: size };
+      },
+      onPointer: { move: (e) => e.target.closest?.("[data-slice]")?.dataset.slice ?? null },
+    });
+    const plot = $(".oq-chart__plot", el);
+    plot.classList.add("oq-donut");
+    // Same as the React DonutChart: its size, but never wider than the container.
+    Object.assign(plot.style, { width: `${size}px`, maxWidth: "100%", aspectRatio: "1" });
+    return api;
+  }
+
+  /* ---------- Heatmap ---------- */
+  function heatmap(el, { rows, columns, values, label, cellHeight = 22, steps = 6, fmt = full }) {
+    const flat = values.flat().filter((v) => typeof v === "number");
+    const lo = Math.min(...flat), hi = Math.max(...flat);
+    const step = (v) => (hi <= lo ? steps - 1 : Math.max(0, Math.min(steps - 1, Math.floor(((v - lo) / (hi - lo)) * steps))));
+    const color = (s) => `color-mix(in srgb, var(--oq-primary) ${Math.round(18 + (82 * s) / (steps - 1))}%, var(--oq-surface))`;
+    let geo = null;
+    const api = mount(el, {
+      kind: "heatmap", label, legend: null,
+      table: tableHTML(label, ["", ...columns], rows.map((r, i) => [r, ...columns.map((_, j) => (typeof values[i][j] === "number" ? fmt(values[i][j]) : "–"))])),
+      renderPlot: (st, width) => {
+        // Same rules as the React Heatmap: labels take at most 30 %, cells stay at least 14px and
+        // the grid scrolls sideways inside .oq-heatmap__scroll when they do not fit.
+        const left = Math.min(120, Math.round(width * 0.3), Math.max(28, Math.max(...rows.map((r) => r.length)) * 6.5 + 10)), top = 18;
+        const labelChars = Math.max(3, Math.floor((left - 10) / 6.5));
+        const cw = Math.max(14, (width - left) / columns.length), h = top + rows.length * cellHeight;
+        const svgW = Math.max(width, Math.ceil(left + cw * columns.length));
+        const every = Math.max(1, Math.ceil((Math.max(...columns.map((c) => c.length)) * 6.5 + 6) / cw));
+        geo = { left, top, cw };
+        let svg = `<div class="oq-heatmap__scroll"><svg class="oq-chart__svg" width="${svgW}" height="${h}" role="img">`;
+        columns.forEach((c, j) => { if (j % every === 0) svg += `<text class="oq-chart__tick" x="${left + j * cw + cw / 2}" y="12" text-anchor="middle">${esc(c)}</text>`; });
+        let tip = null;
+        rows.forEach((r, i) => {
+          svg += `<text class="oq-chart__tick" x="${left - 8}" y="${top + i * cellHeight + cellHeight / 2}" dy="0.32em" text-anchor="end">${esc(r.length > labelChars ? `${r.slice(0, labelChars - 1)}…` : r)}${r.length > labelChars ? `<title>${esc(r)}</title>` : ""}</text>`;
+          columns.forEach((c, j) => {
+            const v = values[i][j], has = typeof v === "number", id = `${i}:${j}`;
+            svg += `<rect class="oq-heatmap__cell"${has ? "" : " data-empty"}${st.active === id ? " data-active" : ""} x="${left + j * cw + 1}" y="${top + i * cellHeight + 1}" width="${Math.max(1, cw - 2)}" height="${cellHeight - 2}" rx="2"${has ? ` style="fill:${color(step(v))}"` : ""}/>`;
+            if (st.active === id) tip = { x: left + j * cw + cw / 2, y: top + i * cellHeight + cellHeight / 2, title: `${r} · ${c}`, rows: [{ label, color: has ? color(step(v)) : "transparent", value: has ? fmt(v) : "no data" }] };
+          });
+        });
+        return { svg: svg + "</svg></div>", tip };
+      },
+      onPointer: {
+        move: (e, plot) => {
+          if (!geo) return null;
+          // The SVG's own box moves with the horizontal scroll, so it gives the right cell.
+          const box = $("svg", plot).getBoundingClientRect();
+          const j = Math.floor((e.clientX - box.left - geo.left) / geo.cw), i = Math.floor((e.clientY - box.top - geo.top) / cellHeight);
+          return i >= 0 && i < rows.length && j >= 0 && j < columns.length ? `${i}:${j}` : null;
+        },
+      },
+    });
+    const scale = `<div class="oq-heatmap__scale" aria-hidden="true"><span>${compact(lo)}</span>${Array.from({ length: steps }, (_, s) => `<span class="oq-heatmap__step" style="background:${color(s)}"></span>`).join("")}<span>${compact(hi)}</span></div>`;
+    $(".oq-chart__plot", el).insertAdjacentHTML("afterend", scale);
+    return api;
+  }
+
+  /* ---------- Demo data (seeded, so screenshots are stable) ---------- */
+  let seed = 11;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const hours = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, "0")}:00`);
+
+  barChart($("#c-bar-grouped"), {
+    label: "Requests by region, allowed / challenged / blocked", x: "region",
+    data: [["eu-central", 4210, 640, 312], ["eu-west", 2890, 410, 198], ["us-east", 5120, 980, 655], ["us-west", 1980, 260, 120], ["ap-south", 1240, 330, 290]].map(([region, allowed, challenged, blocked]) => ({ region, allowed, challenged, blocked })),
+    series: [{ key: "allowed", label: "Allowed" }, { key: "challenged", label: "Challenged" }, { key: "blocked", label: "Blocked" }],
+  });
+  barChart($("#c-bar-stacked"), {
+    label: "Responses per day by status class", x: "day", stacked: true,
+    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => ({ day, s2: Math.round(9000 + rnd() * 4000 - i * 300), s3: Math.round(900 + rnd() * 500), s4: Math.round(600 + rnd() * 700), s5: Math.round(40 + rnd() * 160) })),
+    series: [{ key: "s2", label: "2xx" }, { key: "s3", label: "3xx" }, { key: "s4", label: "4xx" }, { key: "s5", label: "5xx" }],
+  });
+  barChart($("#c-bar-horizontal"), {
+    label: "Slowest endpoints, p95 latency in ms", x: "endpoint", orientation: "horizontal", height: 230, fmt: (v) => `${full(v)} ms`,
+    data: [["/api/export", 1840], ["/api/search", 920], ["/api/reports/daily", 610], ["/api/login", 340], ["/api/nodes", 128], ["/health", 9]].map(([endpoint, p95]) => ({ endpoint, p95 })),
+    series: [{ key: "p95", label: "p95" }],
+  });
+
+  xyChart($("#c-line"), {
+    label: "Latency over the last 24 hours, p50, p95 and p99", x: "hour", fmt: (v) => `${full(v)} ms`, points: false,
+    data: hours.map((hour, i) => { const load = 1 + 0.6 * Math.sin((i - 8) / 3.8); return { hour, p50: Math.round(22 * load + rnd() * 6), p95: Math.round(70 * load + rnd() * 18), p99: Math.round(140 * load + rnd() * 60) }; }),
+    series: [{ key: "p50", label: "p50" }, { key: "p95", label: "p95" }, { key: "p99", label: "p99" }],
+  });
+  xyChart($("#c-area-stacked"), {
+    mode: "area", stacked: true, label: "Requests per second by region, stacked", x: "hour", points: false,
+    data: hours.map((hour, i) => { const k = 1 + 0.5 * Math.sin((i - 9) / 3.5); return { hour, eu: Math.round(60 * k + rnd() * 10), us: Math.round(45 * k + rnd() * 10), ap: Math.round(18 * k + rnd() * 6) }; }),
+    series: [{ key: "eu", label: "EU" }, { key: "us", label: "US" }, { key: "ap", label: "AP" }],
+  });
+  xyChart($("#c-area"), {
+    mode: "area", label: "Memory in use, GB", x: "hour", fmt: (v) => `${v.toFixed(1)} GB`, points: false,
+    data: hours.map((hour, i) => ({ hour, mem: Number((2.2 + i * 0.05 + rnd() * 0.3).toFixed(2)) })),
+    series: [{ key: "mem", label: "Memory" }],
+  });
+
+  donut($("#c-donut"), {
+    label: "Blocked requests by detector", centerLabel: "blocked",
+    data: [{ key: "rate", label: "rate", value: 1240 }, { key: "tor", label: "tor-exit", value: 860 }, { key: "ua", label: "user-agent", value: 410 }, { key: "headers", label: "headers", value: 190 }, { key: "other", label: "Other", value: 75, color: "var(--oq-neutral)" }],
+  });
+  donut($("#c-donut-2"), {
+    label: "Traffic share by region", centerLabel: "req/s", size: 180, thickness: 22,
+    data: [{ key: "eu", label: "EU", value: 62 }, { key: "us", label: "US", value: 48 }, { key: "ap", label: "AP", value: 19 }],
+  });
+  $("#c-empty").innerHTML = `<div class="oq-chart"><div class="oq-chart__empty" style="height:200px">No data in this range</div></div>`;
+
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  heatmap($("#c-heat"), {
+    label: "Requests", rows: days, columns: hours.map((h) => h.slice(0, 2)),
+    values: days.map((_, d) => hours.map((_, h) => (d === 6 && h > 2 && h < 6 ? null : Math.round((d < 5 ? 1 : 0.45) * (300 + 900 * Math.max(0, Math.sin(((h - 6) / 16) * Math.PI))) + rnd() * 160)))),
+  });
+
+  /* ---------- Calendar + pickers: the same markup as src/react/DatePicker.tsx ---------- */
+  const DAY = 86400000;
+  const sod = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const eod = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+  const addD = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n, d.getHours(), d.getMinutes());
+  const addM = (d, n) => { const f = new Date(d.getFullYear(), d.getMonth() + n, 1, d.getHours(), d.getMinutes()); f.setDate(Math.min(d.getDate(), new Date(f.getFullYear(), f.getMonth() + 1, 0).getDate())); return f; };
+  const same = (a, b) => !!a && !!b && sod(a).getTime() === sod(b).getTime();
+  const sow = (d, ws = 1) => sod(addD(d, -((d.getDay() - ws + 7) % 7)));
+  const matrix = (y, m, ws = 1) => { const s = sow(new Date(y, m, 1), ws); return Array.from({ length: 6 }, (_, w) => Array.from({ length: 7 }, (_, i) => new Date(s.getFullYear(), s.getMonth(), s.getDate() + w * 7 + i))); };
+  const norm = (a, b) => (sod(a) <= sod(b) ? { from: a, to: b } : { from: b, to: a });
+  const rpos = (d, from, to) => {
+    if (!from || !to) return same(d, from) ? "single" : null;
+    const { from: a, to: b } = norm(from, to), x = sod(d).getTime();
+    if (same(a, b) && same(d, a)) return "single";
+    if (x === sod(a).getTime()) return "start";
+    if (x === sod(b).getTime()) return "end";
+    return x > sod(a).getTime() && x < sod(b).getTime() ? "middle" : null;
+  };
+  const pad = (n) => String(n).padStart(2, "0");
+  const timeOf = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const setT = (d, hm) => { const [h, m] = hm.split(":").map(Number); return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h || 0, m || 0); };
+  const titleF = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" });
+  const fullF = new Intl.DateTimeFormat("en-US", { dateStyle: "full" });
+  const wd = (style) => Array.from({ length: 7 }, (_, i) => new Intl.DateTimeFormat("en-US", { weekday: style }).format(new Date(2024, 0, 8 + i)));
+  const chevL = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>';
+  const chevR = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+  const calIcon = '<svg class="oq-icon oq-datepicker__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+
+  /**
+   * A calendar in `host`. opts: { months, selected, range, min, max, isDisabled, onSelect, onEscape, autoFocus }.
+   * Keyboard per the WAI-ARIA date grid.
+   */
+  function calendar(host, opts) {
+    const st = { month: new Date((opts.selected ?? opts.range?.from ?? new Date()).getFullYear(), (opts.selected ?? opts.range?.from ?? new Date()).getMonth() - (opts.startOffset ?? 0), 1), focus: sod(opts.selected ?? opts.range?.from ?? new Date()), hover: null, keyboard: !!opts.autoFocus };
+    const months = opts.months ?? 1, today = new Date();
+    const disabled = (d) => (opts.min && sod(d) < sod(opts.min)) || (opts.max && sod(d) > sod(opts.max)) || (opts.isDisabled ? opts.isDisabled(d) : false);
+    const render = () => {
+      const shown = Array.from({ length: months }, (_, i) => addM(st.month, i));
+      const first = shown[0], last = shown[shown.length - 1];
+      const fm = new Date(st.focus.getFullYear(), st.focus.getMonth(), 1);
+      if (fm < first) st.month = fm; else if (fm > last) st.month = addM(fm, -(months - 1));
+      const vis = Array.from({ length: months }, (_, i) => addM(st.month, i));
+      const range = opts.range, rto = range ? (range.to ?? st.hover) : null;
+      const short = wd("short"), long = wd("long");
+      let h = `<div class="oq-calendar${months === 2 ? " oq-calendar--double" : ""}"><div class="oq-calendar__header"><button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon oq-sm" aria-label="Previous month" data-step="-1">${chevL}</button>`;
+      h += vis.map((m) => `<div class="oq-calendar__title" aria-live="polite">${titleF.format(m)}</div>`).join("");
+      h += `<button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon oq-sm" aria-label="Next month" data-step="1">${chevR}</button></div><div class="oq-calendar__months">`;
+      for (const m of vis) {
+        h += `<table class="oq-calendar__grid" role="grid" aria-label="${titleF.format(m)}"><thead><tr>${short.map((w, i) => `<th scope="col" class="oq-calendar__weekday" abbr="${long[i]}">${w}</th>`).join("")}</tr></thead><tbody>`;
+        for (const week of matrix(m.getFullYear(), m.getMonth())) {
+          h += "<tr>";
+          for (const d of week) {
+            const out = d.getMonth() !== m.getMonth();
+            if (out && months === 2) { h += "<td></td>"; continue; }
+            const pos = range ? rpos(d, range.from, rto) : null;
+            const sel = range ? pos !== null && pos !== "middle" : same(d, opts.selected);
+            const foc = same(d, st.focus) && !out;
+            const attrs = [foc && 'data-focus="true"', same(d, today) && 'data-today="true" aria-current="date"', out && 'data-outside="true"', sel && 'data-selected="true"', pos && `data-range="${pos}"`, range && !range.to && pos && 'data-preview="true"', disabled(d) && "disabled"].filter(Boolean).join(" ");
+            h += `<td role="gridcell" aria-selected="${sel || pos === "middle"}"><button type="button" class="oq-calendar__day" tabindex="${foc ? 0 : -1}" data-date="${d.getTime()}" aria-label="${fullF.format(d)}" ${attrs}>${d.getDate()}</button></td>`;
+          }
+          h += "</tr>";
+        }
+        h += "</tbody></table>";
+      }
+      host.innerHTML = h + "</div></div>";
+      if (st.keyboard) $('button[data-focus="true"]', host)?.focus();
+    };
+    host.addEventListener("click", (e) => {
+      const s = e.target.closest("[data-step]");
+      if (s) { const n = Number(s.dataset.step); st.month = addM(st.month, n); st.focus = addM(st.focus, n); st.keyboard = false; render(); return; }
+      const b = e.target.closest("[data-date]");
+      if (b && !b.disabled) { const d = new Date(Number(b.dataset.date)); st.focus = d; opts.onSelect(d); }
+    });
+    host.addEventListener("mouseover", (e) => {
+      if (!opts.range || opts.range.to || !opts.range.from) return;
+      const b = e.target.closest("[data-date]"); const d = b ? new Date(Number(b.dataset.date)) : null;
+      if (!same(d, st.hover)) { st.hover = d; render(); }
+    });
+    host.addEventListener("keydown", (e) => {
+      const k = e.key, f = st.focus;
+      const map = { ArrowLeft: () => addD(f, -1), ArrowRight: () => addD(f, 1), ArrowUp: () => addD(f, -7), ArrowDown: () => addD(f, 7), PageUp: () => addM(f, e.shiftKey ? -12 : -1), PageDown: () => addM(f, e.shiftKey ? 12 : 1), Home: () => sow(f), End: () => addD(sow(f), 6) };
+      if (map[k]) { e.preventDefault(); st.focus = map[k](); st.keyboard = true; if (opts.range && opts.range.from && !opts.range.to) st.hover = st.focus; render(); }
+      else if ((k === "Enter" || k === " ") && e.target.closest("[data-date]")) { e.preventDefault(); if (!disabled(f)) opts.onSelect(f); }
+      else if (k === "Escape" && opts.onEscape) { e.preventDefault(); opts.onEscape(); }
+    });
+    render();
+    return { render, st, set: (o) => { Object.assign(opts, o); render(); } };
+  }
+
+  /** Popover plumbing shared by both pickers: outside click and Escape close it. */
+  function pickerShell(host, { range, placeholder }) {
+    host.className = `oq-datepicker${range ? " oq-rangepicker" : ""}`;
+    host.innerHTML = `<button type="button" class="oq-input oq-datepicker__trigger" aria-haspopup="dialog" aria-expanded="false">${calIcon}<span class="oq-datepicker__placeholder">${placeholder}</span></button>`;
+    const trigger = host.firstElementChild;
+    let panel = null;
+    const close = (refocus = true) => { panel?.remove(); panel = null; trigger.setAttribute("aria-expanded", "false"); if (refocus) trigger.focus(); };
+    document.addEventListener("pointerdown", (e) => { if (panel && !e.composedPath().includes(host)) close(false); });
+    const open = (build) => { close(false); panel = document.createElement("div"); panel.className = "oq-datepicker__panel"; panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", range ? "Choose date range" : "Choose date"); host.append(panel); trigger.setAttribute("aria-expanded", "true"); build(panel); };
+    const show = (text) => { const span = trigger.lastElementChild; span.className = text ? "oq-datepicker__value" : "oq-datepicker__placeholder"; span.textContent = text || placeholder; };
+    return { trigger, open, close, show, isOpen: () => !!panel };
+  }
+
+  function datePicker(host, { value = null, withTime = false, min, max, isDisabled, placeholder = "Select date" } = {}) {
+    const f = new Intl.DateTimeFormat("en-US", withTime ? { dateStyle: "medium", timeStyle: "short" } : { dateStyle: "medium" });
+    const p = pickerShell(host, { placeholder });
+    const set = (v) => { value = v; p.show(v ? f.format(v) : ""); };
+    set(value);
+    p.trigger.addEventListener("click", () => {
+      if (p.isOpen()) return p.close(false);
+      p.open((panel) => {
+        const calHost = document.createElement("div"); panel.append(calHost);
+        const cal = calendar(calHost, { selected: value, min, max, isDisabled, autoFocus: true, onEscape: () => p.close(),
+          onSelect: (d) => { set(withTime ? setT(d, value ? timeOf(value) : "09:00") : sod(d)); cal.set({ selected: value }); if (!withTime) p.close(); } });
+        panel.insertAdjacentHTML("beforeend", `<div class="oq-datepicker__footer">${withTime ? `<input type="time" class="oq-input oq-sm oq-datepicker__time" aria-label="Time" value="${value ? timeOf(value) : ""}">` : ""}<span class="oq-spacer"></span><button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-sm" data-act="clear">Clear</button><button type="button" class="oq-btn oq-btn--ghost oq-sm" data-act="today">Today</button>${withTime ? '<button type="button" class="oq-btn oq-sm" data-act="done">Done</button>' : ""}</div>`);
+        $("input[type=time]", panel)?.addEventListener("change", (e) => set(setT(value ?? sod(new Date()), e.target.value)));
+        panel.addEventListener("click", (e) => {
+          const a = e.target.closest("[data-act]")?.dataset.act;
+          if (a === "clear") { set(null); p.close(); }
+          if (a === "today") { set(withTime ? setT(new Date(), timeOf(new Date())) : sod(new Date())); p.close(); }
+          if (a === "done") p.close();
+        });
+      });
+    });
+    return { get: () => value };
+  }
+
+  const presets = [
+    { key: "24h", label: "Last 24 hours", range: (now) => ({ from: new Date(now.getTime() - DAY), to: now }) },
+    { key: "7d", label: "Last 7 days", range: (now) => ({ from: sod(addD(now, -6)), to: eod(now) }) },
+    { key: "30d", label: "Last 30 days", range: (now) => ({ from: sod(addD(now, -29)), to: eod(now) }) },
+    { key: "month", label: "This month", range: (now) => ({ from: new Date(now.getFullYear(), now.getMonth(), 1), to: eod(now) }) },
+  ];
+
+  function rangePicker(host, { value = null, withTime = false, preset = null, onChange = () => {}, placeholder = "Select range" } = {}) {
+    const f = new Intl.DateTimeFormat("en-US", withTime ? { dateStyle: "medium", timeStyle: "short" } : { dateStyle: "medium" });
+    const fmtR = (r) => (f.formatRange ? f.formatRange(r.from, r.to) : `${f.format(r.from)} – ${f.format(r.to)}`);
+    const p = pickerShell(host, { range: true, placeholder });
+    const show = () => p.show(preset ? presets.find((x) => x.key === preset).label : value ? fmtR(value) : "");
+    const commit = (r, key = null) => { value = r; preset = key; show(); onChange(r, key); p.close(); };
+    show();
+    p.trigger.addEventListener("click", () => {
+      if (p.isOpen()) return p.close(false);
+      const draft = { from: value?.from ?? null, to: value?.to ?? null };
+      p.open((panel) => {
+        panel.innerHTML = `<div class="oq-rangepicker__body"><div class="oq-datepicker__presets" role="listbox" aria-label="Quick ranges">${presets.map((x) => `<button type="button" role="option" class="oq-datepicker__preset" data-preset="${x.key}" aria-selected="${preset === x.key}">${x.label}</button>`).join("")}<button type="button" role="option" class="oq-datepicker__preset" data-preset="" aria-selected="${!preset}">Custom</button></div><div data-cal></div></div><div class="oq-datepicker__footer"><span class="oq-small oq-muted oq-rangepicker__summary"></span><span data-times class="oq-row oq-gap-1"></span><span class="oq-spacer"></span><button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-sm" data-act="cancel">Cancel</button>${withTime ? '<button type="button" class="oq-btn oq-sm" data-act="apply" disabled>Apply</button>' : ""}</div>`;
+        const summary = () => {
+          $(".oq-rangepicker__summary", panel).textContent = draft.from && draft.to ? fmtR(norm(draft.from, draft.to)) : draft.from ? "Pick the end date" : "Pick the start date";
+          if (withTime) {
+            const ready = draft.from && draft.to;
+            $("[data-times]", panel).innerHTML = ready ? `<input type="time" class="oq-input oq-sm oq-datepicker__time" aria-label="Start time" data-t="from" value="${timeOf(draft.from)}"><span class="oq-faint">–</span><input type="time" class="oq-input oq-sm oq-datepicker__time" aria-label="End time" data-t="to" value="${timeOf(draft.to)}">` : "";
+            $("[data-act=apply]", panel).disabled = !ready;
+          }
+        };
+        const cal = calendar($("[data-cal]", panel), { months: narrowMQ.matches ? 1 : 2, range: draft, startOffset: 0, autoFocus: true, onEscape: () => p.close(),
+          onSelect: (d) => {
+            if (!draft.from || draft.to) { draft.from = d; draft.to = null; preset = null; $$("[data-preset]", panel).forEach((x) => x.setAttribute("aria-selected", String(!x.dataset.preset))); }
+            else { const n = norm(draft.from, d); draft.from = sod(n.from); draft.to = eod(n.to); if (!withTime) return commit({ from: draft.from, to: draft.to }); }
+            cal.set({ range: draft }); summary();
+          } });
+        if (value) { cal.st.month = addM(new Date(value.to.getFullYear(), value.to.getMonth(), 1), -1); cal.render(); }
+        else { cal.st.month = addM(new Date(new Date().getFullYear(), new Date().getMonth(), 1), -1); cal.render(); }
+        summary();
+        panel.addEventListener("change", (e) => { const t = e.target.dataset.t; if (t) { draft[t] = setT(draft[t], e.target.value); summary(); } });
+        panel.addEventListener("click", (e) => {
+          const pr = e.target.closest("[data-preset]");
+          if (pr) { if (pr.dataset.preset) { const x = presets.find((q) => q.key === pr.dataset.preset); commit(x.range(new Date()), x.key); } else { preset = null; $$("[data-preset]", panel).forEach((b) => b.setAttribute("aria-selected", String(b === pr))); } return; }
+          const a = e.target.closest("[data-act]")?.dataset.act;
+          if (a === "cancel") p.close();
+          if (a === "apply" && draft.from && draft.to) commit(norm(draft.from, draft.to));
+        });
+      });
+    });
+    return { get: () => value };
+  }
+
+  /* ---------- Date demos ---------- */
+  const now = new Date();
+  datePicker($("#dp-1"), { value: sod(now) });
+  datePicker($("#dp-2"), { withTime: true, placeholder: "Select date and time" });
+  datePicker($("#dp-3"), { min: now, max: addD(now, 60), isDisabled: (d) => d.getDay() === 0 || d.getDay() === 6, placeholder: "Pick a weekday" });
+  rangePicker($("#rp-1"), { value: presets[1].range(now), preset: "7d" });
+  rangePicker($("#rp-2"), { withTime: true, placeholder: "Select start and end" });
+
+  const out = $("#cal-out");
+  const inline = calendar($("#cal-inline"), { selected: null, onSelect: (d) => { inline.set({ selected: d }); out.textContent = fullF.format(d); } });
+
+  /* ---------- Together: the range picker drives the chart ---------- */
+  const series = (from, to) => {
+    const daysN = Math.max(1, Math.round((sod(to) - sod(from)) / DAY) + 1);
+    if (daysN <= 1) return { x: "hour", rows: hours.map((hour, i) => ({ hour, blocked: Math.round(40 + 30 * Math.sin(i / 3) + rnd() * 20) })) };
+    return { x: "day", rows: Array.from({ length: daysN }, (_, i) => { const d = addD(sod(from), i); return { day: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(d), blocked: Math.round(900 + 400 * Math.sin(i / 2.5) + rnd() * 300) }; }) };
+  };
+  const drawTogether = (r) => {
+    const s = series(r.from, r.to);
+    // A fresh element each time, so the old chart's observers and listeners go with the old one.
+    $("#c-together").replaceWith(Object.assign(document.createElement("div"), { id: "c-together" }));
+    const el = $("#c-together");
+    (s.rows.length > 14 ? xyChart : barChart)(el, { label: "Blocked requests in the selected range", x: s.x, data: s.rows, series: [{ key: "blocked", label: "Blocked" }], points: false, mode: "area" });
+  };
+  const rpT = $("#rp-together");
+  rangePicker(rpT, { value: presets[1].range(now), preset: "7d", onChange: (r) => drawTogether(r) });
+  rpT.classList.add("oq-datepicker--end");
+  drawTogether(presets[1].range(now));
+
+  let saved = "dark";
+  try { saved = localStorage.getItem("oq-preview-theme") || "dark"; } catch {}
+  setTheme(saved);
+})();
+</script>
+</body>
+</html>

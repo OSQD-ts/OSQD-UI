@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edge Monitor</title>
+<link rel="stylesheet" href="../styles/index.css">
+<link rel="stylesheet" href="lib/samples.css">
+<script src="../assets/osqd-ui-elements.js" defer></script>
+<script src="lib/demo-kit.js" defer></script>
+<style>
+  .spark { display: block; width: 100%; height: 34px; margin-top: 4px; }
+  .dash-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
+  @media (max-width: 1100px) { .dash-grid { grid-template-columns: minmax(0, 1fr); } }
+  #range { min-width: 220px; }
+  @media (max-width: 640px) {
+    #stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+    #stats .oq-stat { padding: 12px; }
+    #stats .oq-stat__value { font-size: var(--oq-text-xl); }
+    #stats .oq-stat__delta { font-size: var(--oq-text-xs); }
+    .oq-page-header__actions { width: 100%; }
+    .oq-page-header__actions > #range { flex: 1 1 100%; min-width: 0; order: 3; }
+    .oq-page-header__actions > .oq-btn { flex: 1 1 0; }
+  }
+</style>
+</head>
+<body class="oq">
+<div class="oq-shell" id="shell">
+  <header class="oq-appbar oq-appbar--sticky">
+    <button class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-shell__rail-btn" id="rail-btn" aria-pressed="false" aria-label="Collapse sidebar" data-tip="Collapse sidebar ( [ )" data-tip-pos="bottom">{{icon:sidebar}}</button>
+    <button class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-shell__menu-btn" id="menu-btn" aria-expanded="false" aria-label="Open menu">{{icon:menu}}</button>
+    {{brand:Edge Monitor}}
+    <ol class="oq-breadcrumbs sx-hide-md"><li><a href="#">Production</a></li><li><span aria-current="page">Overview</span></li></ol>
+    <div class="oq-spacer"></div>
+    <button class="oq-btn oq-btn--outline oq-neutral oq-sm sx-hide-sm" data-oq-open="cmdk" aria-label="Jump to">{{icon:search:oq-sm}}<span class="sx-hide-md"> Jump to… <kbd class="oq-kbd">Ctrl K</kbd></span></button>
+    <div class="oq-notify" id="bell">
+      <span class="oq-badge-anchor">
+        <button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral" data-bell aria-expanded="false" aria-haspopup="dialog" aria-label="Notifications">{{icon:bell}}</button>
+        <span class="oq-badge oq-danger" data-count aria-hidden="true" hidden></span>
+      </span>
+      <div class="oq-notify__panel" role="dialog" aria-label="Notifications" hidden></div>
+    </div>
+    {{appbar-end}}<button type="button" class="oq-menu__item" role="menuitem" data-oq-open="cmdk">{{icon:search:oq-sm}} Jump to…</button><button type="button" class="oq-menu__item" role="menuitem" data-oq-open="deploy">{{icon:rocket:oq-sm}} Deploy ruleset…</button>{{/appbar-end}}
+    <span class="oq-avatar oq-sm sx-hide-md" title="Michał P.">MP</span>
+  </header>
+
+  <aside class="oq-sidebar" id="sidebar">
+    <nav class="oq-nav" aria-label="Main">
+      <div class="oq-nav__section oq-overline">Monitor</div>
+      <a class="oq-nav__item" href="#" aria-current="page" data-tip="Overview" data-tip-pos="right">{{icon:activity}}<span class="oq-nav__label">Overview</span></a>
+      <a class="oq-nav__item" href="#nodes" data-tip="Nodes" data-tip-pos="right">{{icon:server}}<span class="oq-nav__label">Nodes</span><span class="oq-badge oq-neutral">6</span></a>
+      <a class="oq-nav__item" href="logs.html" data-tip="Events" data-tip-pos="right">{{icon:list}}<span class="oq-nav__label">Events</span><span class="oq-badge oq-danger">3</span></a>
+      <a class="oq-nav__item" href="admin.html" data-tip="Rules" data-tip-pos="right">{{icon:shield}}<span class="oq-nav__label">Rules</span></a>
+      <div class="oq-nav__section oq-overline">Manage</div>
+      <a class="oq-nav__item" href="settings.html" data-tip="Settings" data-tip-pos="right">{{icon:settings}}<span class="oq-nav__label">Settings</span></a>
+      <a class="oq-nav__item" href="tickets.html" data-tip="Tickets" data-tip-pos="right">{{icon:inbox}}<span class="oq-nav__label">Tickets</span></a>
+      <a class="oq-nav__item" href="docs-page.html" data-tip="Docs" data-tip-pos="right">{{icon:book-open}}<span class="oq-nav__label">Docs</span></a>
+    </nav>
+    <div class="oq-sidebar__extra">
+      <div class="oq-paper oq-p-3 oq-stack oq-gap-2">
+        <div class="oq-row oq-between"><span class="oq-small oq-muted">Request quota</span><span class="oq-small oq-mono">72 %</span></div>
+        <div class="oq-progress oq-sm oq-warning"><div class="oq-progress__bar" style="--value: 72%"></div></div>
+      </div>
+    </div>
+  </aside>
+  <div class="oq-shell__backdrop" id="backdrop" aria-hidden="true"></div>
+
+  <main class="oq-shell__main oq-stack oq-gap-6">
+    <header class="oq-page-header" style="margin-bottom: 0">
+      <div class="oq-page-header__row">
+        <div class="oq-page-header__heading">
+          <div class="oq-page-header__title-row"><h1 class="oq-page-header__title">Overview</h1><span class="oq-chip oq-warning">1 degraded</span></div>
+          <ul class="oq-page-header__meta">
+            <li>{{icon:clock}} Updated <span id="clock">just now</span></li>
+            <li>{{icon:server}} 6 nodes</li>
+            <li>{{icon:globe}} 3 regions</li>
+          </ul>
+        </div>
+        <div class="oq-page-header__actions">
+          <span id="range"></span>
+          <button class="oq-btn oq-btn--outline oq-neutral" id="refresh">{{icon:refresh}} Refresh</button>
+          <button class="oq-btn" data-oq-open="deploy">{{icon:rocket}} Deploy ruleset</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="oq-alert oq-warning" role="alert">
+      <div class="oq-alert__icon">{{icon:warning}}</div>
+      <div class="oq-alert__content"><div class="oq-alert__title">minisiem-ingest is degraded</div>p95 latency has been above 400 ms for 12 minutes on fra-03.</div>
+      <div class="oq-alert__actions"><a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="logs.html">Open logs</a></div>
+    </div>
+
+    <div class="oq-grid" style="--min: 200px" id="stats"></div>
+
+    <div class="dash-grid">
+      <section class="oq-card">
+        <div class="oq-card__header"><h2 class="oq-card__title">Traffic</h2><span class="oq-card__subtitle" id="traffic-sub"></span></div>
+        <div class="oq-card__body"><div id="traffic"></div></div>
+      </section>
+      <section class="oq-card">
+        <div class="oq-card__header"><h2 class="oq-card__title">Blocked by detector</h2></div>
+        <div class="oq-card__body"><div id="detectors"></div></div>
+      </section>
+    </div>
+
+    <div class="dash-grid">
+      <section class="oq-card" id="nodes">
+        <div class="oq-card__header">
+          <h2 class="oq-card__title">Nodes</h2>
+          <div class="oq-card__actions sx-hide-sm"><span class="oq-small oq-faint">Click a header to sort</span></div>
+        </div>
+        <oq-sortable-table>
+          <div class="oq-table-wrap" style="border: 0; border-radius: 0 0 var(--oq-radius-lg) var(--oq-radius-lg)">
+            <table class="oq-table oq-table--hover sx-nowrap sx-sticky-first">
+              <thead><tr><th aria-sort="none">Node</th><th aria-sort="none">Region</th><th aria-sort="none">Status</th><th aria-sort="none" class="oq-num">Req/s</th><th aria-sort="none" class="oq-num">p95 ms</th><th style="width: 24%">CPU</th><th>Version</th></tr></thead>
+              <tbody id="node-rows"></tbody>
+            </table>
+          </div>
+        </oq-sortable-table>
+      </section>
+      <section class="oq-card">
+        <div class="oq-card__header"><h2 class="oq-card__title">Recent events</h2><div class="oq-card__actions"><a class="oq-small" href="logs.html">All events</a></div></div>
+        <ul class="oq-list oq-list--hover" id="events"></ul>
+      </section>
+    </div>
+  </main>
+</div>
+
+<oq-dialog id="deploy">
+  <dialog class="oq-dialog" style="--w: 460px">
+    <div class="oq-dialog__header"><h3 class="oq-dialog__title">Deploy ruleset edge-v15?</h3></div>
+    <div class="oq-dialog__body oq-stack">
+      <p class="oq-muted">6 nodes pick up the new rules within 30 seconds. Nodes that fail the health check keep edge-v14.</p>
+      <dl class="oq-dl"><dt>Changed rules</dt><dd>3</dd><dt>New detectors</dt><dd><code>headers</code></dd><dt>Rollout</dt><dd>Rolling, 2 nodes at a time</dd></dl>
+    </div>
+    <div class="oq-dialog__footer">
+      <button class="oq-btn oq-btn--ghost oq-neutral" data-close="cancel">Cancel</button>
+      <button class="oq-btn" data-close="deploy" data-oq-toast-title="Deploying edge-v15" data-oq-toast-message="Rolling out to 6 nodes." data-oq-toast-color="info">Deploy</button>
+    </div>
+  </dialog>
+</oq-dialog>
+
+<oq-command-palette id="cmdk">
+  <dialog class="oq-palette" aria-label="Command palette">
+    <div class="oq-palette__search">{{icon:search}}<input placeholder="Search pages and actions…"></div>
+    <ul class="oq-palette__list">
+      <li class="oq-option" data-group="Go to" data-href="logs.html" data-keywords="events log tail">Log explorer</li>
+      <li class="oq-option" data-group="Go to" data-href="admin.html" data-keywords="rules crud">Rules</li>
+      <li class="oq-option" data-group="Go to" data-href="settings.html" data-keywords="config">Settings</li>
+      <li class="oq-option" data-group="Go to" data-href="tickets.html" data-keywords="issues board">Tickets</li>
+      <li class="oq-option" data-group="Go to" data-href="#nodes">Nodes table</li>
+      <li class="oq-option" data-group="Actions" data-value="refresh" data-hint="R" data-keywords="reload update">Refresh data</li>
+      <li class="oq-option" data-group="Actions" data-value="rail" data-hint="[" data-keywords="sidebar collapse">Toggle sidebar</li>
+      <li class="oq-option" data-group="Actions" data-value="deploy" data-keywords="ship release">Deploy ruleset…</li>
+    </ul>
+  </dialog>
+</oq-command-palette>
+
+<script>
+addEventListener("DOMContentLoaded", () => {
+  const { $, barChart, xyChart, rangePicker, presets, notifications, railShell, rng, toast } = OQX;
+  const fmt = new Intl.NumberFormat("en-US").format;
+  const r = rng(7);
+
+  const shell = railShell($("#shell"), { railBtn: $("#rail-btn"), menuBtn: $("#menu-btn"), backdrop: $("#backdrop") });
+  document.addEventListener("keydown", (e) => {
+    if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.ctrlKey || e.metaKey || document.querySelector("dialog[open]")) return;
+    if (e.key === "[") shell.toggle();
+    if (e.key === "r") refresh();
+  });
+
+  const H = 3600000, now = Date.now();
+  notifications($("#bell"), [
+    { id: "n1", title: "fra-03 is degraded", body: "p95 latency above 400 ms for 12 minutes.", time: now - 4 * 60000, color: "warning" },
+    { id: "n2", title: "Blocked 41 requests from 185.220.101.0/24", body: "Detector tor-exit, policy block.", time: now - 38 * 60000, color: "danger" },
+    { id: "n3", title: "Ruleset edge-v14 deployed", body: "6 of 6 nodes.", time: now - 3 * H, color: "success", read: true },
+    { id: "n4", title: "Weekly report ready", body: "12.4 M requests, 0.21 % errors.", time: now - 30 * H, color: "secondary", read: true },
+  ], { allHref: "logs.html" });
+
+  // Stat tiles with small trend lines.
+  const series = (n, base, amp) => Array.from({ length: n }, (_, i) => base + amp * Math.sin(i / 3.5) + amp * 0.6 * (r() - 0.5));
+  const spark = (data, color) => {
+    const max = Math.max(...data), min = Math.min(...data);
+    const pts = data.map((v, i) => `${(i / (data.length - 1)) * 100},${32 - ((v - min) / (max - min || 1)) * 28}`).join(" ");
+    return `<svg class="spark" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--oq-${color})" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>`;
+  };
+  $("#stats").innerHTML = [
+    ["Requests / min", "12 480", "", "▲ 8.2 % vs yesterday", "is-up", "primary", series(24, 50, 12)],
+    ["Blocked", "312", "", "▲ 41 % vs yesterday", "is-down", "danger", series(24, 20, 8)],
+    ["p95 latency", "84", "ms", "— unchanged", "", "warning", series(24, 80, 6)],
+    ["Error rate", "0.21", "%", "▼ 0.05 pt", "is-up", "success", series(24, 10, 3)],
+  ].map(([label, value, unit, delta, cls, color, data]) => `<div class="oq-stat"><span class="oq-stat__label">${label}</span><span class="oq-stat__value">${value}${unit ? `<span class="oq-stat__unit">${unit}</span>` : ""}</span><span class="oq-stat__delta ${cls}">${delta}</span>${spark(data, color)}</div>`).join("");
+
+  // Traffic for the chosen range: hourly for a day, daily otherwise.
+  const DAY = 86400000;
+  const drawTraffic = (range) => {
+    const days = Math.max(1, Math.round((range.to - range.from) / DAY));
+    const rows = days <= 1
+      ? Array.from({ length: 24 }, (_, h) => ({ t: `${String(h).padStart(2, "0")}:00`, allowed: Math.round(9000 + 5000 * Math.sin(((h - 7) / 24) * Math.PI * 2) + r() * 1500), blocked: Math.round(300 + 150 * Math.sin(h / 3) + r() * 120) }))
+      : Array.from({ length: Math.min(days, 31) }, (_, i) => { const d = new Date(range.to.getTime() - (Math.min(days, 31) - 1 - i) * DAY); return { t: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }), allowed: Math.round(210000 + 40000 * Math.sin(i / 2) + r() * 20000), blocked: Math.round(7000 + 2500 * Math.sin(i / 3) + r() * 1500) }; });
+    $("#traffic").replaceWith(Object.assign(document.createElement("div"), { id: "traffic" }));
+    xyChart($("#traffic"), { mode: "area", label: "Allowed and blocked requests", x: "t", data: rows, height: 240, points: false,
+      series: [{ key: "allowed", label: "Allowed", color: "var(--oq-series-1)" }, { key: "blocked", label: "Blocked", color: "var(--oq-danger)" }] });
+    $("#traffic-sub").textContent = days <= 1 ? "Requests per hour" : "Requests per day";
+  };
+  rangePicker($("#range"), { value: presets[0].range(new Date()), preset: "24h", onChange: (range) => { drawTraffic(range); toast("Range updated", "info"); } });
+  $("#range").classList.add("oq-datepicker--end");
+  drawTraffic(presets[0].range(new Date()));
+
+  barChart($("#detectors"), { label: "Blocked requests by detector", x: "detector", orientation: "horizontal", height: 220,
+    data: [{ detector: "tor-exit", n: 141 }, { detector: "rate", n: 96 }, { detector: "user-agent", n: 44 }, { detector: "headers", n: 21 }, { detector: "geo", n: 10 }],
+    series: [{ key: "n", label: "Blocked" }] });
+
+  // Nodes (sorted by <oq-sortable-table>).
+  const intent = { healthy: "success", degraded: "warning", down: "danger" };
+  $("#node-rows").innerHTML = [
+    ["fra-01", "eu-central-1", "healthy", 2310, 41, 38, "0.14.2"], ["fra-02", "eu-central-1", "healthy", 2190, 44, 72, "0.14.2"],
+    ["fra-03", "eu-central-1", "degraded", 980, 412, 91, "0.14.1"], ["dub-01", "eu-west-1", "healthy", 1650, 52, 44, "0.14.2"],
+    ["iad-01", "us-east-1", "healthy", 3020, 63, 57, "0.14.2"], ["iad-02", "us-east-1", "down", 0, 0, 0, "0.13.9"],
+  ].map(([name, region, st, rps, p95, cpu, ver]) => `<tr>
+    <td class="oq-mono">${name}</td><td class="oq-muted">${region}</td>
+    <td data-sort-value="${["healthy", "degraded", "down"].indexOf(st)}"><span class="oq-chip oq-sm oq-${intent[st]}">${st}</span></td>
+    <td class="oq-num" data-sort-value="${rps}">${fmt(rps)}</td><td class="oq-num" data-sort-value="${p95}">${fmt(p95)}</td>
+    <td data-sort-value="${cpu}"><div class="oq-row"><div class="oq-progress oq-grow oq-${cpu > 85 ? "danger" : cpu > 65 ? "warning" : "primary"}"><div class="oq-progress__bar" style="--value:${cpu}%"></div></div><span class="oq-small oq-mono" style="width:34px;text-align:right">${cpu}%</span></div></td>
+    <td><span class="oq-code">${ver}</span></td></tr>`).join("");
+
+  $("#events").innerHTML = [
+    ["danger", "Blocked 41 requests from 185.220.101.0/24", "detector: tor-exit", "2 min"],
+    ["warning", "Rate limit reached on /api/login", "window 60 s · limit 30", "9 min"],
+    ["danger", "Store unreachable on fra-03", "ECONNREFUSED 10.0.0.4:6379", "14 min"],
+    ["success", "Ruleset edge-v14 deployed", "6 of 6 nodes", "1 h"],
+    ["info", "Config reloaded", "3 keys changed", "2 h"],
+  ].map(([c, t, s, m]) => `<li class="oq-list__item"><span class="oq-dot oq-${c}"></span><div class="oq-list__text"><span class="oq-truncate">${t}</span><span class="oq-list__secondary">${s}</span></div><span class="oq-list__meta">${m}</span></li>`).join("");
+
+  // Refresh + the "updated" clock.
+  let t0 = Date.now();
+  const refresh = () => {
+    const b = $("#refresh");
+    b.setAttribute("aria-busy", "true");
+    setTimeout(() => { b.removeAttribute("aria-busy"); t0 = Date.now(); toast("Data refreshed"); }, 700);
+  };
+  $("#refresh").onclick = refresh;
+  setInterval(() => { const s = Math.round((Date.now() - t0) / 1000); $("#clock").textContent = s < 5 ? "just now" : `${s} s ago`; }, 1000);
+
+  // Palette actions that are not links.
+  $("#cmdk").addEventListener("oq-select", (e) => {
+    const v = e.detail.value;
+    if (v === "refresh") refresh();
+    if (v === "rail") shell.toggle();
+    if (v === "deploy") setTimeout(() => $("#deploy").show(), 50);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+/*
+ * Chrome shared by the sample sites in examples/: page reset, app bar spacing, the theme select,
+ * and the small-screen patterns the samples share (the "More" menu, sheets, card tables).
+ * Everything visual comes from the kit (../styles/index.css); this file only lays the pages out.
+ *
+ * Breakpoints: 760 px is where the app bar folds and sidebars become drawers (as in the kit's
+ * shell); 640 px is a phone, where content stacks and tables turn into cards.
+ */
+html, body { margin: 0; }
+body { min-height: 100vh; min-height: 100dvh; }
+/* The hidden attribute wins over component display rules (alerts, callouts and bars set display). */
+[hidden] { display: none !important; }
+.sx-theme { width: 128px; }
+.oq-appbar {
+  gap: 8px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+/* Nothing in an app bar gets squeezed; the brand title gives way first (it ellipsises). */
+.oq-appbar > * { white-space: nowrap; flex: none; }
+.oq-appbar > .oq-spacer { flex: 1 1 auto; }
+.oq-appbar > .oq-appbar__brand { flex: 0 1 auto; min-width: 0; }
+.sx-brand-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sx-show-sm { display: none !important; }
+.sx-appbar-tools { display: flex; align-items: center; gap: 6px; }
+/* A shell whose sidebar sticks under the app bar and scrolls on its own. */
+.oq-shell > .oq-sidebar { position: sticky; top: 48px; height: calc(100vh - 48px); }
+.oq-sidebar__extra { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+/* Toasts sit above a visible save bar instead of covering its buttons. */
+body:has(.oq-savebar:not([hidden])) .oq-toasts { bottom: 84px; }
+.oq-toasts { bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 8px)); }
+
+/* ---------- The phone "More" menu (built by {{appbar-end}}) ---------- */
+.sx-more { display: none; }
+.sx-more .oq-menu { width: min(280px, calc(100vw - 16px)); overflow-y: auto; overscroll-behavior: contain; }
+.sx-more__theme { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 10px; font-size: var(--oq-text-md); color: var(--oq-text); }
+.sx-more__theme .oq-select { width: 150px; }
+
+/* ---------- Rows that scroll sideways instead of wrapping (chip filters, section links) ---------- */
+.sx-scroll-x {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent);
+  padding-right: 24px;
+}
+.sx-scroll-x::-webkit-scrollbar { display: none; }
+.sx-scroll-x > * { flex: none; }
+
+/* A table whose cells never wrap: it scrolls inside its .oq-table-wrap instead. */
+.sx-nowrap :is(th, td) { white-space: nowrap; }
+/* The first column stays put while the rest scrolls under it. */
+.sx-sticky-first :is(th, td):first-child { position: sticky; left: 0; z-index: 1; background: var(--oq-surface); }
+.sx-sticky-first thead th:first-child { z-index: 2; background: var(--oq-raised); }
+
+/* A checkbox in a table cell gets a label around it, so the whole cell is the target. */
+.sx-hit { display: inline-grid; place-items: center; min-width: 32px; min-height: 32px; margin: -8px; padding: 8px; cursor: pointer; }
+
+/* Log lines in two rows (logViewer's `stacked` mode): time, level, source, copy over the message. */
+.sx-log-stacked .oq-log__line {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-rows: 22px 22px;
+  column-gap: 8px;
+  align-items: baseline;
+  padding-block: 1px;
+}
+.sx-log-stacked .oq-log__source { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--oq-text-faint); }
+.sx-log-stacked .oq-log__msg { grid-column: 1 / -1; grid-row: 2; }
+.sx-log-stacked .oq-log__copy { grid-column: 4; grid-row: 1; }
+
+/* ---------- Bottom sheet: a panel that rises from the bottom edge on phones ---------- */
+.sx-sheet__bar { display: none; }
+.sx-scrim { display: none; }
+
+@media (max-width: 1100px) { .sx-hide-md { display: none !important; } }
+
+@media (max-width: 760px) {
+  .oq-appbar { padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); gap: 4px; }
+  .sx-hide-sm { display: none !important; }
+  .sx-show-sm { display: inline-block !important; }
+  .sx-more { display: inline-block; }
+  .sx-theme { width: 104px; }
+}
+
+@media (max-width: 640px) {
+  /* Alerts: the actions go under the text instead of squeezing it into a narrow column. */
+  .oq-alert { flex-wrap: wrap; }
+  .oq-alert__content { flex: 1 1 0; }
+  .oq-alert__actions { flex: 1 0 100%; margin: 0; padding-left: 30px; }
+
+  .sx-sheet {
+    position: fixed !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto !important;
+    z-index: 70;
+    max-height: 82vh;
+    max-height: 82dvh;
+    width: auto !important;
+    margin: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 1px solid var(--oq-border-strong);
+    border-bottom: 0;
+    border-radius: var(--oq-radius-lg) var(--oq-radius-lg) 0 0;
+    background: var(--oq-surface);
+    box-shadow: var(--oq-shadow-lg);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transform: translateY(105%);
+    transition: transform calc(var(--oq-motion) * 2) ease-out;
+    visibility: hidden;
+  }
+  .sx-sheet.is-open { transform: none; visibility: visible; }
+  .sx-sheet__bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 6px 8px 6px 16px;
+    background: var(--oq-surface);
+    border-bottom: 1px solid var(--oq-border);
+  }
+  .sx-sheet__bar::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    width: 36px;
+    height: 4px;
+    margin-left: -18px;
+    border-radius: 2px;
+    background: var(--oq-border-strong);
+  }
+  .sx-scrim.is-open { display: block; position: fixed; inset: 0; z-index: 69; background: var(--oq-overlay); }
+
+  /* A context menu opens as an action sheet: big rows, thumb's reach. */
+  .oq-context-menu.sx-menu-sheet {
+    position: fixed;
+    left: 8px !important;
+    right: 8px;
+    top: auto !important;
+    bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    width: auto;
+    min-width: 0;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .oq-context-menu.sx-menu-sheet .oq-menu__item { height: 46px; }
+
+  /* Tables that turn into a list of cards: thead shrinks to a "select all" row, each row is a card. */
+  .sx-cards thead tr { display: flex; align-items: center; }
+  .sx-cards thead th:not(.oq-table__check) { display: none; }
+  .sx-cards thead th.oq-table__check { flex: 1 1 auto; width: auto; border-bottom: 0; padding: 10px 12px; text-align: left; }
+  .sx-cards thead th.oq-table__check::after { content: attr(data-label); margin-left: 12px; font-size: var(--oq-text-sm); font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--oq-text-muted); }
+  .sx-cards tbody tr {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 12px;
+    padding: 12px;
+    border-top: 1px solid var(--oq-border);
+  }
+  .sx-cards tbody td,
+  .sx-cards tbody td.oq-num { display: block; padding: 0; border: 0; text-align: left; }
+  .sx-cards tbody td.oq-table__check { grid-row: span 2; align-self: start; padding-top: 2px; }
+  .sx-cards tbody td[data-label]::before { content: attr(data-label) " "; color: var(--oq-text-faint); font-size: var(--oq-text-sm); }
+  .sx-cards tbody td[colspan] { grid-column: 1 / -1; }
+}
+
+/* Under the iPhone home bar and notch: the page's last pixels stay clear of them. */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .sx-safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+}
+

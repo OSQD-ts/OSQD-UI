@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSQD UI — layout</title>
+<link rel="stylesheet" href="styles/index.css">
+<style>
+  /* Preview-page layout only; nothing here is part of the kit. */
+  html, body { margin: 0; }
+  .pv-section { scroll-margin-top: 64px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid var(--oq-border); }
+  .pv-section:last-child { border-bottom: 0; }
+  .pv-section > header { display: flex; flex-direction: column; gap: 4px; }
+  .pv-demo { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .pv-main { max-width: 1080px; }
+  .oq { --pv-appbar: 48px; --oq-appbar-h: var(--pv-appbar); }
+  [data-density="compact"] { --pv-appbar: 40px; }
+  [data-density="comfortable"] { --pv-appbar: 56px; }
+  .pv-sidebar { position: sticky; top: var(--pv-appbar); height: calc(100vh - var(--pv-appbar)); }
+  .pv-frame { border: 1px solid var(--oq-border); border-radius: var(--oq-radius-lg); background: var(--oq-bg); overflow: hidden; }
+  .pv-frame--pad { padding: 20px; }
+  .pv-split-demo { height: 320px; }
+  /* On a phone the demo split stacks (layout.css), so the frame takes the panes' own height. */
+  @media (max-width: 640px) { .pv-split-demo { height: auto; } .pv-pane { height: auto; } }
+  .pv-pane { padding: 12px 14px; height: 100%; box-sizing: border-box; }
+  .pv-pane--surface { background: var(--oq-surface); }
+  .pv-files { display: flex; flex-direction: column; gap: 1px; }
+  .pv-files .oq-nav__item { height: 28px; font-size: var(--oq-text-sm); }
+  .pv-rows tbody tr { cursor: context-menu; }
+  .pv-error-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 12px; }
+  .pv-thumb { display: flex; flex-direction: column; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-lg); overflow: hidden; background: var(--oq-surface); color: inherit; text-decoration: none; }
+  .pv-thumb:hover { border-color: var(--oq-border-strong); }
+  .pv-thumb__view { position: relative; aspect-ratio: 1000 / 700; overflow: hidden; background: var(--oq-bg); border-bottom: 1px solid var(--oq-border); }
+  /* The page is drawn at 1000×700 and scaled to the thumbnail's width (--s is set from script). */
+  .pv-thumb__view iframe { position: absolute; top: 0; left: 0; width: 1000px; height: 700px; border: 0; transform: scale(var(--s, 0.24)); transform-origin: 0 0; pointer-events: none; }
+  .pv-thumb__label { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; font-size: var(--oq-text-sm); }
+  .pv-density-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 16px; align-items: start; }
+  .pv-density-cols > div { border: 1px solid var(--oq-border); border-radius: var(--oq-radius-lg); padding: 14px; background: var(--oq-bg); display: flex; flex-direction: column; gap: 10px; }
+  .pv-skel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 16px; align-items: start; }
+  .pv-appbar-tools { display: flex; align-items: center; gap: 6px; }
+  @media (max-width: 1240px) { .pv-samples, .pv-samples + .oq-divider { display: none; } }
+  @media (max-width: 1020px) { .pv-galleries { display: none; } }
+  @media (max-width: 600px) {
+    #density-switch, #help-btn, .oq-appbar__brand .oq-chip { display: none; }
+    #theme-switch { width: 104px !important; }
+    .oq-appbar { gap: 8px; padding: 0 10px; }
+  }
+</style>
+</head>
+<body class="oq">
+
+<div class="oq-shell" id="shell">
+  <header class="oq-appbar oq-appbar--sticky pv-appbar">
+    <button class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-shell__rail-btn" id="rail-btn" aria-pressed="false" aria-label="Collapse sidebar" data-tip="Collapse sidebar ( [ )" data-tip-pos="bottom"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></svg></button>
+    <button class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-shell__menu-btn" id="menu-btn" aria-expanded="false" aria-label="Open menu"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button>
+    <a class="oq-appbar__brand" href="preview.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+      OSQD&nbsp;UI <span class="oq-chip oq-sm oq-neutral">0.4.0</span>
+    </a>
+    <nav class="pv-galleries" aria-label="Galleries">
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview.html">Core</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-charts.html">Charts</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-data.html">Data</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-forms.html">Forms</a>
+      <a class="oq-btn oq-btn--soft oq-neutral oq-sm" href="preview-layout.html" aria-current="page">Layout</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="elements.html">Elements</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="icons.html">Icons</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="theme-builder.html">Theme builder</a>
+    </nav>
+    <oq-dropdown class="pv-galleries-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Layout <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Galleries">
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html" aria-current="page">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <oq-dropdown class="pv-samples-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Samples <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Sample sites">
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <div class="oq-spacer"></div>
+    <div class="pv-appbar-tools">
+      <div class="oq-segmented" role="group" aria-label="Density" id="density-switch">
+        <button aria-pressed="false" data-density-set="compact" data-tip="Compact" data-tip-pos="bottom" aria-label="Compact density">S</button>
+        <button aria-pressed="true" data-density-set="default" data-tip="Default" data-tip-pos="bottom" aria-label="Default density">M</button>
+        <button aria-pressed="false" data-density-set="comfortable" data-tip="Comfortable" data-tip-pos="bottom" aria-label="Comfortable density">L</button>
+      </div>
+      <div class="oq-notify" id="bell">
+        <span class="oq-badge-anchor">
+          <button class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral" id="bell-btn" aria-expanded="false" aria-haspopup="dialog" aria-label="Notifications"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button>
+          <span class="oq-badge oq-danger" id="bell-count" aria-hidden="true" hidden></span>
+        </span>
+        <div class="oq-notify__panel" id="bell-panel" role="dialog" aria-label="Notifications" hidden></div>
+      </div>
+      <button class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral" id="help-btn" aria-label="Keyboard shortcuts" data-tip="Shortcuts ( ? )" data-tip-pos="bottom"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="6.5" cy="10" r="0.6" fill="currentColor"/><circle cx="10" cy="10" r="0.6" fill="currentColor"/><circle cx="14" cy="10" r="0.6" fill="currentColor"/><circle cx="17.5" cy="10" r="0.6" fill="currentColor"/><line x1="7.5" y1="14" x2="16.5" y2="14"/></svg></button>
+      
+    </div>
+    <oq-theme-select storage-key="oq-preview-theme" default="dark">
+      <select class="oq-select oq-sm" id="theme-switch" aria-label="Theme" style="width: 132px">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="graphite">Graphite</option>
+        <option value="midnight">Midnight</option>
+        <option value="contrast">Contrast</option>
+        <option value="paper">Paper</option>
+        <option value="slate">Slate</option>
+        <option value="auto">Auto (system)</option>
+      </select>
+    </oq-theme-select>
+    <oq-dropdown class="pv-site-menu">
+      <details class="oq-dropdown oq-dropdown--end">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon" aria-label="Menu"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+        <nav class="oq-menu" aria-label="Galleries and samples">
+          <div class="oq-menu__label oq-overline">Galleries</div>
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html" aria-current="page">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <div class="oq-menu__label oq-overline">Samples</div>
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <style data-pv-appbar>
+      /* Gallery app bar (the same on every gallery page). */
+      .pv-appbar { gap: 8px; min-width: 0; }
+      .pv-appbar .oq-appbar__brand { flex: none; }
+      .pv-galleries { display: flex; flex: none; gap: 2px; }
+      .pv-appbar > * { white-space: nowrap; }
+      .pv-galleries-menu, .pv-site-menu { display: none; }
+      .pv-appbar .oq-dropdown > summary { gap: 4px; }
+      .pv-appbar .oq-menu { min-width: 200px; }
+      .pv-appbar-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .pv-appbar .oq-input-group { flex: 0 1 240px; min-width: 0; width: auto !important; }
+      @media (max-width: 1359.98px) { .pv-galleries { display: none; } .pv-galleries-menu { display: inline-block; } }
+      /* Phones: brand, theme and one menu; the page's own tools move to a second row that scrolls. */
+      @media (max-width: 720px) {
+        .pv-appbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 4px 8px; row-gap: 0; gap: 4px; }
+        .pv-appbar .oq-appbar__brand .oq-chip, .pv-appbar .pv-hide-sm, .pv-galleries-menu, .pv-samples-menu { display: none; }
+        .pv-site-menu { display: inline-block; }
+        .pv-appbar #theme-switch { width: 108px !important; }
+        .pv-appbar-tools { order: 10; flex: 1 0 100%; padding: 4px 0 8px; overflow-x: auto; scrollbar-width: none; }
+        .pv-appbar-tools .oq-input-group { flex: 1 1 auto; }
+        .pv-site-menu .oq-menu { position: fixed; top: 52px; left: 8px; right: 8px; max-width: none; max-height: calc(100dvh - 64px); }
+      }
+    </style>
+    <script src="assets/osqd-ui-elements.js" defer></script>
+  </header>
+
+  <aside class="oq-sidebar pv-sidebar" id="sidebar">
+    <nav class="oq-nav" id="toc">
+      <div class="oq-nav__section oq-overline">Layout</div>
+      <a class="oq-nav__item" href="#split" data-tip="Split panes" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/></svg><span class="oq-nav__label">Split panes</span></a>
+      <a class="oq-nav__item" href="#shell-rail" data-tip="Sidebar rail &amp; drawer" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></svg><span class="oq-nav__label">Sidebar rail &amp; drawer</span></a>
+      <a class="oq-nav__item" href="#page-header" data-tip="Page header" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12,3.5 21,8 12,12.5 3,8"/><polyline points="3,12 12,16.5 21,12"/><polyline points="3,16 12,20.5 21,16"/></svg><span class="oq-nav__label">Page header</span></a>
+      <a class="oq-nav__item" href="#detail" data-tip="Detail layout" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><line x1="8.5" y1="13" x2="15.5" y2="13"/><line x1="8.5" y1="17" x2="13" y2="17"/></svg><span class="oq-nav__label">Detail layout</span></a>
+      <a class="oq-nav__item" href="#density" data-tip="Density" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg><span class="oq-nav__label">Density</span></a>
+      <div class="oq-nav__section oq-overline">Overlays</div>
+      <a class="oq-nav__item" href="#context-menu" data-tip="Context menu" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="6" r="0.6" fill="currentColor"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/><circle cx="12" cy="18" r="0.6" fill="currentColor"/></svg><span class="oq-nav__label">Context menu</span></a>
+      <a class="oq-nav__item" href="#shortcuts" data-tip="Shortcuts overlay" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="6.5" cy="10" r="0.6" fill="currentColor"/><circle cx="10" cy="10" r="0.6" fill="currentColor"/><circle cx="14" cy="10" r="0.6" fill="currentColor"/><circle cx="17.5" cy="10" r="0.6" fill="currentColor"/><line x1="7.5" y1="14" x2="16.5" y2="14"/></svg><span class="oq-nav__label">Shortcuts overlay</span></a>
+      <a class="oq-nav__item" href="#notifications" data-tip="Notifications" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span class="oq-nav__label">Notifications</span><span class="oq-badge oq-danger" id="nav-count" hidden></span></a>
+      <div class="oq-nav__section oq-overline">Feedback</div>
+      <a class="oq-nav__item" href="#skeletons" data-tip="Skeleton presets" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg><span class="oq-nav__label">Skeleton presets</span></a>
+      <a class="oq-nav__item" href="#errors" data-tip="Error pages" data-tip-pos="right"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12,3.5 21.5,20 2.5,20"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg><span class="oq-nav__label">Error pages</span></a>
+    </nav>
+  </aside>
+  <div class="oq-shell__backdrop" id="backdrop" aria-hidden="true"></div>
+
+  <main class="oq-shell__main">
+  <div class="pv-main">
+
+  <!-- ================= Split panes ================= -->
+  <section class="pv-section" id="split">
+    <header>
+      <div class="oq-overline">Layout</div>
+      <h2 class="oq-h2">Split panes</h2>
+      <p class="oq-muted">Drag the line, or focus it and use the arrow keys (Shift for bigger steps, Home/End for the limits). Double-click or Enter collapses the first pane. The outer split remembers its size. <code>.oq-split</code> · <code>&lt;SplitPane&gt;</code></p>
+    </header>
+    <div class="pv-frame pv-split-demo">
+      <div class="oq-split" data-split data-min="15" data-max="60" data-key="oq-preview-split" style="--split: 28%">
+        <div class="oq-split__pane pv-pane pv-pane--surface">
+          <div class="oq-overline" style="margin-bottom: 8px">Files</div>
+          <nav class="pv-files oq-nav">
+            <a class="oq-nav__item" href="#split"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18V7a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v2"/><path d="M3 18l2.6-6.4A1 1 0 0 1 6.5 11h14a1 1 0 0 1 .9 1.4l-2.6 6.4a2 2 0 0 1-1.9 1.2H5a2 2 0 0 1-2-2z"/></svg><span class="oq-nav__label">src</span></a>
+            <a class="oq-nav__item" href="#split" style="padding-left: 26px"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg><span class="oq-nav__label">core.ts</span></a>
+            <a class="oq-nav__item" href="#split" style="padding-left: 26px" aria-current="page"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg><span class="oq-nav__label">policy.ts</span></a>
+            <a class="oq-nav__item" href="#split" style="padding-left: 26px"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg><span class="oq-nav__label">types.ts</span></a>
+            <a class="oq-nav__item" href="#split"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="oq-nav__label">tests</span></a>
+            <a class="oq-nav__item" href="#split"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><line x1="8.5" y1="13" x2="15.5" y2="13"/><line x1="8.5" y1="17" x2="13" y2="17"/></svg><span class="oq-nav__label">README.md</span></a>
+          </nav>
+        </div>
+        <div class="oq-split__handle" role="separator" tabindex="0" aria-label="Resize file list" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="60" aria-valuenow="28"></div>
+        <div class="oq-split__pane">
+          <div class="oq-split oq-split--vertical" data-split data-min="20" data-max="85" style="--split: 62%">
+            <div class="oq-split__pane pv-pane">
+              <div class="oq-row oq-between" style="margin-bottom: 8px"><span class="oq-mono oq-small">src/policy.ts</span><span class="oq-chip oq-sm oq-neutral">TypeScript</span></div>
+<pre class="oq-pre" style="margin: 0">export function decide(findings: Finding[], policy: Policy): Decision {
+  const score = findings.reduce((s, f) =&gt; s + f.score, 0);
+  if (score &gt;= policy.block) return { action: "block", score };
+  if (score &gt;= policy.challenge) return { action: "challenge", score };
+  return { action: "allow", score };
+}</pre>
+            </div>
+            <div class="oq-split__handle" role="separator" tabindex="0" aria-label="Resize terminal" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="85" aria-valuenow="62"></div>
+            <div class="oq-split__pane pv-pane pv-pane--surface">
+              <div class="oq-overline" style="margin-bottom: 6px">Terminal</div>
+              <div class="oq-mono oq-small oq-muted">$ npm test<br><span class="oq-text-c oq-success">✓</span> 310 passed (1.2 s)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Shell rail ================= -->
+  <section class="pv-section" id="shell-rail">
+    <header>
+      <div class="oq-overline">Layout</div>
+      <h2 class="oq-h2">Sidebar rail &amp; drawer</h2>
+      <p class="oq-muted">This page's own sidebar. On wide screens it collapses to an icon rail (labels move into tooltips, badges into corner markers); below 760 px it becomes a drawer over the page with a backdrop. Add <code>.oq-shell--rail</code> or <code>.oq-shell--drawer-open</code> to <code>.oq-shell</code>; in React, <code>&lt;CollapsibleShell&gt;</code> with a <code>&lt;ShellToggle&gt;</code> in the app bar.</p>
+    </header>
+    <div class="pv-demo">
+      <button class="oq-btn" id="rail-demo">Toggle the sidebar</button>
+      <span class="oq-small oq-muted">or press <kbd class="oq-kbd">[</kbd> · narrow the window to see the drawer</span>
+    </div>
+<pre class="oq-pre">&lt;div class="oq-shell oq-shell--rail"&gt;
+  &lt;header class="oq-appbar"&gt;&lt;button class="oq-btn oq-btn--icon oq-shell__rail-btn"&gt;…&lt;/button&gt;&lt;button class="oq-btn oq-btn--icon oq-shell__menu-btn"&gt;…&lt;/button&gt;…&lt;/header&gt;
+  &lt;aside class="oq-sidebar"&gt;&lt;a class="oq-nav__item" data-tip="Nodes" data-tip-pos="right"&gt;&lt;svg…/&gt;&lt;span class="oq-nav__label"&gt;Nodes&lt;/span&gt;&lt;/a&gt;&lt;/aside&gt;
+  &lt;div class="oq-shell__backdrop"&gt;&lt;/div&gt;
+  &lt;main class="oq-shell__main"&gt;…&lt;/main&gt;
+&lt;/div&gt;</pre>
+  </section>
+
+  <!-- ================= Page header ================= -->
+  <section class="pv-section" id="page-header">
+    <header>
+      <div class="oq-overline">Layout</div>
+      <h2 class="oq-h2">Page header</h2>
+      <p class="oq-muted">Breadcrumbs, title with status, subtitle, short facts, actions and an optional tab strip that sits on the header's line. <code>.oq-page-header</code> · <code>&lt;PageHeader&gt;</code></p>
+    </header>
+    <div class="pv-frame pv-frame--pad">
+      <header class="oq-page-header oq-page-header--bordered" style="margin-bottom: 0">
+        <ol class="oq-breadcrumbs"><li><a href="#page-header">Production</a></li><li><a href="#page-header">Nodes</a></li><li><span aria-current="page">fra-02</span></li></ol>
+        <div class="oq-page-header__row">
+          <div class="oq-page-header__heading">
+            <div class="oq-page-header__title-row"><h3 class="oq-page-header__title">fra-02</h3><span class="oq-chip oq-success"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="8,12.5 11,15.5 16.5,9.5"/></svg> online</span></div>
+            <div class="oq-page-header__subtitle">Edge node in eu-central-1, serving 2 190 req/s</div>
+            <ul class="oq-page-header__meta">
+              <li><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg> Owner MP</li>
+              <li><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="5.5" r="2"/><circle cx="6" cy="18.5" r="2"/><circle cx="18" cy="7" r="2"/><line x1="6" y1="7.5" x2="6" y2="16.5"/><path d="M18 9c0 4-3 6-7.5 6.5L7.5 17"/></svg> 0.14.2</li>
+              <li><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12,7 12,12 15.5,14"/></svg> Heartbeat 4 s ago</li>
+            </ul>
+          </div>
+          <div class="oq-page-header__actions">
+            <button class="oq-btn oq-btn--ghost oq-neutral"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2"/><polyline points="7,9.5 10,12 7,14.5"/><line x1="12.5" y1="15" x2="17" y2="15"/></svg> Logs</button>
+            <button class="oq-btn oq-btn--outline oq-neutral"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 10A8 8 0 0 0 5.5 7.3L4 9"/><polyline points="4,4.5 4,9 8.5,9"/><path d="M4.5 14a8 8 0 0 0 14 2.7L20 15"/><polyline points="20,19.5 20,15 15.5,15"/></svg> Restart</button>
+            <button class="oq-btn"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L8 18.5z"/><line x1="13.5" y1="7" x2="16.5" y2="10"/></svg> Edit</button>
+          </div>
+        </div>
+        <div class="oq-page-header__tabs">
+          <div class="oq-tabs" role="tablist" aria-label="Node">
+            <button class="oq-tab" role="tab" aria-selected="true">Overview</button>
+            <button class="oq-tab" role="tab" aria-selected="false" tabindex="-1">Detectors <span class="oq-badge oq-neutral">8</span></button>
+            <button class="oq-tab" role="tab" aria-selected="false" tabindex="-1">Events</button>
+            <button class="oq-tab" role="tab" aria-selected="false" tabindex="-1">Settings</button>
+          </div>
+        </div>
+      </header>
+    </div>
+  </section>
+
+  <!-- ================= Detail layout ================= -->
+  <section class="pv-section" id="detail">
+    <header>
+      <div class="oq-overline">Layout</div>
+      <h2 class="oq-h2">Detail layout</h2>
+      <p class="oq-muted">Header across the top, the content, and a column of properties beside it; the properties move above the content on narrow screens. <code>.oq-detail</code> · <code>&lt;DetailLayout&gt;</code></p>
+    </header>
+    <div class="pv-frame pv-frame--pad">
+      <div class="oq-detail" style="--aside-w: 280px">
+        <header class="oq-page-header">
+          <div class="oq-page-header__row">
+            <div class="oq-page-header__heading">
+              <div class="oq-page-header__title-row"><span class="oq-mono oq-faint">OSQD-221</span><h3 class="oq-page-header__title">Reload ignores changed port</h3><span class="oq-chip oq-primary">In progress</span></div>
+              <ul class="oq-page-header__meta"><li>Opened 3 days ago by AK</li><li>2 comments</li></ul>
+            </div>
+            <div class="oq-page-header__actions"><button class="oq-btn oq-btn--outline oq-neutral oq-sm"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><line x1="8.2" y1="10.8" x2="15.8" y2="6.7"/><line x1="8.2" y1="13.2" x2="15.8" y2="17.3"/></svg> Share</button><button class="oq-btn oq-sm"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5,12.5 10,17.5 19,7"/></svg> Resolve</button></div>
+          </div>
+        </header>
+        <div class="oq-detail__main">
+          <section class="oq-detail__section">
+            <h3>Description</h3>
+            <p class="oq-muted">A <code>SIGHUP</code> reload with a new port keeps listening on the old one and reports success. The reload should either rebind or say clearly that the port needs a restart.</p>
+          </section>
+          <section class="oq-detail__section">
+            <h3>Activity</h3>
+            <ul class="oq-list oq-paper">
+              <li class="oq-list__item"><span class="oq-avatar oq-sm">AK</span><div class="oq-list__text"><span>Opened the ticket</span><span class="oq-list__secondary">Steps to reproduce attached</span></div><span class="oq-list__meta">3 d</span></li>
+              <li class="oq-list__item"><span class="oq-avatar oq-sm oq-secondary">MP</span><div class="oq-list__text"><span>Moved to <strong>In progress</strong></span></div><span class="oq-list__meta">1 d</span></li>
+              <li class="oq-list__item"><span class="oq-avatar oq-sm oq-secondary">MP</span><div class="oq-list__text"><span>“Rebinding needs the old socket drained first.”</span></div><span class="oq-list__meta">2 h</span></li>
+            </ul>
+          </section>
+        </div>
+        <aside class="oq-detail__aside">
+          <div class="oq-card"><div class="oq-card__body">
+            <dl class="oq-dl">
+              <dt>Status</dt><dd><span class="oq-status"><span class="oq-dot oq-primary"></span>In progress</span></dd>
+              <dt>Priority</dt><dd><span class="oq-chip oq-sm oq-chip--square oq-danger">P1</span></dd>
+              <dt>Assignee</dt><dd><span class="oq-row oq-gap-2"><span class="oq-avatar oq-sm oq-secondary">MP</span>Michał P.</span></dd>
+              <dt>Estimate</dt><dd class="oq-mono">3 h</dd>
+              <dt>Labels</dt><dd><span class="oq-row oq-gap-1 oq-wrap"><span class="oq-chip oq-sm oq-neutral">config</span><span class="oq-chip oq-sm oq-neutral">reload</span></span></dd>
+            </dl>
+          </div></div>
+          <div class="oq-card"><div class="oq-card__body oq-stack oq-gap-2">
+            <div class="oq-overline">Linked</div>
+            <a href="#detail" class="oq-small">OSQD-222 CIDR allowlist matches nothing</a>
+            <a href="#detail" class="oq-small">OSQD-225 Threshold above cap should warn</a>
+          </div></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Density ================= -->
+  <section class="pv-section" id="density">
+    <header>
+      <div class="oq-overline">Layout</div>
+      <h2 class="oq-h2">Density</h2>
+      <p class="oq-muted"><code>data-density="compact"</code> or <code>"comfortable"</code> on any element rescales spacing, control heights and text for everything inside; leave it off for the default. The S / M / L switch in the top bar sets it for this whole page. In React: <code>&lt;DensityProvider density="compact"&gt;</code>.</p>
+    </header>
+    <div class="pv-density-cols">
+      <div data-density="compact">
+        <div class="oq-row oq-between"><span class="oq-strong">Compact</span><code>data-density="compact"</code></div>
+        <label class="oq-field"><span class="oq-label">Service name</span><input class="oq-input" value="bothandler-edge"></label>
+        <div class="oq-row oq-gap-2"><button class="oq-btn oq-sm">Save</button><button class="oq-btn oq-btn--outline oq-neutral oq-sm">Cancel</button><span class="oq-spacer"></span><label class="oq-check oq-small"><input type="checkbox" role="switch" class="oq-switch" checked> On</label></div>
+        <nav class="oq-nav"><a class="oq-nav__item" href="#density" aria-current="page"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="7" rx="1.5"/><rect x="3.5" y="13" width="17" height="7" rx="1.5"/><circle cx="7" cy="7.5" r="0.6" fill="currentColor"/><circle cx="7" cy="16.5" r="0.6" fill="currentColor"/><line x1="11" y1="7.5" x2="17" y2="7.5"/><line x1="11" y1="16.5" x2="17" y2="16.5"/></svg><span class="oq-nav__label">Nodes</span><span class="oq-badge oq-neutral">6</span></a><a class="oq-nav__item" href="#density"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3,12 7,12 10,5 14,19 17,12 21,12"/></svg><span class="oq-nav__label">Events</span></a></nav>
+        <div class="oq-table-wrap"><table class="oq-table"><thead><tr><th>Node</th><th class="oq-num">Req/s</th></tr></thead><tbody><tr><td class="oq-mono">fra-01</td><td class="oq-num">2,310</td></tr><tr><td class="oq-mono">fra-02</td><td class="oq-num">2,190</td></tr><tr><td class="oq-mono">iad-01</td><td class="oq-num">3,020</td></tr></tbody></table></div>
+      </div>
+      <div>
+        <div class="oq-row oq-between"><span class="oq-strong">Inherited from the page</span><span class="oq-faint oq-small">no attribute</span></div>
+        <label class="oq-field"><span class="oq-label">Service name</span><input class="oq-input" value="bothandler-edge"></label>
+        <div class="oq-row oq-gap-2"><button class="oq-btn oq-sm">Save</button><button class="oq-btn oq-btn--outline oq-neutral oq-sm">Cancel</button><span class="oq-spacer"></span><label class="oq-check oq-small"><input type="checkbox" role="switch" class="oq-switch" checked> On</label></div>
+        <nav class="oq-nav"><a class="oq-nav__item" href="#density" aria-current="page"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="7" rx="1.5"/><rect x="3.5" y="13" width="17" height="7" rx="1.5"/><circle cx="7" cy="7.5" r="0.6" fill="currentColor"/><circle cx="7" cy="16.5" r="0.6" fill="currentColor"/><line x1="11" y1="7.5" x2="17" y2="7.5"/><line x1="11" y1="16.5" x2="17" y2="16.5"/></svg><span class="oq-nav__label">Nodes</span><span class="oq-badge oq-neutral">6</span></a><a class="oq-nav__item" href="#density"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3,12 7,12 10,5 14,19 17,12 21,12"/></svg><span class="oq-nav__label">Events</span></a></nav>
+        <div class="oq-table-wrap"><table class="oq-table"><thead><tr><th>Node</th><th class="oq-num">Req/s</th></tr></thead><tbody><tr><td class="oq-mono">fra-01</td><td class="oq-num">2,310</td></tr><tr><td class="oq-mono">fra-02</td><td class="oq-num">2,190</td></tr><tr><td class="oq-mono">iad-01</td><td class="oq-num">3,020</td></tr></tbody></table></div>
+      </div>
+      <div data-density="comfortable">
+        <div class="oq-row oq-between"><span class="oq-strong">Comfortable</span><code>data-density="comfortable"</code></div>
+        <label class="oq-field"><span class="oq-label">Service name</span><input class="oq-input" value="bothandler-edge"></label>
+        <div class="oq-row oq-gap-2"><button class="oq-btn oq-sm">Save</button><button class="oq-btn oq-btn--outline oq-neutral oq-sm">Cancel</button><span class="oq-spacer"></span><label class="oq-check oq-small"><input type="checkbox" role="switch" class="oq-switch" checked> On</label></div>
+        <nav class="oq-nav"><a class="oq-nav__item" href="#density" aria-current="page"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="7" rx="1.5"/><rect x="3.5" y="13" width="17" height="7" rx="1.5"/><circle cx="7" cy="7.5" r="0.6" fill="currentColor"/><circle cx="7" cy="16.5" r="0.6" fill="currentColor"/><line x1="11" y1="7.5" x2="17" y2="7.5"/><line x1="11" y1="16.5" x2="17" y2="16.5"/></svg><span class="oq-nav__label">Nodes</span><span class="oq-badge oq-neutral">6</span></a><a class="oq-nav__item" href="#density"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3,12 7,12 10,5 14,19 17,12 21,12"/></svg><span class="oq-nav__label">Events</span></a></nav>
+        <div class="oq-table-wrap"><table class="oq-table"><thead><tr><th>Node</th><th class="oq-num">Req/s</th></tr></thead><tbody><tr><td class="oq-mono">fra-01</td><td class="oq-num">2,310</td></tr><tr><td class="oq-mono">fra-02</td><td class="oq-num">2,190</td></tr><tr><td class="oq-mono">iad-01</td><td class="oq-num">3,020</td></tr></tbody></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Context menu ================= -->
+  <section class="pv-section" id="context-menu">
+    <header>
+      <div class="oq-overline">Overlays</div>
+      <h2 class="oq-h2">Context menu</h2>
+      <p class="oq-muted">Right-click a row, long-press it on a touch screen, or focus it and press <kbd class="oq-kbd">Shift</kbd> <kbd class="oq-kbd">F10</kbd> or the Menu key. The menu stays inside the window, arrow keys move, Escape closes. It reuses <code>.oq-menu</code> with <code>.oq-context-menu</code>; in React, <code>&lt;ContextMenu items={…}&gt;</code>.</p>
+    </header>
+    <div class="oq-table-wrap">
+      <table class="oq-table oq-table--hover pv-rows" id="ctx-table" data-context-menu>
+        <thead><tr><th>Node</th><th>Region</th><th>Status</th><th class="oq-num">Req/s</th></tr></thead>
+        <tbody>
+          <tr tabindex="0" data-node="fra-01"><td class="oq-mono">fra-01</td><td class="oq-muted">eu-central-1</td><td><span class="oq-chip oq-sm oq-success">healthy</span></td><td class="oq-num">2,310</td></tr>
+          <tr tabindex="0" data-node="fra-02"><td class="oq-mono">fra-02</td><td class="oq-muted">eu-central-1</td><td><span class="oq-chip oq-sm oq-success">healthy</span></td><td class="oq-num">2,190</td></tr>
+          <tr tabindex="0" data-node="fra-03"><td class="oq-mono">fra-03</td><td class="oq-muted">eu-central-1</td><td><span class="oq-chip oq-sm oq-warning">degraded</span></td><td class="oq-num">980</td></tr>
+          <tr tabindex="0" data-node="iad-01"><td class="oq-mono">iad-01</td><td class="oq-muted">us-east-1</td><td><span class="oq-chip oq-sm oq-success">healthy</span></td><td class="oq-num">3,020</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="oq-small oq-muted" id="ctx-log">Last action: —</div>
+  </section>
+
+  <!-- ================= Shortcuts ================= -->
+  <section class="pv-section" id="shortcuts">
+    <header>
+      <div class="oq-overline">Overlays</div>
+      <h2 class="oq-h2">Shortcuts overlay</h2>
+      <p class="oq-muted">Press <kbd class="oq-kbd">?</kbd> anywhere outside a text field. In React, <code>&lt;ShortcutsProvider&gt;</code> holds a registry; each <code>useShortcut({ keys, label, group, handler })</code> adds one, and the overlay lists whatever is registered right now, grouped.</p>
+    </header>
+    <div class="pv-demo">
+      <button class="oq-btn" id="help-demo"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="6.5" cy="10" r="0.6" fill="currentColor"/><circle cx="10" cy="10" r="0.6" fill="currentColor"/><circle cx="14" cy="10" r="0.6" fill="currentColor"/><circle cx="17.5" cy="10" r="0.6" fill="currentColor"/><line x1="7.5" y1="14" x2="16.5" y2="14"/></svg> Show shortcuts</button>
+    </div>
+    <div class="oq-card" style="max-width: 520px"><div class="oq-card__body" id="shortcut-inline"></div></div>
+  </section>
+
+  <!-- ================= Notifications ================= -->
+  <section class="pv-section" id="notifications">
+    <header>
+      <div class="oq-overline">Overlays</div>
+      <h2 class="oq-h2">Notification center</h2>
+      <p class="oq-muted">The bell in the top bar: unread count, a panel grouped by day, mark one or all as read, dismiss. The same panel drawn in place below (<code>.oq-notify__panel--static</code>) works as a full inbox page. <code>&lt;NotificationCenter&gt;</code> · <code>useNotifications()</code></p>
+    </header>
+    <div class="pv-demo">
+      <button class="oq-btn oq-btn--outline oq-neutral" id="notify-add"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Send a test notification</button>
+      <button class="oq-btn oq-btn--ghost oq-neutral" id="notify-reset"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 10A8 8 0 0 0 5.5 7.3L4 9"/><polyline points="4,4.5 4,9 8.5,9"/><path d="M4.5 14a8 8 0 0 0 14 2.7L20 15"/><polyline points="20,19.5 20,15 15.5,15"/></svg> Reset</button>
+    </div>
+    <div style="max-width: 460px"><div class="oq-notify__panel oq-notify__panel--static" id="inline-panel"></div></div>
+  </section>
+
+  <!-- ================= Skeletons ================= -->
+  <section class="pv-section" id="skeletons">
+    <header>
+      <div class="oq-overline">Feedback</div>
+      <h2 class="oq-h2">Skeleton presets</h2>
+      <p class="oq-muted">Placeholders shaped like what will load: text, a list, a card, a table. <code>&lt;SkeletonText&gt;</code> <code>&lt;SkeletonList&gt;</code> <code>&lt;SkeletonCard&gt;</code> <code>&lt;SkeletonTable&gt;</code></p>
+    </header>
+    <div class="pv-demo">
+      <button class="oq-btn" id="skel-load"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 10A8 8 0 0 0 5.5 7.3L4 9"/><polyline points="4,4.5 4,9 8.5,9"/><path d="M4.5 14a8 8 0 0 0 14 2.7L20 15"/><polyline points="20,19.5 20,15 15.5,15"/></svg> Simulate loading</button>
+      <span class="oq-small oq-muted" id="skel-state">Loading…</span>
+    </div>
+    <div class="pv-skel-grid" id="skel-grid" aria-busy="true"></div>
+  </section>
+
+  <!-- ================= Error pages ================= -->
+  <section class="pv-section" id="errors">
+    <header>
+      <div class="oq-overline">Feedback</div>
+      <h2 class="oq-h2">Error pages</h2>
+      <p class="oq-muted">Ready-made pages in <code>pages/</code> (open one to see it full size), and <code>&lt;ErrorPage variant="404 | 500 | offline | forbidden"&gt;</code> in React, using the kit's illustrations. They follow the theme picked here.</p>
+    </header>
+    <div class="pv-error-thumbs">
+      <a class="pv-thumb" href="pages/404.html"><div class="pv-thumb__view"><iframe src="pages/404.html" title="404 page preview" tabindex="-1" loading="lazy"></iframe></div><div class="pv-thumb__label"><span class="oq-strong">404 · Not found</span><span class="oq-faint">pages/404.html</span></div></a>
+      <a class="pv-thumb" href="pages/500.html"><div class="pv-thumb__view"><iframe src="pages/500.html" title="500 page preview" tabindex="-1" loading="lazy"></iframe></div><div class="pv-thumb__label"><span class="oq-strong">500 · Server error</span><span class="oq-faint">pages/500.html</span></div></a>
+      <a class="pv-thumb" href="pages/offline.html"><div class="pv-thumb__view"><iframe src="pages/offline.html" title="Offline page preview" tabindex="-1" loading="lazy"></iframe></div><div class="pv-thumb__label"><span class="oq-strong">Offline</span><span class="oq-faint">pages/offline.html</span></div></a>
+      <a class="pv-thumb" href="pages/403.html"><div class="pv-thumb__view"><iframe src="pages/403.html" title="403 page preview" tabindex="-1" loading="lazy"></iframe></div><div class="pv-thumb__label"><span class="oq-strong">403 · No access</span><span class="oq-faint">pages/403.html</span></div></a>
+    </div>
+  </section>
+
+  </div>
+  </main>
+</div>
+
+<div class="oq-menu oq-context-menu" role="menu" id="ctx-menu" hidden>
+  <div class="oq-menu__label oq-overline" id="ctx-title">Node</div>
+  <button class="oq-menu__item" role="menuitem" tabindex="-1" data-act="Open"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><line x1="20" y1="4" x2="11" y2="13"/><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></svg><span class="oq-truncate">Open</span><span class="oq-menu__hint">↵</span></button>
+  <button class="oq-menu__item" role="menuitem" tabindex="-1" data-act="Copy ID"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span class="oq-truncate">Copy ID</span><span class="oq-menu__hint">Ctrl C</span></button>
+  <button class="oq-menu__item" role="menuitem" tabindex="-1" data-act="Restart"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 10A8 8 0 0 0 5.5 7.3L4 9"/><polyline points="4,4.5 4,9 8.5,9"/><path d="M4.5 14a8 8 0 0 0 14 2.7L20 15"/><polyline points="20,19.5 20,15 15.5,15"/></svg><span class="oq-truncate">Restart</span></button>
+  <button class="oq-menu__item" role="menuitem" tabindex="-1" data-act="Move" disabled><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/></svg><span class="oq-truncate">Move (locked)</span></button>
+  <div class="oq-menu__sep" role="separator"></div>
+  <button class="oq-menu__item oq-danger" role="menuitem" tabindex="-1" data-act="Remove"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5V7"/><path d="M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12"/><line x1="10" y1="11" x2="10" y2="16"/><line x1="14" y1="11" x2="14" y2="16"/></svg><span class="oq-truncate">Remove…</span></button>
+</div>
+
+<dialog class="oq-dialog" id="shortcuts-dialog" style="--w: 720px">
+  <div class="oq-dialog__header"><h3 class="oq-dialog__title">Keyboard shortcuts</h3><button class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm oq-dialog__close" data-close aria-label="Close"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button></div>
+  <div class="oq-dialog__body"><div class="oq-shortcuts" id="shortcuts-list"></div></div>
+</dialog>
+
+<div class="oq-toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const html = document.documentElement;
+  const store = {
+    get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+  };
+  const ICON = (name) => document.getElementById(`tpl-${name}`)?.innerHTML ?? "";
+  const toast = (title, kind = "success") => {
+    const el = document.createElement("div");
+    el.className = `oq-toast oq-${kind}`;
+    el.setAttribute("role", "status");
+    el.innerHTML = `<div class="oq-toast__body"><div class="oq-toast__title"></div></div>`;
+    el.querySelector(".oq-toast__title").textContent = title;
+    $("#toasts").append(el);
+    setTimeout(() => el.remove(), 2600);
+  };
+
+  // ---------- Theme (shared with the other galleries) ----------
+  const THEMES = [...$("#theme-switch").options].map((o) => o.value);
+  const setTheme = (t) => {
+    html.dataset.theme = t;
+    $("#theme-switch").value = t;
+    store.set("oq-preview-theme", t);
+    // The error-page previews read the same key; reload them so they follow.
+    $$(".pv-thumb iframe").forEach((f) => { try { f.contentWindow.document.documentElement.dataset.theme = t; } catch { f.src = f.src; } });
+  };
+  $("#theme-switch").addEventListener("change", (e) => setTheme(e.target.value));
+
+  // ---------- Density ----------
+  const DENSITIES = ["compact", "default", "comfortable"];
+  const setDensity = (d) => {
+    if (d === "default") html.removeAttribute("data-density");
+    else html.dataset.density = d;
+    $$("#density-switch button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.densitySet === d)));
+    store.set("oq-preview-density", d);
+  };
+  $("#density-switch").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) setDensity(b.dataset.densitySet); });
+
+  // ---------- Sidebar: rail on wide screens, drawer on narrow ones ----------
+  const shell = $("#shell");
+  const narrow = matchMedia("(max-width: 760px)");
+  const setRail = (on) => {
+    shell.classList.toggle("oq-shell--rail", on);
+    const label = on ? "Expand sidebar" : "Collapse sidebar";
+    $("#rail-btn").setAttribute("aria-pressed", String(on));
+    $("#rail-btn").setAttribute("aria-label", label);
+    $("#rail-btn").dataset.tip = `${label} ( [ )`;
+    store.set("oq-preview-rail", on ? "1" : "0");
+  };
+  const setDrawer = (open) => {
+    shell.classList.toggle("oq-shell--drawer-open", open);
+    $("#menu-btn").setAttribute("aria-expanded", String(open));
+    $("#menu-btn").setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  };
+  const toggleSidebar = () => (narrow.matches ? setDrawer(!shell.classList.contains("oq-shell--drawer-open")) : setRail(!shell.classList.contains("oq-shell--rail")));
+  $("#rail-btn").onclick = () => setRail(!shell.classList.contains("oq-shell--rail"));
+  $("#rail-demo").onclick = toggleSidebar;
+  $("#menu-btn").onclick = () => setDrawer(!shell.classList.contains("oq-shell--drawer-open"));
+  $("#backdrop").onclick = () => setDrawer(false);
+  $("#toc").addEventListener("click", (e) => { if (e.target.closest("a")) setDrawer(false); });
+  narrow.addEventListener("change", () => setDrawer(false));
+  // Swipe the open drawer to the left to close it; Tab stays inside it while it is open.
+  {
+    const side = shell.querySelector(":scope > .oq-sidebar");
+    let start = null;
+    side.addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse") start = { x: e.clientX, y: e.clientY, id: e.pointerId }; });
+    side.addEventListener("pointermove", (e) => {
+      if (!start || e.pointerId !== start.id || !shell.classList.contains("oq-shell--drawer-open")) return;
+      const dx = e.clientX - start.x;
+      if (dx < -60 && Math.abs(dx) > Math.abs(e.clientY - start.y)) { start = null; setDrawer(false); $("#menu-btn").focus(); }
+    });
+    side.addEventListener("pointerup", () => { start = null; });
+    side.addEventListener("pointercancel", () => { start = null; });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Tab" || !shell.classList.contains("oq-shell--drawer-open")) return;
+      const list = $$("a[href], button:not(:disabled)", side).filter((el) => el.offsetParent !== null);
+      const first = list[0], last = list[list.length - 1];
+      if (!side.contains(document.activeElement)) { e.preventDefault(); first?.focus(); }
+      else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  }
+
+  // ---------- Error page thumbnails: scale each 1000px-wide page to its card ----------
+  const thumbFit = new ResizeObserver((entries) => entries.forEach((en) => en.target.style.setProperty("--s", String(en.contentRect.width / 1000))));
+  $$(".pv-thumb__view").forEach((v) => thumbFit.observe(v));
+
+  // ---------- Split panes ----------
+  $$("[data-split]").forEach((split) => {
+    const handle = [...split.children].find((c) => c.classList.contains("oq-split__handle"));
+    const vertical = split.classList.contains("oq-split--vertical");
+    const min = +split.dataset.min || 10, max = +split.dataset.max || 90, key = split.dataset.key;
+    let size = parseFloat(split.style.getPropertyValue("--split")) || 50, collapsed = false;
+    const saved = key && parseFloat(store.get(key) ?? "");
+    if (saved) size = Math.min(max, Math.max(min, saved));
+    const apply = () => {
+      split.style.setProperty("--split", `${collapsed ? 0 : size}%`);
+      split.classList.toggle("is-collapsed", collapsed);
+      handle.setAttribute("aria-valuenow", String(Math.round(collapsed ? 0 : size)));
+    };
+    const set = (v) => { size = Math.min(max, Math.max(min, v)); collapsed = false; apply(); if (key) store.set(key, size.toFixed(2)); };
+    handle.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      handle.setPointerCapture(e.pointerId);
+      handle.focus();
+      split.classList.add("is-dragging");
+    });
+    handle.addEventListener("pointermove", (e) => {
+      if (!split.classList.contains("is-dragging")) return;
+      const r = split.getBoundingClientRect();
+      set(vertical ? ((e.clientY - r.top) / r.height) * 100 : ((e.clientX - r.left) / r.width) * 100);
+    });
+    const end = (e) => { if (split.classList.contains("is-dragging")) { handle.releasePointerCapture(e.pointerId); split.classList.remove("is-dragging"); } };
+    handle.addEventListener("pointerup", end);
+    handle.addEventListener("pointercancel", end);
+    handle.addEventListener("dblclick", () => { collapsed = !collapsed; apply(); });
+    handle.addEventListener("keydown", (e) => {
+      const by = e.shiftKey ? 20 : 2;
+      const k = { [vertical ? "ArrowUp" : "ArrowLeft"]: -by, [vertical ? "ArrowDown" : "ArrowRight"]: by }[e.key];
+      if (k) set(size + k);
+      else if (e.key === "Home") set(min);
+      else if (e.key === "End") set(max);
+      else if (e.key === "Enter") { collapsed = !collapsed; apply(); }
+      else return;
+      e.preventDefault();
+    });
+    apply();
+  });
+
+  // ---------- Context menu ----------
+  const menu = $("#ctx-menu");
+  let ctxRow = null, ctxReturn = null;
+  const place = (x, y) => {
+    menu.hidden = false;
+    menu.style.visibility = "hidden";
+    const { width: w, height: h } = menu.getBoundingClientRect();
+    const m = 8, vw = innerWidth, vh = innerHeight;
+    let left = x + w + m > vw ? x - w : x, top = y + h + m > vh ? y - h : y;
+    left = Math.max(m, Math.min(left, vw - w - m));
+    top = Math.max(m, Math.min(top, vh - h - m));
+    Object.assign(menu.style, { left: `${left}px`, top: `${top}px`, visibility: "visible" });
+    menu.querySelector(".oq-menu__item:not(:disabled)")?.focus();
+  };
+  const openMenu = (row, x, y) => {
+    ctxRow = row;
+    ctxReturn = document.activeElement;
+    $("#ctx-title").textContent = row.dataset.node;
+    $$("#ctx-table tr").forEach((r) => r.setAttribute("aria-selected", String(r === row)));
+    place(x, y);
+  };
+  const closeMenu = () => {
+    if (menu.hidden) return;
+    menu.hidden = true;
+    $$("#ctx-table tr").forEach((r) => r.removeAttribute("aria-selected"));
+    ctxReturn?.focus?.();
+  };
+  // Long press (touch): held still for 500 ms. iOS sends no contextmenu event for it, so it is
+  // timed here; the click that follows the lift is swallowed so it does not also act on the row.
+  const ctxBody = $("#ctx-table tbody");
+  let press = null, swallowClick = false;
+  const cancelPress = () => { if (press) { clearTimeout(press.t); press = null; } };
+  ctxBody.addEventListener("pointerdown", (e) => {
+    swallowClick = false;
+    if (e.pointerType === "mouse" || !e.isPrimary) return;
+    const row = e.target.closest("tr"); if (!row) return;
+    const x = e.clientX, y = e.clientY;
+    cancelPress();
+    press = { x, y, t: setTimeout(() => { press = null; swallowClick = true; openMenu(row, x, y); }, 500) };
+  });
+  ctxBody.addEventListener("pointermove", (e) => { if (press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 10) cancelPress(); });
+  ctxBody.addEventListener("pointerup", cancelPress);
+  ctxBody.addEventListener("pointercancel", cancelPress);
+  ctxBody.addEventListener("click", (e) => { if (swallowClick) { swallowClick = false; e.preventDefault(); e.stopPropagation(); } }, true);
+  ctxBody.addEventListener("contextmenu", (e) => {
+    const row = e.target.closest("tr"); if (!row) return;
+    e.preventDefault();
+    if (press) { cancelPress(); swallowClick = true; } // the browser reported the long press first
+    else if (swallowClick) return; // the timer already opened it
+    openMenu(row, e.clientX, e.clientY);
+  });
+  $("#ctx-table tbody").addEventListener("keydown", (e) => {
+    const row = e.target.closest("tr"); if (!row) return;
+    if ((e.shiftKey && e.key === "F10") || e.key === "ContextMenu") {
+      e.preventDefault();
+      const r = row.getBoundingClientRect();
+      openMenu(row, r.left + 24, r.bottom);
+    } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      (e.key === "ArrowDown" ? row.nextElementSibling : row.previousElementSibling)?.focus();
+    }
+  });
+  menu.addEventListener("click", (e) => {
+    const b = e.target.closest(".oq-menu__item"); if (!b || b.disabled) return;
+    const text = `${b.dataset.act} ${ctxRow?.dataset.node ?? ""}`;
+    $("#ctx-log").textContent = `Last action: ${text}`;
+    closeMenu();
+    toast(text, b.classList.contains("oq-danger") ? "danger" : "success");
+  });
+  menu.addEventListener("keydown", (e) => {
+    const items = $$(".oq-menu__item:not(:disabled)", menu);
+    const i = items.indexOf(document.activeElement);
+    const go = (n) => items[(n + items.length) % items.length]?.focus();
+    if (e.key === "ArrowDown") go(i + 1);
+    else if (e.key === "ArrowUp") go(i - 1);
+    else if (e.key === "Home") go(0);
+    else if (e.key === "End") go(items.length - 1);
+    else if (e.key === "Escape" || e.key === "Tab") closeMenu();
+    else return;
+    e.preventDefault();
+  });
+  menu.addEventListener("contextmenu", (e) => e.preventDefault());
+  document.addEventListener("pointerdown", (e) => { if (!menu.contains(e.target)) closeMenu(); });
+  addEventListener("scroll", closeMenu, true);
+  addEventListener("resize", closeMenu);
+
+  // ---------- Notifications ----------
+  const H = 3_600_000, now = Date.now();
+  const seed = () => [
+    { id: "n1", title: "fra-03 is degraded", body: "p95 latency above 400 ms for 12 minutes.", time: now - 4 * 60_000, color: "warning" },
+    { id: "n2", title: "Blocked 41 requests from 185.220.101.0/24", body: "Detector tor-exit, policy block.", time: now - 38 * 60_000, color: "danger" },
+    { id: "n3", title: "Ruleset edge-v14 deployed", body: "6 of 6 nodes.", time: now - 3 * H, color: "success", read: true },
+    { id: "n4", title: "Anna K. commented on OSQD-221", body: "“Rebinding needs the old socket drained first.”", time: now - 26 * H, color: "primary" },
+    { id: "n5", title: "New version available: 0.15.0", time: now - 30 * H, color: "info", read: true },
+    { id: "n6", title: "Weekly report ready", body: "12.4 M requests, 0.21 % errors.", time: now - 5 * 24 * H, color: "secondary", read: true },
+  ];
+  let notes = seed();
+  const startOfDay = (t) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+  const dayLabel = (t) => {
+    const days = Math.round((startOfDay(Date.now()) - startOfDay(t)) / 86_400_000);
+    return days === 0 ? "Today" : days === 1 ? "Yesterday" : new Date(t).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  };
+  const ago = (t) => { const s = Math.round((Date.now() - t) / 1000); return s < 45 ? "now" : s < 3600 ? `${Math.round(s / 60)} min` : s < 86400 ? `${Math.round(s / 3600)} h` : `${Math.round(s / 86400)} d`; };
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const panelHtml = () => {
+    const unread = notes.some((n) => !n.read);
+    const head = `<div class="oq-notify__header"><h2 class="oq-notify__title">Notifications</h2><button type="button" class="oq-btn oq-btn--ghost oq-sm" data-all ${unread ? "" : "disabled"}>Mark all read</button></div>`;
+    if (!notes.length) return `${head}<div class="oq-empty">${ICON("bell")}<div class="oq-empty__title">You're all caught up</div><div class="oq-small">New notifications will show up here.</div></div>`;
+    const sorted = [...notes].sort((a, b) => b.time - a.time);
+    let body = "", last = "";
+    for (const n of sorted) {
+      const label = dayLabel(n.time);
+      if (label !== last) { body += `<li class="oq-notify__group oq-overline" role="presentation">${label}</li>`; last = label; }
+      body += `<li class="oq-notify__item ${n.read ? "" : "is-unread"} oq-${n.color}">
+        <span class="oq-notify__mark" aria-hidden="true"></span>
+        <div class="oq-notify__body">${n.read ? "" : '<span class="oq-sr-only">Unread: </span>'}<span class="oq-notify__item-title">${esc(n.title)}</span>${n.body ? `<span class="oq-notify__text">${esc(n.body)}</span>` : ""}<time class="oq-notify__time">${ago(n.time)}</time></div>
+        <div class="oq-notify__actions">${n.read ? "" : `<button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-read="${n.id}" aria-label="Mark as read" data-tip="Mark as read">${ICON("check")}</button>`}<button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-dismiss="${n.id}" aria-label="Dismiss" data-tip="Dismiss">${ICON("close")}</button></div>
+      </li>`;
+    }
+    return `${head}<ul class="oq-notify__list">${body}</ul><div class="oq-notify__footer"><a href="#notifications">View all notifications</a></div>`;
+  };
+  const renderNotes = () => {
+    const unread = notes.filter((n) => !n.read).length;
+    $("#bell-panel").innerHTML = panelHtml();
+    $("#inline-panel").innerHTML = panelHtml();
+    for (const id of ["#bell-count", "#nav-count"]) { $(id).hidden = !unread; $(id).textContent = unread > 99 ? "99+" : unread; }
+    $("#bell-btn").setAttribute("aria-label", unread ? `Notifications, ${unread} unread` : "Notifications");
+  };
+  const onPanelClick = (e) => {
+    const t = e.target.closest("button"); if (!t) return;
+    e.stopPropagation();
+    if (t.dataset.all !== undefined) notes = notes.map((n) => ({ ...n, read: true }));
+    if (t.dataset.read) notes = notes.map((n) => (n.id === t.dataset.read ? { ...n, read: true } : n));
+    if (t.dataset.dismiss) notes = notes.filter((n) => n.id !== t.dataset.dismiss);
+    renderNotes();
+  };
+  $("#bell-panel").addEventListener("click", onPanelClick);
+  $("#inline-panel").addEventListener("click", onPanelClick);
+  const setBell = (open) => { $("#bell-panel").hidden = !open; $("#bell-btn").setAttribute("aria-expanded", String(open)); };
+  $("#bell-btn").onclick = () => setBell($("#bell-panel").hidden);
+  document.addEventListener("pointerdown", (e) => { if (!$("#bell").contains(e.target)) setBell(false); });
+  let sent = 0;
+  const samples = [["Node iad-02 is down", "No heartbeat for 60 s.", "danger"], ["Config reloaded", "3 keys changed.", "success"], ["Rate limit reached on /api/login", "Window 60 s, limit 30.", "warning"]];
+  $("#notify-add").onclick = () => {
+    const [title, body, color] = samples[sent++ % samples.length];
+    notes = [{ id: `t${Date.now()}`, title, body, color, time: Date.now() }, ...notes];
+    renderNotes();
+    toast(`Notification sent: ${title}`, color === "danger" ? "danger" : "success");
+  };
+  $("#notify-reset").onclick = () => { notes = seed(); renderNotes(); };
+
+  // ---------- Shortcuts registry + overlay ----------
+  const mac = /mac|iphone|ipad/i.test(navigator.platform);
+  const fmt = (combo) => combo.split("+").map((p) => ({ mod: mac ? "⌘" : "Ctrl", shift: mac ? "⇧" : "Shift", escape: "Esc" })[p] ?? (p.length === 1 ? p.toUpperCase() : p));
+  const cycle = (list, cur) => list[(list.indexOf(cur) + 1) % list.length];
+  const shortcuts = [
+    { keys: "?", label: "Show keyboard shortcuts", group: "General", run: () => toggleHelp() },
+    { keys: "t", label: "Next theme", group: "General", run: () => { setTheme(cycle(THEMES, html.dataset.theme)); toast(`Theme: ${html.dataset.theme}`); } },
+    { keys: "d", label: "Next density", group: "General", run: () => { setDensity(cycle(DENSITIES, html.dataset.density ?? "default")); toast(`Density: ${html.dataset.density ?? "default"}`); } },
+    { keys: "[", label: "Collapse or expand the sidebar", group: "Layout", run: toggleSidebar },
+    { keys: "n", label: "Open notifications", group: "Layout", run: () => setBell($("#bell-panel").hidden) },
+    { keys: "g", label: "Go to the top", group: "Navigation", run: () => scrollTo({ top: 0, behavior: "smooth" }) },
+    { keys: "j", label: "Next section", group: "Navigation", run: () => jump(1) },
+    { keys: "k", label: "Previous section", group: "Navigation", run: () => jump(-1) },
+    { keys: "escape", label: "Close menus and panels", group: "Navigation" },
+  ];
+  const sections = $$(".pv-section");
+  const jump = (d) => {
+    const y = scrollY + 80;
+    const i = sections.findIndex((s) => s.offsetTop > y - 10);
+    const cur = i === -1 ? sections.length - 1 : Math.max(0, i - 1);
+    sections[Math.min(sections.length - 1, Math.max(0, cur + d))]?.scrollIntoView({ behavior: "smooth" });
+  };
+  const listHtml = () => {
+    const groups = new Map();
+    for (const s of shortcuts) groups.set(s.group, [...(groups.get(s.group) ?? []), s]);
+    return [...groups].map(([g, items]) => `<section class="oq-shortcuts__group"><div class="oq-overline">${g}</div>${items.map((s) => `<div class="oq-shortcuts__row"><span>${s.label}</span><span class="oq-shortcuts__keys">${fmt(s.keys).map((k) => `<kbd class="oq-kbd">${k}</kbd>`).join("")}</span></div>`).join("")}</section>`).join("");
+  };
+  $("#shortcuts-list").innerHTML = listHtml();
+  $("#shortcut-inline").innerHTML = `<div class="oq-shortcuts" style="grid-template-columns: 1fr">${listHtml()}</div>`;
+  const dlg = $("#shortcuts-dialog");
+  const toggleHelp = () => (dlg.open ? dlg.close() : dlg.showModal());
+  dlg.addEventListener("click", (e) => { if (e.target === dlg || e.target.closest("[data-close]")) dlg.close(); });
+  $("#help-btn").onclick = toggleHelp;
+  $("#help-demo").onclick = toggleHelp;
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { closeMenu(); setBell(false); setDrawer(false); return; }
+    if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
+    if (dlg.open && e.key !== "?") return;
+    const s = shortcuts.find((x) => x.run && x.keys === e.key.toLowerCase());
+    if (s) { e.preventDefault(); s.run(); }
+  });
+
+  // ---------- Skeletons ----------
+  const skelLines = (n) => `<div class="oq-skeleton-text" aria-hidden="true">${Array.from({ length: n }, (_, i) => `<span class="oq-skeleton" style="width:${["92%", "78%", "86%", "70%"][i % 4]}"></span>`).join("")}</div>`;
+  const skeletonHtml = `
+    <div class="oq-card"><div class="oq-card__header"><span class="oq-skeleton" style="width: 40%"></span></div><div class="oq-card__body">${skelLines(4)}</div></div>
+    <div class="oq-card"><ul class="oq-skeleton-list" aria-hidden="true">${Array.from({ length: 4 }, () => `<li><span class="oq-skeleton oq-skeleton--circle" style="width:32px;height:32px"></span>${skelLines(2)}<span class="oq-skeleton" style="width:36px;height:.75em"></span></li>`).join("")}</ul></div>
+    <div class="oq-card" aria-hidden="true"><span class="oq-skeleton oq-skeleton-card__media"></span><div class="oq-card__body oq-stack oq-gap-3"><span class="oq-skeleton" style="width:45%;height:1.15em"></span>${skelLines(3)}</div><div class="oq-card__footer"><span class="oq-skeleton" style="width:64px;height:var(--oq-control-md)"></span><span class="oq-skeleton" style="width:80px;height:var(--oq-control-md)"></span></div></div>
+    <div class="oq-table-wrap" aria-hidden="true"><table class="oq-table oq-skeleton-table"><thead><tr>${[40, 55, 55].map((w) => `<th><span class="oq-skeleton" style="width:${w}%"></span></th>`).join("")}<th class="oq-num"><span class="oq-skeleton" style="width:55%;margin-left:auto"></span></th></tr></thead><tbody>${Array.from({ length: 5 }, (_, r) => `<tr>${[0, 1, 2].map((c) => `<td><span class="oq-skeleton" style="width:${["92%", "78%", "86%", "70%"][(r + c) % 4]}"></span></td>`).join("")}<td class="oq-num"><span class="oq-skeleton" style="width:40%;margin-left:auto"></span></td></tr>`).join("")}</tbody></table></div>`;
+  const loadedHtml = `
+    <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">About this node</h3></div><div class="oq-card__body oq-muted">fra-02 serves eu-central-1 behind the edge balancer. It runs ruleset edge-v14 with the redis store, three replicas, and reports a heartbeat every 5 seconds.</div></div>
+    <div class="oq-card"><ul class="oq-list">${[["AK", "Anna K.", "Operator", "2 h"], ["MP", "Michał P.", "Owner", "1 d"], ["CI", "ci-deployer", "Service account", "3 d"], ["JB", "Jan B.", "Viewer", "1 w"]].map(([a, n, r, t]) => `<li class="oq-list__item"><span class="oq-avatar oq-sm">${a}</span><div class="oq-list__text"><span>${n}</span><span class="oq-list__secondary">${r}</span></div><span class="oq-list__meta">${t}</span></li>`).join("")}</ul></div>
+    <div class="oq-card"><div style="height:120px;background:linear-gradient(135deg, color-mix(in srgb, var(--oq-primary) 30%, var(--oq-surface)), color-mix(in srgb, var(--oq-secondary) 30%, var(--oq-surface)))"></div><div class="oq-card__body oq-stack oq-gap-2"><div class="oq-strong">Weekly report</div><div class="oq-small oq-muted">12.4 M requests, 0.21 % errors, p95 84 ms. Two incidents, both resolved within the hour.</div></div><div class="oq-card__footer"><button class="oq-btn oq-btn--ghost oq-neutral">Share</button><button class="oq-btn">Open</button></div></div>
+    <div class="oq-table-wrap"><table class="oq-table"><thead><tr><th>Node</th><th>Region</th><th>Status</th><th class="oq-num">Req/s</th></tr></thead><tbody>${[["fra-01", "eu-central-1", "healthy", "2,310"], ["fra-02", "eu-central-1", "healthy", "2,190"], ["fra-03", "eu-central-1", "degraded", "980"], ["dub-01", "eu-west-1", "healthy", "1,650"], ["iad-01", "us-east-1", "healthy", "3,020"]].map(([a, b, c, d]) => `<tr><td class="oq-mono">${a}</td><td class="oq-muted">${b}</td><td>${c}</td><td class="oq-num">${d}</td></tr>`).join("")}</tbody></table></div>`;
+  let skelTimer;
+  const loadSkeletons = () => {
+    clearTimeout(skelTimer);
+    $("#skel-grid").innerHTML = skeletonHtml;
+    $("#skel-grid").setAttribute("aria-busy", "true");
+    $("#skel-state").textContent = "Loading…";
+    skelTimer = setTimeout(() => {
+      $("#skel-grid").innerHTML = loadedHtml;
+      $("#skel-grid").setAttribute("aria-busy", "false");
+      $("#skel-state").textContent = "Loaded — press the button to see the placeholders again.";
+    }, 2600);
+  };
+  $("#skel-load").onclick = loadSkeletons;
+  $("#skel-grid").innerHTML = skeletonHtml;
+  $("#skel-state").textContent = "Showing placeholders — press the button to load content.";
+
+  // ---------- Active section in the sidebar ----------
+  const links = $$("#toc a");
+  const spy = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    links.forEach((a) => (a.hash === `#${en.target.id}` ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
+  }), { rootMargin: "-15% 0px -75% 0px" });
+  sections.forEach((s) => spy.observe(s));
+
+  renderNotes();
+  setTheme(store.get("oq-preview-theme") || "dark");
+  setDensity(store.get("oq-preview-density") || "default");
+  setRail(store.get("oq-preview-rail") === "1");
+})();
+</script>
+<!-- Icons the script inserts at run time. -->
+<template id="tpl-bell"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></template>
+<template id="tpl-check"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5,12.5 10,17.5 19,7"/></svg></template>
+<template id="tpl-close"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></template>
+</body>
+</html>

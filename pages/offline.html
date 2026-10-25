@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Offline</title>
+<link rel="stylesheet" href="../styles/index.css">
+<script>
+  // Same theme as the galleries (they store it under this key); dark when nothing is stored.
+  try { document.documentElement.dataset.theme = localStorage.getItem("oq-preview-theme") || "dark"; } catch {}
+</script>
+<style>
+  html, body { margin: 0; }
+  .top { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; padding: 14px 20px; }
+</style>
+</head>
+<body class="oq">
+  <header class="top">
+    <a class="oq-appbar__brand" href="../preview-layout.html">
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+      OSQD
+    </a>
+  </header>
+  <main class="oq-error-page oq-error-page--full oq-info">
+      <svg class="oq-illustration" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><path d="M52 88a20 20 0 0 1-3-39.8 28 28 0 0 1 54.5 6.3A16.8 16.8 0 0 1 106 88z" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><path d="M66 70a20 20 0 0 1 28 0M73 77a10 10 0 0 1 14 0" style="fill:none;stroke:var(--oq-text-faint, #939293);stroke-width:3"/><path d="M40 24l80 76" style="fill:none;stroke:var(--oq-surface, #2d2a2e);stroke-width:10"/><path d="M40 24l80 76" style="fill:none;stroke:var(--oq-danger, #ff6188);stroke-width:4"/></svg>
+      <div class="oq-error-page__code">OFFLINE</div>
+      <h1 class="oq-error-page__title">You're offline</h1>
+      <p class="oq-error-page__message">The connection to the server was lost. This page will work again as soon as the network is back.</p>
+      <div class="oq-status oq-small" id="net"><span class="oq-dot oq-danger"></span><span>No connection</span></div>
+      <div class="oq-error-page__actions">
+        <button class="oq-btn" type="button" id="retry">Retry now</button>
+      </div>
+      <div class="oq-error-page__foot">Checks again automatically when the network comes back.</div>
+  </main>
+  <script>
+    const net = document.getElementById("net");
+    const show = () => {
+      const on = navigator.onLine;
+      net.firstElementChild.className = "oq-dot " + (on ? "oq-success oq-dot--pulse" : "oq-danger");
+      net.lastElementChild.textContent = on ? "Back online — reloading…" : "No connection";
+      if (on) setTimeout(() => location.reload(), 1200);
+    };
+    addEventListener("online", show);
+    addEventListener("offline", show);
+    document.getElementById("retry").onclick = (e) => {
+      e.target.setAttribute("aria-busy", "true");
+      setTimeout(() => { e.target.removeAttribute("aria-busy"); show(); }, 800);
+    };
+  </script>
+</body>
+</html>

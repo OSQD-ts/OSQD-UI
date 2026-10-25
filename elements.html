@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSQD UI — elements</title>
+<link rel="stylesheet" href="styles/index.css">
+<script src="assets/osqd-ui-elements.js" defer></script>
+<style>
+  /* Gallery layout only; nothing here is part of the kit. */
+  html, body { margin: 0; }
+  .pv-section { scroll-margin-top: 64px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid var(--oq-border); }
+  .pv-section:last-child { border-bottom: 0; }
+  .pv-section > header { display: flex; flex-direction: column; gap: 6px; }
+  .pv-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .pv-live { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; padding: 16px; min-height: 64px; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-lg); background: var(--oq-surface); }
+  .pv-live > oq-combobox, .pv-live > oq-tag-input, .pv-live > oq-tabs, .pv-live > oq-sortable-table, .pv-live > oq-tree, .pv-live > oq-dropzone, .pv-live > .oq-filelist, .pv-live > .oq-input-group { flex: 1 1 100%; }
+  .pv-live > oq-sortable-table, .pv-live > oq-tabs, .pv-live > oq-tree { display: block; }
+  .pv-pair .oq-pre { max-height: 360px; font-size: 12px; }
+  .pv-main { max-width: 1240px; }
+  .pv-sidebar { position: sticky; top: 48px; height: calc(100vh - 48px); }
+  @media (max-width: 1100px) { .pv-pair { grid-template-columns: minmax(0, 1fr); } }
+  /* Long event signatures in section headers wrap instead of widening the page. */
+  .pv-section > header .oq-chip { white-space: normal; height: auto; min-height: 18px; padding-block: 2px; overflow-wrap: anywhere; }
+  /* Demos shrink with the column (a flex item would otherwise keep its content's width). */
+  .pv-live > * { min-width: 0; max-width: 100%; }
+  /* Phones: tables in the demos scroll sideways rather than break values over lines. */
+  .pv-live .oq-table :is(th, td) { white-space: nowrap; }
+  @media (max-width: 640px) { .pv-live { padding: 12px; } .pv-section { padding-bottom: 28px; margin-bottom: 28px; } }
+</style>
+</head>
+<body class="oq">
+
+<div class="oq-shell">
+  <header class="oq-appbar oq-appbar--sticky pv-appbar">
+    <a class="oq-appbar__brand" href="preview.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+      OSQD&nbsp;UI <span class="oq-chip oq-sm oq-neutral">0.4.0</span>
+    </a>
+    <nav class="pv-galleries" aria-label="Galleries">
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview.html">Core</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-charts.html">Charts</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-data.html">Data</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-forms.html">Forms</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-layout.html">Layout</a>
+      <a class="oq-btn oq-btn--soft oq-neutral oq-sm" href="elements.html" aria-current="page">Elements</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="icons.html">Icons</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="theme-builder.html">Theme builder</a>
+    </nav>
+    <oq-dropdown class="pv-galleries-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Elements <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Galleries">
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html" aria-current="page">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <oq-dropdown class="pv-samples-menu">
+      <details class="oq-dropdown">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Samples <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <nav class="oq-menu" role="menu" aria-label="Sample sites">
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <div class="oq-spacer"></div>
+    <oq-theme-select storage-key="oq-preview-theme" default="dark">
+      <select class="oq-select oq-sm" id="theme-switch" aria-label="Theme" style="width: 132px">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="graphite">Graphite</option>
+        <option value="midnight">Midnight</option>
+        <option value="contrast">Contrast</option>
+        <option value="paper">Paper</option>
+        <option value="slate">Slate</option>
+        <option value="auto">Auto (system)</option>
+      </select>
+    </oq-theme-select>
+    <oq-dropdown class="pv-site-menu">
+      <details class="oq-dropdown oq-dropdown--end">
+        <summary class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon" aria-label="Menu"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+        <nav class="oq-menu" aria-label="Galleries and samples">
+          <div class="oq-menu__label oq-overline">Galleries</div>
+          <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+          <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+          <a class="oq-menu__item" role="menuitem" href="elements.html" aria-current="page">Elements</a>
+          <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+          <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+          <div class="oq-menu__sep" role="separator"></div>
+          <div class="oq-menu__label oq-overline">Samples</div>
+          <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+          <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+        </nav>
+      </details>
+    </oq-dropdown>
+    <style data-pv-appbar>
+      /* Gallery app bar (the same on every gallery page). */
+      .pv-appbar { gap: 8px; min-width: 0; }
+      .pv-appbar .oq-appbar__brand { flex: none; }
+      .pv-galleries { display: flex; flex: none; gap: 2px; }
+      .pv-appbar > * { white-space: nowrap; }
+      .pv-galleries-menu, .pv-site-menu { display: none; }
+      .pv-appbar .oq-dropdown > summary { gap: 4px; }
+      .pv-appbar .oq-menu { min-width: 200px; }
+      .pv-appbar-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .pv-appbar .oq-input-group { flex: 0 1 240px; min-width: 0; width: auto !important; }
+      @media (max-width: 1359.98px) { .pv-galleries { display: none; } .pv-galleries-menu { display: inline-block; } }
+      /* Phones: brand, theme and one menu; the page's own tools move to a second row that scrolls. */
+      @media (max-width: 720px) {
+        .pv-appbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 4px 8px; row-gap: 0; gap: 4px; }
+        .pv-appbar .oq-appbar__brand .oq-chip, .pv-appbar .pv-hide-sm, .pv-galleries-menu, .pv-samples-menu { display: none; }
+        .pv-site-menu { display: inline-block; }
+        .pv-appbar #theme-switch { width: 108px !important; }
+        .pv-appbar-tools { order: 10; flex: 1 0 100%; padding: 4px 0 8px; overflow-x: auto; scrollbar-width: none; }
+        .pv-appbar-tools .oq-input-group { flex: 1 1 auto; }
+        .pv-site-menu .oq-menu { position: fixed; top: 52px; left: 8px; right: 8px; max-width: none; max-height: calc(100dvh - 64px); }
+      }
+    </style>
+  </header>
+
+  <aside class="oq-sidebar pv-sidebar">
+    <nav class="oq-nav">
+      <div class="oq-nav__section oq-overline">Custom elements</div>
+      <a class="oq-nav__item" href="#theme">Theme select</a>
+      <a class="oq-nav__item" href="#dialog">Dialog</a>
+      <a class="oq-nav__item" href="#tabs">Tabs</a>
+      <a class="oq-nav__item" href="#dropdown">Dropdown</a>
+      <a class="oq-nav__item" href="#toast">Toasts</a>
+      <a class="oq-nav__item" href="#combobox">Combobox</a>
+      <a class="oq-nav__item" href="#tree">Tree</a>
+      <a class="oq-nav__item" href="#palette">Command palette</a>
+      <a class="oq-nav__item" href="#table">Sortable table</a>
+      <a class="oq-nav__item" href="#copy">Copy</a>
+      <a class="oq-nav__item" href="#number">Number</a>
+      <a class="oq-nav__item" href="#tags">Tag input</a>
+      <a class="oq-nav__item" href="#dropzone">Drop zone</a>
+    </nav>
+  </aside>
+
+  <main class="oq-shell__main">
+  <div class="pv-main">
+  <section class="pv-section">
+    <header>
+      <div class="oq-overline">No React, no build</div>
+      <h1 class="oq-h2">Custom elements</h1>
+      <p class="oq-muted">One script makes plain HTML interactive. Every element works in the light DOM and enhances markup that already uses the kit's classes, so a page looks right before the script loads. This page runs on that script alone — it has no other JavaScript.</p>
+    </header>
+    <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;link rel=&quot;stylesheet&quot; href=&quot;node_modules/@osqd/ui/dist/osqd-ui.css&quot;&gt;
+&lt;script src=&quot;node_modules/@osqd/ui/assets/osqd-ui-elements.js&quot; defer&gt;&lt;/script&gt;
+&lt;!-- or, with a bundler: import &quot;@osqd/ui/elements/auto&quot;; --&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;link rel="stylesheet" href="node_modules/@osqd/ui/dist/osqd-ui.css"&gt;</span><span class="oq-code-line">&lt;script src="node_modules/@osqd/ui/assets/osqd-ui-elements.js" defer&gt;&lt;/script&gt;</span><span class="oq-code-line">&lt;!-- or, with a bundler: import "@osqd/ui/elements/auto"; --&gt;</span></code></pre>
+    </div>
+  </section>
+
+  <section class="pv-section" id="theme">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Theme select</h2><code>&lt;oq-theme-select&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-theme-select&gt;</code> binds a select to <code>data-theme</code> and remembers the choice. Without a <code>&lt;select&gt;</code> inside, it builds one with every built-in theme. The one in the top bar is this element.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-change {theme}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<oq-theme-select target="#theme-demo" storage-key="" default="paper"></oq-theme-select>
+<div class="oq-paper oq-p-4" id="theme-demo" style="background: var(--oq-bg)">
+  <button class="oq-btn oq-sm">Themed only in here</button>
+</div>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;oq-theme-select target=&quot;#theme-demo&quot; storage-key=&quot;&quot; default=&quot;paper&quot;&gt;&lt;/oq-theme-select&gt;
+&lt;div class=&quot;oq-paper oq-p-4&quot; id=&quot;theme-demo&quot; style=&quot;background: var(--oq-bg)&quot;&gt;
+  &lt;button class=&quot;oq-btn oq-sm&quot;&gt;Themed only in here&lt;/button&gt;
+&lt;/div&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-theme-select target="#theme-demo" storage-key="" default="paper"&gt;&lt;/oq-theme-select&gt;</span><span class="oq-code-line">&lt;div class="oq-paper oq-p-4" id="theme-demo" style="background: var(--oq-bg)"&gt;</span><span class="oq-code-line">  &lt;button class="oq-btn oq-sm"&gt;Themed only in here&lt;/button&gt;</span><span class="oq-code-line">&lt;/div&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="dialog">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Dialog</h2><code>&lt;oq-dialog&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-dialog&gt;</code> around a native <code>&lt;dialog&gt;</code>. Any <code>[data-oq-open="id"]</code> opens it; Escape, the backdrop and <code>[data-close]</code> close it. The <code>open</code> attribute works both ways.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-open</span> <span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-close {returnValue}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<button class="oq-btn" data-oq-open="demo-dialog">Open dialog</button>
+<oq-dialog id="demo-dialog">
+  <dialog class="oq-dialog" style="--w: 420px">
+    <div class="oq-dialog__header"><h3 class="oq-dialog__title">Restart node?</h3></div>
+    <div class="oq-dialog__body oq-muted">fra-02 drops its connections for about five seconds.</div>
+    <div class="oq-dialog__footer">
+      <button class="oq-btn oq-btn--ghost oq-neutral" data-close="cancel">Cancel</button>
+      <button class="oq-btn" data-close="restart" data-oq-toast-title="Restarting fra-02" data-oq-toast-color="info">Restart</button>
+    </div>
+  </dialog>
+</oq-dialog>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;button class=&quot;oq-btn&quot; data-oq-open=&quot;demo-dialog&quot;&gt;Open dialog&lt;/button&gt;
+&lt;oq-dialog id=&quot;demo-dialog&quot;&gt;
+  &lt;dialog class=&quot;oq-dialog&quot; style=&quot;--w: 420px&quot;&gt;
+    &lt;div class=&quot;oq-dialog__header&quot;&gt;&lt;h3 class=&quot;oq-dialog__title&quot;&gt;Restart node?&lt;/h3&gt;&lt;/div&gt;
+    &lt;div class=&quot;oq-dialog__body oq-muted&quot;&gt;fra-02 drops its connections for about five seconds.&lt;/div&gt;
+    &lt;div class=&quot;oq-dialog__footer&quot;&gt;
+      &lt;button class=&quot;oq-btn oq-btn--ghost oq-neutral&quot; data-close=&quot;cancel&quot;&gt;Cancel&lt;/button&gt;
+      &lt;button class=&quot;oq-btn&quot; data-close=&quot;restart&quot; data-oq-toast-title=&quot;Restarting fra-02&quot; data-oq-toast-color=&quot;info&quot;&gt;Restart&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/dialog&gt;
+&lt;/oq-dialog&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;button class="oq-btn" data-oq-open="demo-dialog"&gt;Open dialog&lt;/button&gt;</span><span class="oq-code-line">&lt;oq-dialog id="demo-dialog"&gt;</span><span class="oq-code-line">  &lt;dialog class="oq-dialog" style="--w: 420px"&gt;</span><span class="oq-code-line">    &lt;div class="oq-dialog__header"&gt;&lt;h3 class="oq-dialog__title"&gt;Restart node?&lt;/h3&gt;&lt;/div&gt;</span><span class="oq-code-line">    &lt;div class="oq-dialog__body oq-muted"&gt;fra-02 drops its connections for about five seconds.&lt;/div&gt;</span><span class="oq-code-line">    &lt;div class="oq-dialog__footer"&gt;</span><span class="oq-code-line">      &lt;button class="oq-btn oq-btn--ghost oq-neutral" data-close="cancel"&gt;Cancel&lt;/button&gt;</span><span class="oq-code-line">      &lt;button class="oq-btn" data-close="restart" data-oq-toast-title="Restarting fra-02" data-oq-toast-color="info"&gt;Restart&lt;/button&gt;</span><span class="oq-code-line">    &lt;/div&gt;</span><span class="oq-code-line">  &lt;/dialog&gt;</span><span class="oq-code-line">&lt;/oq-dialog&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="tabs">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Tabs</h2><code>&lt;oq-tabs&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-tabs&gt;</code>: arrow keys move and select (disabled tabs are skipped), Home/End jump. Set the <code>value</code> attribute to switch from outside.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-change {value, tab}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<oq-tabs>
+  <div class="oq-tabs" role="tablist" aria-label="Node">
+    <button class="oq-tab" role="tab" id="et-1" aria-controls="ep-1">Overview</button>
+    <button class="oq-tab" role="tab" id="et-2" aria-controls="ep-2">Detectors</button>
+    <button class="oq-tab" role="tab" id="et-3" aria-controls="ep-3" disabled>Billing</button>
+    <button class="oq-tab" role="tab" id="et-4" aria-controls="ep-4">Logs</button>
+  </div>
+  <div class="oq-tabpanel" role="tabpanel" id="ep-1">Eight detectors, two alerts.</div>
+  <div class="oq-tabpanel" role="tabpanel" id="ep-2">rate · tor-exit · user-agent · headers</div>
+  <div class="oq-tabpanel" role="tabpanel" id="ep-3"></div>
+  <div class="oq-tabpanel" role="tabpanel" id="ep-4">11:05:02 error store ECONNREFUSED</div>
+</oq-tabs>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;oq-tabs&gt;
+  &lt;div class=&quot;oq-tabs&quot; role=&quot;tablist&quot; aria-label=&quot;Node&quot;&gt;
+    &lt;button class=&quot;oq-tab&quot; role=&quot;tab&quot; id=&quot;et-1&quot; aria-controls=&quot;ep-1&quot;&gt;Overview&lt;/button&gt;
+    &lt;button class=&quot;oq-tab&quot; role=&quot;tab&quot; id=&quot;et-2&quot; aria-controls=&quot;ep-2&quot;&gt;Detectors&lt;/button&gt;
+    &lt;button class=&quot;oq-tab&quot; role=&quot;tab&quot; id=&quot;et-3&quot; aria-controls=&quot;ep-3&quot; disabled&gt;Billing&lt;/button&gt;
+    &lt;button class=&quot;oq-tab&quot; role=&quot;tab&quot; id=&quot;et-4&quot; aria-controls=&quot;ep-4&quot;&gt;Logs&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;oq-tabpanel&quot; role=&quot;tabpanel&quot; id=&quot;ep-1&quot;&gt;Eight detectors, two alerts.&lt;/div&gt;
+  &lt;div class=&quot;oq-tabpanel&quot; role=&quot;tabpanel&quot; id=&quot;ep-2&quot;&gt;rate · tor-exit · user-agent · headers&lt;/div&gt;
+  &lt;div class=&quot;oq-tabpanel&quot; role=&quot;tabpanel&quot; id=&quot;ep-3&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;oq-tabpanel&quot; role=&quot;tabpanel&quot; id=&quot;ep-4&quot;&gt;11:05:02 error store ECONNREFUSED&lt;/div&gt;
+&lt;/oq-tabs&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-tabs&gt;</span><span class="oq-code-line">  &lt;div class="oq-tabs" role="tablist" aria-label="Node"&gt;</span><span class="oq-code-line">    &lt;button class="oq-tab" role="tab" id="et-1" aria-controls="ep-1"&gt;Overview&lt;/button&gt;</span><span class="oq-code-line">    &lt;button class="oq-tab" role="tab" id="et-2" aria-controls="ep-2"&gt;Detectors&lt;/button&gt;</span><span class="oq-code-line">    &lt;button class="oq-tab" role="tab" id="et-3" aria-controls="ep-3" disabled&gt;Billing&lt;/button&gt;</span><span class="oq-code-line">    &lt;button class="oq-tab" role="tab" id="et-4" aria-controls="ep-4"&gt;Logs&lt;/button&gt;</span><span class="oq-code-line">  &lt;/div&gt;</span><span class="oq-code-line">  &lt;div class="oq-tabpanel" role="tabpanel" id="ep-1"&gt;Eight detectors, two alerts.&lt;/div&gt;</span><span class="oq-code-line">  &lt;div class="oq-tabpanel" role="tabpanel" id="ep-2"&gt;rate · tor-exit · user-agent · headers&lt;/div&gt;</span><span class="oq-code-line">  &lt;div class="oq-tabpanel" role="tabpanel" id="ep-3"&gt;&lt;/div&gt;</span><span class="oq-code-line">  &lt;div class="oq-tabpanel" role="tabpanel" id="ep-4"&gt;11:05:02 error store ECONNREFUSED&lt;/div&gt;</span><span class="oq-code-line">&lt;/oq-tabs&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="dropdown">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Dropdown</h2><code>&lt;oq-dropdown&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-dropdown&gt;</code> around a <code>&lt;details class="oq-dropdown"&gt;</code>: closes on an outside click, Escape or an item; ↑/↓ move between items.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-select {value, item}</span> <span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-toggle {open}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<oq-dropdown>
+  <details class="oq-dropdown">
+    <summary class="oq-btn oq-btn--outline oq-neutral">Actions</summary>
+    <div class="oq-menu" role="menu">
+      <button class="oq-menu__item" role="menuitem" data-value="open">Open</button>
+      <button class="oq-menu__item" role="menuitem" data-value="dup">Duplicate</button>
+      <div class="oq-menu__sep" role="separator"></div>
+      <button class="oq-menu__item oq-danger" role="menuitem" data-value="delete">Delete…</button>
+    </div>
+  </details>
+</oq-dropdown>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;oq-dropdown&gt;
+  &lt;details class=&quot;oq-dropdown&quot;&gt;
+    &lt;summary class=&quot;oq-btn oq-btn--outline oq-neutral&quot;&gt;Actions&lt;/summary&gt;
+    &lt;div class=&quot;oq-menu&quot; role=&quot;menu&quot;&gt;
+      &lt;button class=&quot;oq-menu__item&quot; role=&quot;menuitem&quot; data-value=&quot;open&quot;&gt;Open&lt;/button&gt;
+      &lt;button class=&quot;oq-menu__item&quot; role=&quot;menuitem&quot; data-value=&quot;dup&quot;&gt;Duplicate&lt;/button&gt;
+      &lt;div class=&quot;oq-menu__sep&quot; role=&quot;separator&quot;&gt;&lt;/div&gt;
+      &lt;button class=&quot;oq-menu__item oq-danger&quot; role=&quot;menuitem&quot; data-value=&quot;delete&quot;&gt;Delete…&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/details&gt;
+&lt;/oq-dropdown&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-dropdown&gt;</span><span class="oq-code-line">  &lt;details class="oq-dropdown"&gt;</span><span class="oq-code-line">    &lt;summary class="oq-btn oq-btn--outline oq-neutral"&gt;Actions&lt;/summary&gt;</span><span class="oq-code-line">    &lt;div class="oq-menu" role="menu"&gt;</span><span class="oq-code-line">      &lt;button class="oq-menu__item" role="menuitem" data-value="open"&gt;Open&lt;/button&gt;</span><span class="oq-code-line">      &lt;button class="oq-menu__item" role="menuitem" data-value="dup"&gt;Duplicate&lt;/button&gt;</span><span class="oq-code-line">      &lt;div class="oq-menu__sep" role="separator"&gt;&lt;/div&gt;</span><span class="oq-code-line">      &lt;button class="oq-menu__item oq-danger" role="menuitem" data-value="delete"&gt;Delete…&lt;/button&gt;</span><span class="oq-code-line">    &lt;/div&gt;</span><span class="oq-code-line">  &lt;/details&gt;</span><span class="oq-code-line">&lt;/oq-dropdown&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="toast">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Toasts</h2><code>&lt;oq-toast-region&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-toast-region&gt;</code> is the stack (<code>max</code>, <code>duration</code>). From script: <code>OQ.toast({ title, message, color, duration })</code>. Without script: <code>data-oq-toast-title</code> / <code>-message</code> / <code>-color</code> on any clickable element.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-show {id}</span> <span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-dismiss {id}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<button class="oq-btn oq-btn--soft oq-success" data-oq-toast-title="Saved" data-oq-toast-message="Ruleset edge-v14 deployed." data-oq-toast-color="success">Success</button>
+<button class="oq-btn oq-btn--soft oq-warning" data-oq-toast-title="Reload partial" data-oq-toast-message="2 keys need a restart." data-oq-toast-color="warning">Warning</button>
+<button class="oq-btn oq-btn--soft oq-danger" data-oq-toast-title="Request failed" data-oq-toast-message="POST /api/nodes returned 503." data-oq-toast-color="danger" data-oq-toast-duration="0">Error (stays)</button>
+<oq-toast-region max="4"></oq-toast-region>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;button class=&quot;oq-btn oq-btn--soft oq-success&quot; data-oq-toast-title=&quot;Saved&quot; data-oq-toast-message=&quot;Ruleset edge-v14 deployed.&quot; data-oq-toast-color=&quot;success&quot;&gt;Success&lt;/button&gt;
+&lt;button class=&quot;oq-btn oq-btn--soft oq-warning&quot; data-oq-toast-title=&quot;Reload partial&quot; data-oq-toast-message=&quot;2 keys need a restart.&quot; data-oq-toast-color=&quot;warning&quot;&gt;Warning&lt;/button&gt;
+&lt;button class=&quot;oq-btn oq-btn--soft oq-danger&quot; data-oq-toast-title=&quot;Request failed&quot; data-oq-toast-message=&quot;POST /api/nodes returned 503.&quot; data-oq-toast-color=&quot;danger&quot; data-oq-toast-duration=&quot;0&quot;&gt;Error (stays)&lt;/button&gt;
+&lt;oq-toast-region max=&quot;4&quot;&gt;&lt;/oq-toast-region&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;button class="oq-btn oq-btn--soft oq-success" data-oq-toast-title="Saved" data-oq-toast-message="Ruleset edge-v14 deployed." data-oq-toast-color="success"&gt;Success&lt;/button&gt;</span><span class="oq-code-line">&lt;button class="oq-btn oq-btn--soft oq-warning" data-oq-toast-title="Reload partial" data-oq-toast-message="2 keys need a restart." data-oq-toast-color="warning"&gt;Warning&lt;/button&gt;</span><span class="oq-code-line">&lt;button class="oq-btn oq-btn--soft oq-danger" data-oq-toast-title="Request failed" data-oq-toast-message="POST /api/nodes returned 503." data-oq-toast-color="danger" data-oq-toast-duration="0"&gt;Error (stays)&lt;/button&gt;</span><span class="oq-code-line">&lt;oq-toast-region max="4"&gt;&lt;/oq-toast-region&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="combobox">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Combobox</h2><code>&lt;oq-combobox&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-combobox&gt;</code>: type to filter (the match is highlighted), ↑/↓ move, Enter picks, Escape closes. Options are the listbox's <code>li.oq-option</code>s, or set <code>element.options</code>.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-change {value, label}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<oq-combobox class="oq-combobox" value="bot" empty-text="No service by that name">
+  <input class="oq-input" aria-label="Service" placeholder="Search services…">
+  <button class="oq-combobox__toggle" type="button" tabindex="-1" aria-label="Open list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+  <ul class="oq-listbox">
+    <li class="oq-option" data-value="api">api-gateway</li>
+    <li class="oq-option" data-value="bot">bothandler-edge</li>
+    <li class="oq-option" data-value="pot">hackerpot</li>
+    <li class="oq-option" data-value="siem" aria-disabled="true">minisiem-ingest (paused)</li>
+    <li class="oq-option" data-value="notify">notify</li>
+    <li class="oq-option" data-value="stats">statgather</li>
+  </ul>
+</oq-combobox>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;oq-combobox class=&quot;oq-combobox&quot; value=&quot;bot&quot; empty-text=&quot;No service by that name&quot;&gt;
+  &lt;input class=&quot;oq-input&quot; aria-label=&quot;Service&quot; placeholder=&quot;Search services…&quot;&gt;
+  &lt;button class=&quot;oq-combobox__toggle&quot; type=&quot;button&quot; tabindex=&quot;-1&quot; aria-label=&quot;Open list&quot;&gt;&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m6 9 6 6 6-6&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
+  &lt;ul class=&quot;oq-listbox&quot;&gt;
+    &lt;li class=&quot;oq-option&quot; data-value=&quot;api&quot;&gt;api-gateway&lt;/li&gt;
+    &lt;li class=&quot;oq-option&quot; data-value=&quot;bot&quot;&gt;bothandler-edge&lt;/li&gt;
+    &lt;li class=&quot;oq-option&quot; data-value=&quot;pot&quot;&gt;hackerpot&lt;/li&gt;
+    &lt;li class=&quot;oq-option&quot; data-value=&quot;siem&quot; aria-disabled=&quot;true&quot;&gt;minisiem-ingest (paused)&lt;/li&gt;
+    &lt;li class=&quot;oq-option&quot; data-value=&quot;notify&quot;&gt;notify&lt;/li&gt;
+    &lt;li class=&quot;oq-option&quot; data-value=&quot;stats&quot;&gt;statgather&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/oq-combobox&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-combobox class="oq-combobox" value="bot" empty-text="No service by that name"&gt;</span><span class="oq-code-line">  &lt;input class="oq-input" aria-label="Service" placeholder="Search services…"&gt;</span><span class="oq-code-line">  &lt;button class="oq-combobox__toggle" type="button" tabindex="-1" aria-label="Open list"&gt;&lt;svg …&gt;&lt;/button&gt;</span><span class="oq-code-line">  &lt;ul class="oq-listbox"&gt;</span><span class="oq-code-line">    &lt;li class="oq-option" data-value="api"&gt;api-gateway&lt;/li&gt;</span><span class="oq-code-line">    &lt;li class="oq-option" data-value="bot"&gt;bothandler-edge&lt;/li&gt;</span><span class="oq-code-line">    &lt;li class="oq-option" data-value="pot"&gt;hackerpot&lt;/li&gt;</span><span class="oq-code-line">    &lt;li class="oq-option" data-value="siem" aria-disabled="true"&gt;minisiem-ingest (paused)&lt;/li&gt;</span><span class="oq-code-line">    &lt;li class="oq-option" data-value="notify"&gt;notify&lt;/li&gt;</span><span class="oq-code-line">    &lt;li class="oq-option" data-value="stats"&gt;statgather&lt;/li&gt;</span><span class="oq-code-line">  &lt;/ul&gt;</span><span class="oq-code-line">&lt;/oq-combobox&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="tree">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Tree</h2><code>&lt;oq-tree&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-tree&gt;</code>: ↑/↓ move, → opens or enters, ← closes or goes up, Home/End, Enter/Space select, <kbd class="oq-kbd">*</kbd> opens siblings. One item is in the tab order.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-select {id, item}</span> <span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-toggle {id, expanded}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<oq-tree value="src/core.ts">
+<ul class="oq-tree" role="tree" aria-label="Files">
+<li role="treeitem" data-id="src" aria-expanded="true"><div class="oq-tree__row"><span class="oq-tree__twisty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span><svg class="oq-tree__icon oq-tree__icon--folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg><span>src</span></div>
+  <ul role="group">
+    <li role="treeitem" data-id="src/core.ts"><div class="oq-tree__row"><span class="oq-tree__twisty"></span><svg class="oq-tree__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg><span>core.ts</span><span class="oq-tree__meta">4.1 KB</span></div></li>
+    <li role="treeitem" data-id="src/types.ts"><div class="oq-tree__row"><span class="oq-tree__twisty"></span><svg class="oq-tree__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg><span>types.ts</span><span class="oq-tree__meta">1.2 KB</span></div></li>
+    <li role="treeitem" data-id="src/detectors" aria-expanded="false"><div class="oq-tree__row"><span class="oq-tree__twisty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span><svg class="oq-tree__icon oq-tree__icon--folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg><span>detectors</span></div>
+  <ul role="group">
+    <li role="treeitem" data-id="src/detectors/rate.ts"><div class="oq-tree__row"><span class="oq-tree__twisty"></span><svg class="oq-tree__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg><span>rate.ts</span></div></li>
+    <li role="treeitem" data-id="src/detectors/tor-exit.ts"><div class="oq-tree__row"><span class="oq-tree__twisty"></span><svg class="oq-tree__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg><span>tor-exit.ts</span></div></li>
+  </ul>
+</li>
+  </ul>
+</li>
+<li role="treeitem" data-id="tests" aria-expanded="false"><div class="oq-tree__row"><span class="oq-tree__twisty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span><svg class="oq-tree__icon oq-tree__icon--folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg><span>tests</span></div>
+  <ul role="group">
+    <li role="treeitem" data-id="tests/core.test.ts"><div class="oq-tree__row"><span class="oq-tree__twisty"></span><svg class="oq-tree__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg><span>core.test.ts</span></div></li>
+  </ul>
+</li>
+<li role="treeitem" data-id="package.json"><div class="oq-tree__row"><span class="oq-tree__twisty"></span><svg class="oq-tree__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg><span>package.json</span><span class="oq-tree__meta">2.3 KB</span></div></li>
+</ul>
+</oq-tree>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;oq-tree value=&quot;src/core.ts&quot;&gt;
+&lt;ul class=&quot;oq-tree&quot; role=&quot;tree&quot; aria-label=&quot;Files&quot;&gt;
+&lt;li role=&quot;treeitem&quot; data-id=&quot;src&quot; aria-expanded=&quot;true&quot;&gt;&lt;div class=&quot;oq-tree__row&quot;&gt;&lt;span class=&quot;oq-tree__twisty&quot;&gt;&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m9 6 6 6-6 6&quot;/&gt;&lt;/svg&gt;&lt;/span&gt;&lt;svg class=&quot;oq-tree__icon oq-tree__icon--folder&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z&quot;/&gt;&lt;/svg&gt;&lt;span&gt;src&lt;/span&gt;&lt;/div&gt;
+  &lt;ul role=&quot;group&quot;&gt;
+    &lt;li role=&quot;treeitem&quot; data-id=&quot;src/core.ts&quot;&gt;&lt;div class=&quot;oq-tree__row&quot;&gt;&lt;span class=&quot;oq-tree__twisty&quot;&gt;&lt;/span&gt;&lt;svg class=&quot;oq-tree__icon&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z&quot;/&gt;&lt;path d=&quot;M14 3v5h5&quot;/&gt;&lt;/svg&gt;&lt;span&gt;core.ts&lt;/span&gt;&lt;span class=&quot;oq-tree__meta&quot;&gt;4.1 KB&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;
+    &lt;li role=&quot;treeitem&quot; data-id=&quot;src/types.ts&quot;&gt;&lt;div class=&quot;oq-tree__row&quot;&gt;&lt;span class=&quot;oq-tree__twisty&quot;&gt;&lt;/span&gt;&lt;svg class=&quot;oq-tree__icon&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z&quot;/&gt;&lt;path d=&quot;M14 3v5h5&quot;/&gt;&lt;/svg&gt;&lt;span&gt;types.ts&lt;/span&gt;&lt;span class=&quot;oq-tree__meta&quot;&gt;1.2 KB&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;
+    &lt;li role=&quot;treeitem&quot; data-id=&quot;src/detectors&quot; aria-expanded=&quot;false&quot;&gt;&lt;div class=&quot;oq-tree__row&quot;&gt;&lt;span class=&quot;oq-tree__twisty&quot;&gt;&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m9 6 6 6-6 6&quot;/&gt;&lt;/svg&gt;&lt;/span&gt;&lt;svg class=&quot;oq-tree__icon oq-tree__icon--folder&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z&quot;/&gt;&lt;/svg&gt;&lt;span&gt;detectors&lt;/span&gt;&lt;/div&gt;
+  &lt;ul role=&quot;group&quot;&gt;
+    &lt;li role=&quot;treeitem&quot; data-id=&quot;src/detectors/rate.ts&quot;&gt;&lt;div class=&quot;oq-tree__row&quot;&gt;&lt;span class=&quot;oq-tree__twisty&quot;&gt;&lt;/span&gt;&lt;svg class=&quot;oq-tree__icon&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z&quot;/&gt;&lt;path d=&quot;M14 3v5h5&quot;/&gt;&lt;/svg&gt;&lt;span&gt;rate.ts&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;
+    &lt;li role=&quot;treeitem&quot; data-id=&quot;src/detectors/tor-exit.ts&quot;&gt;&lt;div class=&quot;oq-tree__row&quot;&gt;&lt;span class=&quot;oq-tree__twisty&quot;&gt;&lt;/span&gt;&lt;svg class=&quot;oq-tree__icon&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z&quot;/&gt;&lt;path d=&quot;M14 3v5h5&quot;/&gt;&lt;/svg&gt;&lt;span&gt;tor-exit.ts&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;li role=&quot;treeitem&quot; data-id=&quot;tests&quot; aria-expanded=&quot;false&quot;&gt;&lt;div class=&quot;oq-tree__row&quot;&gt;&lt;span class=&quot;oq-tree__twisty&quot;&gt;&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m9 6 6 6-6 6&quot;/&gt;&lt;/svg&gt;&lt;/span&gt;&lt;svg class=&quot;oq-tree__icon oq-tree__icon--folder&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z&quot;/&gt;&lt;/svg&gt;&lt;span&gt;tests&lt;/span&gt;&lt;/div&gt;
+  &lt;ul role=&quot;group&quot;&gt;
+    &lt;li role=&quot;treeitem&quot; data-id=&quot;tests/core.test.ts&quot;&gt;&lt;div class=&quot;oq-tree__row&quot;&gt;&lt;span class=&quot;oq-tree__twisty&quot;&gt;&lt;/span&gt;&lt;svg class=&quot;oq-tree__icon&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z&quot;/&gt;&lt;path d=&quot;M14 3v5h5&quot;/&gt;&lt;/svg&gt;&lt;span&gt;core.test.ts&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;li role=&quot;treeitem&quot; data-id=&quot;package.json&quot;&gt;&lt;div class=&quot;oq-tree__row&quot;&gt;&lt;span class=&quot;oq-tree__twisty&quot;&gt;&lt;/span&gt;&lt;svg class=&quot;oq-tree__icon&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z&quot;/&gt;&lt;path d=&quot;M14 3v5h5&quot;/&gt;&lt;/svg&gt;&lt;span&gt;package.json&lt;/span&gt;&lt;span class=&quot;oq-tree__meta&quot;&gt;2.3 KB&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/oq-tree&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-tree value="src/core.ts"&gt;</span><span class="oq-code-line">&lt;ul class="oq-tree" role="tree" aria-label="Files"&gt;</span><span class="oq-code-line">&lt;li role="treeitem" data-id="src" aria-expanded="true"&gt;&lt;div class="oq-tree__row"&gt;&lt;span class="oq-tree__twisty"&gt;&lt;svg …&gt;&lt;/span&gt;&lt;svg …&gt;&lt;span&gt;src&lt;/span&gt;&lt;/div&gt;</span><span class="oq-code-line">  &lt;ul role="group"&gt;</span><span class="oq-code-line">    &lt;li role="treeitem" data-id="src/core.ts"&gt;&lt;div class="oq-tree__row"&gt;&lt;span class="oq-tree__twisty"&gt;&lt;/span&gt;&lt;svg …&gt;&lt;span&gt;core.ts&lt;/span&gt;&lt;span class="oq-tree__meta"&gt;4.1 KB&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;</span><span class="oq-code-line">    &lt;li role="treeitem" data-id="src/types.ts"&gt;&lt;div class="oq-tree__row"&gt;&lt;span class="oq-tree__twisty"&gt;&lt;/span&gt;&lt;svg …&gt;&lt;span&gt;types.ts&lt;/span&gt;&lt;span class="oq-tree__meta"&gt;1.2 KB&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;</span><span class="oq-code-line">    &lt;li role="treeitem" data-id="src/detectors" aria-expanded="false"&gt;&lt;div class="oq-tree__row"&gt;&lt;span class="oq-tree__twisty"&gt;&lt;svg …&gt;&lt;/span&gt;&lt;svg …&gt;&lt;span&gt;detectors&lt;/span&gt;&lt;/div&gt;</span><span class="oq-code-line">  &lt;ul role="group"&gt;</span><span class="oq-code-line">    &lt;li role="treeitem" data-id="src/detectors/rate.ts"&gt;&lt;div class="oq-tree__row"&gt;&lt;span class="oq-tree__twisty"&gt;&lt;/span&gt;&lt;svg …&gt;&lt;span&gt;rate.ts&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;</span><span class="oq-code-line">    &lt;li role="treeitem" data-id="src/detectors/tor-exit.ts"&gt;&lt;div class="oq-tree__row"&gt;&lt;span class="oq-tree__twisty"&gt;&lt;/span&gt;&lt;svg …&gt;&lt;span&gt;tor-exit.ts&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;</span><span class="oq-code-line">  &lt;/ul&gt;</span><span class="oq-code-line">&lt;/li&gt;</span><span class="oq-code-line">  &lt;/ul&gt;</span><span class="oq-code-line">&lt;/li&gt;</span><span class="oq-code-line">&lt;li role="treeitem" data-id="tests" aria-expanded="false"&gt;&lt;div class="oq-tree__row"&gt;&lt;span class="oq-tree__twisty"&gt;&lt;svg …&gt;&lt;/span&gt;&lt;svg …&gt;&lt;span&gt;tests&lt;/span&gt;&lt;/div&gt;</span><span class="oq-code-line">  &lt;ul role="group"&gt;</span><span class="oq-code-line">    &lt;li role="treeitem" data-id="tests/core.test.ts"&gt;&lt;div class="oq-tree__row"&gt;&lt;span class="oq-tree__twisty"&gt;&lt;/span&gt;&lt;svg …&gt;&lt;span&gt;core.test.ts&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;</span><span class="oq-code-line">  &lt;/ul&gt;</span><span class="oq-code-line">&lt;/li&gt;</span><span class="oq-code-line">&lt;li role="treeitem" data-id="package.json"&gt;&lt;div class="oq-tree__row"&gt;&lt;span class="oq-tree__twisty"&gt;&lt;/span&gt;&lt;svg …&gt;&lt;span&gt;package.json&lt;/span&gt;&lt;span class="oq-tree__meta"&gt;2.3 KB&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;</span><span class="oq-code-line">&lt;/ul&gt;</span><span class="oq-code-line">&lt;/oq-tree&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="palette">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Command palette</h2><code>&lt;oq-command-palette&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-command-palette&gt;</code> opens on <kbd class="oq-kbd">Ctrl</kbd> <kbd class="oq-kbd">K</kbd> (⌘K on a Mac; <code>hotkey</code> changes it) or any <code>[data-oq-open]</code>. Items come from <code>li.oq-option</code> with <code>data-group</code>, <code>data-keywords</code>, <code>data-hint</code>, <code>data-href</code>.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-open</span> <span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-select {value, label, command} (cancel it to skip data-href)</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<button class="oq-btn oq-btn--outline oq-neutral" data-oq-open="demo-cmdk">Open palette <kbd class="oq-kbd">Ctrl K</kbd></button>
+<oq-command-palette id="demo-cmdk">
+  <dialog class="oq-palette" aria-label="Command palette">
+    <div class="oq-palette__search"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><input placeholder="Type a command…"></div>
+    <ul class="oq-palette__list">
+      <li class="oq-option" data-group="Actions" data-hint="D" data-keywords="ship release">Deploy ruleset</li>
+      <li class="oq-option" data-group="Actions" data-keywords="refresh config sighup">Reload config</li>
+      <li class="oq-option" data-group="Go to" data-href="#tree">Tree demo</li>
+      <li class="oq-option" data-group="Go to" data-href="#table">Table demo</li>
+    </ul>
+  </dialog>
+</oq-command-palette>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;button class=&quot;oq-btn oq-btn--outline oq-neutral&quot; data-oq-open=&quot;demo-cmdk&quot;&gt;Open palette &lt;kbd class=&quot;oq-kbd&quot;&gt;Ctrl K&lt;/kbd&gt;&lt;/button&gt;
+&lt;oq-command-palette id=&quot;demo-cmdk&quot;&gt;
+  &lt;dialog class=&quot;oq-palette&quot; aria-label=&quot;Command palette&quot;&gt;
+    &lt;div class=&quot;oq-palette__search&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 16 16&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;&gt;&lt;circle cx=&quot;7&quot; cy=&quot;7&quot; r=&quot;4.5&quot;/&gt;&lt;path d=&quot;M10.5 10.5 14 14&quot;/&gt;&lt;/svg&gt;&lt;input placeholder=&quot;Type a command…&quot;&gt;&lt;/div&gt;
+    &lt;ul class=&quot;oq-palette__list&quot;&gt;
+      &lt;li class=&quot;oq-option&quot; data-group=&quot;Actions&quot; data-hint=&quot;D&quot; data-keywords=&quot;ship release&quot;&gt;Deploy ruleset&lt;/li&gt;
+      &lt;li class=&quot;oq-option&quot; data-group=&quot;Actions&quot; data-keywords=&quot;refresh config sighup&quot;&gt;Reload config&lt;/li&gt;
+      &lt;li class=&quot;oq-option&quot; data-group=&quot;Go to&quot; data-href=&quot;#tree&quot;&gt;Tree demo&lt;/li&gt;
+      &lt;li class=&quot;oq-option&quot; data-group=&quot;Go to&quot; data-href=&quot;#table&quot;&gt;Table demo&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/dialog&gt;
+&lt;/oq-command-palette&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;button class="oq-btn oq-btn--outline oq-neutral" data-oq-open="demo-cmdk"&gt;Open palette &lt;kbd class="oq-kbd"&gt;Ctrl K&lt;/kbd&gt;&lt;/button&gt;</span><span class="oq-code-line">&lt;oq-command-palette id="demo-cmdk"&gt;</span><span class="oq-code-line">  &lt;dialog class="oq-palette" aria-label="Command palette"&gt;</span><span class="oq-code-line">    &lt;div class="oq-palette__search"&gt;&lt;svg …&gt;&lt;input placeholder="Type a command…"&gt;&lt;/div&gt;</span><span class="oq-code-line">    &lt;ul class="oq-palette__list"&gt;</span><span class="oq-code-line">      &lt;li class="oq-option" data-group="Actions" data-hint="D" data-keywords="ship release"&gt;Deploy ruleset&lt;/li&gt;</span><span class="oq-code-line">      &lt;li class="oq-option" data-group="Actions" data-keywords="refresh config sighup"&gt;Reload config&lt;/li&gt;</span><span class="oq-code-line">      &lt;li class="oq-option" data-group="Go to" data-href="#tree"&gt;Tree demo&lt;/li&gt;</span><span class="oq-code-line">      &lt;li class="oq-option" data-group="Go to" data-href="#table"&gt;Table demo&lt;/li&gt;</span><span class="oq-code-line">    &lt;/ul&gt;</span><span class="oq-code-line">  &lt;/dialog&gt;</span><span class="oq-code-line">&lt;/oq-command-palette&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="table">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Sortable table</h2><code>&lt;oq-sortable-table&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-sortable-table&gt;</code>: headers with <code>aria-sort</code> sort on click or Enter — ascending, descending, then the original order. Numbers with separators and units sort numerically; <code>data-sort-value</code> overrides a cell.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-sort {column, key, direction}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<oq-sortable-table>
+<div class="oq-table-wrap">
+<table class="oq-table oq-table--hover">
+  <thead><tr><th aria-sort="none" data-key="node">Node</th><th aria-sort="none">Status</th><th aria-sort="none" class="oq-num">Req/s</th><th aria-sort="none" class="oq-num">p95</th></tr></thead>
+  <tbody>
+    <tr><td class="oq-mono">node-10</td><td>healthy</td><td class="oq-num">2,310</td><td class="oq-num" data-sort-value="41">41 ms</td></tr>
+    <tr><td class="oq-mono">node-2</td><td>degraded</td><td class="oq-num">980</td><td class="oq-num" data-sort-value="412">412 ms</td></tr>
+    <tr><td class="oq-mono">node-1</td><td>down</td><td class="oq-num"></td><td class="oq-num"></td></tr>
+    <tr><td class="oq-mono">node-3</td><td>healthy</td><td class="oq-num">12 480</td><td class="oq-num" data-sort-value="63">63 ms</td></tr>
+  </tbody>
+</table>
+</div>
+</oq-sortable-table>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;oq-sortable-table&gt;
+&lt;div class=&quot;oq-table-wrap&quot;&gt;
+&lt;table class=&quot;oq-table oq-table--hover&quot;&gt;
+  &lt;thead&gt;&lt;tr&gt;&lt;th aria-sort=&quot;none&quot; data-key=&quot;node&quot;&gt;Node&lt;/th&gt;&lt;th aria-sort=&quot;none&quot;&gt;Status&lt;/th&gt;&lt;th aria-sort=&quot;none&quot; class=&quot;oq-num&quot;&gt;Req/s&lt;/th&gt;&lt;th aria-sort=&quot;none&quot; class=&quot;oq-num&quot;&gt;p95&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td class=&quot;oq-mono&quot;&gt;node-10&lt;/td&gt;&lt;td&gt;healthy&lt;/td&gt;&lt;td class=&quot;oq-num&quot;&gt;2,310&lt;/td&gt;&lt;td class=&quot;oq-num&quot; data-sort-value=&quot;41&quot;&gt;41 ms&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td class=&quot;oq-mono&quot;&gt;node-2&lt;/td&gt;&lt;td&gt;degraded&lt;/td&gt;&lt;td class=&quot;oq-num&quot;&gt;980&lt;/td&gt;&lt;td class=&quot;oq-num&quot; data-sort-value=&quot;412&quot;&gt;412 ms&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td class=&quot;oq-mono&quot;&gt;node-1&lt;/td&gt;&lt;td&gt;down&lt;/td&gt;&lt;td class=&quot;oq-num&quot;&gt;&lt;/td&gt;&lt;td class=&quot;oq-num&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td class=&quot;oq-mono&quot;&gt;node-3&lt;/td&gt;&lt;td&gt;healthy&lt;/td&gt;&lt;td class=&quot;oq-num&quot;&gt;12 480&lt;/td&gt;&lt;td class=&quot;oq-num&quot; data-sort-value=&quot;63&quot;&gt;63 ms&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/oq-sortable-table&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-sortable-table&gt;</span><span class="oq-code-line">&lt;div class="oq-table-wrap"&gt;</span><span class="oq-code-line">&lt;table class="oq-table oq-table--hover"&gt;</span><span class="oq-code-line">  &lt;thead&gt;&lt;tr&gt;&lt;th aria-sort="none" data-key="node"&gt;Node&lt;/th&gt;&lt;th aria-sort="none"&gt;Status&lt;/th&gt;&lt;th aria-sort="none" class="oq-num"&gt;Req/s&lt;/th&gt;&lt;th aria-sort="none" class="oq-num"&gt;p95&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</span><span class="oq-code-line">  &lt;tbody&gt;</span><span class="oq-code-line">    &lt;tr&gt;&lt;td class="oq-mono"&gt;node-10&lt;/td&gt;&lt;td&gt;healthy&lt;/td&gt;&lt;td class="oq-num"&gt;2,310&lt;/td&gt;&lt;td class="oq-num" data-sort-value="41"&gt;41 ms&lt;/td&gt;&lt;/tr&gt;</span><span class="oq-code-line">    &lt;tr&gt;&lt;td class="oq-mono"&gt;node-2&lt;/td&gt;&lt;td&gt;degraded&lt;/td&gt;&lt;td class="oq-num"&gt;980&lt;/td&gt;&lt;td class="oq-num" data-sort-value="412"&gt;412 ms&lt;/td&gt;&lt;/tr&gt;</span><span class="oq-code-line">    &lt;tr&gt;&lt;td class="oq-mono"&gt;node-1&lt;/td&gt;&lt;td&gt;down&lt;/td&gt;&lt;td class="oq-num"&gt;&lt;/td&gt;&lt;td class="oq-num"&gt;&lt;/td&gt;&lt;/tr&gt;</span><span class="oq-code-line">    &lt;tr&gt;&lt;td class="oq-mono"&gt;node-3&lt;/td&gt;&lt;td&gt;healthy&lt;/td&gt;&lt;td class="oq-num"&gt;12 480&lt;/td&gt;&lt;td class="oq-num" data-sort-value="63"&gt;63 ms&lt;/td&gt;&lt;/tr&gt;</span><span class="oq-code-line">  &lt;/tbody&gt;</span><span class="oq-code-line">&lt;/table&gt;</span><span class="oq-code-line">&lt;/div&gt;</span><span class="oq-code-line">&lt;/oq-sortable-table&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="copy">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Copy</h2><code>&lt;oq-copy&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-copy&gt;</code> around a button copies its <code>text</code> attribute, the element matched by <code>target</code>, or — inside a code block — the code. The button reads “Copied” for a moment.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-copy {text}</span> <span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-copy-error {error}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<div class="oq-input-group" style="max-width: 380px">
+  <input class="oq-input oq-input--mono" id="demo-key" value="osqd_live_9f2c41a71e" readonly aria-label="API key">
+  <oq-copy target="#demo-key"><button class="oq-btn oq-btn--soft oq-neutral oq-sm" type="button">Copy</button></oq-copy>
+</div>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;div class=&quot;oq-input-group&quot; style=&quot;max-width: 380px&quot;&gt;
+  &lt;input class=&quot;oq-input oq-input--mono&quot; id=&quot;demo-key&quot; value=&quot;osqd_live_9f2c41a71e&quot; readonly aria-label=&quot;API key&quot;&gt;
+  &lt;oq-copy target=&quot;#demo-key&quot;&gt;&lt;button class=&quot;oq-btn oq-btn--soft oq-neutral oq-sm&quot; type=&quot;button&quot;&gt;Copy&lt;/button&gt;&lt;/oq-copy&gt;
+&lt;/div&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;div class="oq-input-group" style="max-width: 380px"&gt;</span><span class="oq-code-line">  &lt;input class="oq-input oq-input--mono" id="demo-key" value="osqd_live_9f2c41a71e" readonly aria-label="API key"&gt;</span><span class="oq-code-line">  &lt;oq-copy target="#demo-key"&gt;&lt;button class="oq-btn oq-btn--soft oq-neutral oq-sm" type="button"&gt;Copy&lt;/button&gt;&lt;/oq-copy&gt;</span><span class="oq-code-line">&lt;/div&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="number">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Number</h2><code>&lt;oq-number&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-number class="oq-number"&gt;</code>: ↑/↓ step (Shift ×10), PageUp/PageDown, Home/End to the limits; typed values are clamped and rounded on blur. The −/+ buttons are created if missing.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-change {value}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<oq-number class="oq-number" min="0" max="10" value="3"><input aria-label="Retries"></oq-number>
+<oq-number class="oq-number" min="0" max="1" step="0.05" value="0.25" style="--w: 64px"><input aria-label="Sample rate"></oq-number>
+<oq-number class="oq-number oq-sm" min="100" max="30000" step="100" value="2500"><input aria-label="Timeout"><span class="oq-number__unit">ms</span></oq-number>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;oq-number class=&quot;oq-number&quot; min=&quot;0&quot; max=&quot;10&quot; value=&quot;3&quot;&gt;&lt;input aria-label=&quot;Retries&quot;&gt;&lt;/oq-number&gt;
+&lt;oq-number class=&quot;oq-number&quot; min=&quot;0&quot; max=&quot;1&quot; step=&quot;0.05&quot; value=&quot;0.25&quot; style=&quot;--w: 64px&quot;&gt;&lt;input aria-label=&quot;Sample rate&quot;&gt;&lt;/oq-number&gt;
+&lt;oq-number class=&quot;oq-number oq-sm&quot; min=&quot;100&quot; max=&quot;30000&quot; step=&quot;100&quot; value=&quot;2500&quot;&gt;&lt;input aria-label=&quot;Timeout&quot;&gt;&lt;span class=&quot;oq-number__unit&quot;&gt;ms&lt;/span&gt;&lt;/oq-number&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-number class="oq-number" min="0" max="10" value="3"&gt;&lt;input aria-label="Retries"&gt;&lt;/oq-number&gt;</span><span class="oq-code-line">&lt;oq-number class="oq-number" min="0" max="1" step="0.05" value="0.25" style="--w: 64px"&gt;&lt;input aria-label="Sample rate"&gt;&lt;/oq-number&gt;</span><span class="oq-code-line">&lt;oq-number class="oq-number oq-sm" min="100" max="30000" step="100" value="2500"&gt;&lt;input aria-label="Timeout"&gt;&lt;span class="oq-number__unit"&gt;ms&lt;/span&gt;&lt;/oq-number&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="tags">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Tag input</h2><code>&lt;oq-tag-input&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-tag-input class="oq-tags"&gt;</code>: Enter or comma adds, pasting a list adds them all, Backspace removes the last; duplicates and values failing <code>pattern</code> are refused. <code>name</code> keeps a hidden input for plain form posts.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-change {tags}</span> <span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-reject {value, reason}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<oq-tag-input class="oq-tags" value="eu-central-1,eu-west-1" pattern="[a-z]+-[a-z]+-\d" name="regions">
+  <input aria-label="Add region" placeholder="Add a region, e.g. us-east-1">
+</oq-tag-input>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;oq-tag-input class=&quot;oq-tags&quot; value=&quot;eu-central-1,eu-west-1&quot; pattern=&quot;[a-z]+-[a-z]+-\d&quot; name=&quot;regions&quot;&gt;
+  &lt;input aria-label=&quot;Add region&quot; placeholder=&quot;Add a region, e.g. us-east-1&quot;&gt;
+&lt;/oq-tag-input&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-tag-input class="oq-tags" value="eu-central-1,eu-west-1" pattern="[a-z]+-[a-z]+-\d" name="regions"&gt;</span><span class="oq-code-line">  &lt;input aria-label="Add region" placeholder="Add a region, e.g. us-east-1"&gt;</span><span class="oq-code-line">&lt;/oq-tag-input&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="dropzone">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Drop zone</h2><code>&lt;oq-dropzone&gt;</code></div>
+      <p class="oq-muted"><code>&lt;oq-dropzone class="oq-dropzone"&gt;</code>: click, Enter/Space or drop. Checks the input's <code>accept</code> and <code>max-size</code> (bytes); <code>list</code> points at a <code>ul.oq-filelist</code> to show files in.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Events</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-files {files, rejected}</span> <span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">oq-remove {file}</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<oq-dropzone class="oq-dropzone" list="#demo-files" max-size="52428800">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg>
+  <span class="oq-dropzone__title">Drop files here or <u>browse</u></span>
+  <span class="oq-dropzone__hint">CSV, JSON or logs · up to 50 MB each</span>
+  <input type="file" multiple accept=".csv,.json,.log,.txt">
+</oq-dropzone>
+<ul class="oq-filelist" id="demo-files"></ul>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;oq-dropzone class=&quot;oq-dropzone&quot; list=&quot;#demo-files&quot; max-size=&quot;52428800&quot;&gt;
+  &lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.75&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M12 15V4M7 9l5-5 5 5M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4&quot;/&gt;&lt;/svg&gt;
+  &lt;span class=&quot;oq-dropzone__title&quot;&gt;Drop files here or &lt;u&gt;browse&lt;/u&gt;&lt;/span&gt;
+  &lt;span class=&quot;oq-dropzone__hint&quot;&gt;CSV, JSON or logs · up to 50 MB each&lt;/span&gt;
+  &lt;input type=&quot;file&quot; multiple accept=&quot;.csv,.json,.log,.txt&quot;&gt;
+&lt;/oq-dropzone&gt;
+&lt;ul class=&quot;oq-filelist&quot; id=&quot;demo-files&quot;&gt;&lt;/ul&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-dropzone class="oq-dropzone" list="#demo-files" max-size="52428800"&gt;</span><span class="oq-code-line">  &lt;svg …&gt;</span><span class="oq-code-line">  &lt;span class="oq-dropzone__title"&gt;Drop files here or &lt;u&gt;browse&lt;/u&gt;&lt;/span&gt;</span><span class="oq-code-line">  &lt;span class="oq-dropzone__hint"&gt;CSV, JSON or logs · up to 50 MB each&lt;/span&gt;</span><span class="oq-code-line">  &lt;input type="file" multiple accept=".csv,.json,.log,.txt"&gt;</span><span class="oq-code-line">&lt;/oq-dropzone&gt;</span><span class="oq-code-line">&lt;ul class="oq-filelist" id="demo-files"&gt;&lt;/ul&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Settings</title>
+<link rel="stylesheet" href="../styles/index.css">
+<link rel="stylesheet" href="lib/samples.css">
+<script src="../assets/osqd-ui-elements.js" defer></script>
+<script src="lib/forms-logic.js" defer></script>
+<script src="lib/demo-kit.js" defer></script>
+<style>
+  .layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+  .layout > nav { position: sticky; top: 72px; }
+  .section-head { display: flex; flex-direction: column; gap: 2px; }
+  .sec-chips { display: none; }
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    .layout > nav { display: none; }
+    /* The section links become a sticky row of chips under the app bar. */
+    .sec-chips { display: flex; position: sticky; top: 48px; z-index: 5; margin: -8px -16px 16px; padding: 8px 16px; background: var(--oq-bg); border-bottom: 1px solid var(--oq-border); }
+    .sec-chips .oq-chip { text-decoration: none; }
+    .sec-chips .oq-chip[aria-current] { background: var(--oq-primary); color: var(--oq-on-primary); }
+    .oq-card { scroll-margin-top: 110px; }
+  }
+  @media (max-width: 640px) {
+    .page { padding: 16px max(12px, env(safe-area-inset-right, 0px)) 24px max(12px, env(safe-area-inset-left, 0px)) !important; }
+    .sec-chips { margin-inline: -12px; padding-inline: 12px; }
+    .oq-card__body { padding: 14px; }
+    .oq-card__header { padding-inline: 14px; }
+  }
+</style>
+</head>
+<body class="oq">
+<header class="oq-appbar oq-appbar--sticky">
+  {{brand:BotHandler}}
+  <span class="oq-faint sx-hide-sm">/</span><span class="sx-hide-sm">Settings</span>
+  <div class="oq-spacer"></div>
+  {{appbar-end}}
+  <span class="oq-avatar oq-sm sx-hide-sm">MP</span>
+</header>
+
+<div class="oq-container oq-p-6 page" style="--max: 1040px">
+  <div class="oq-stack oq-gap-1" style="margin-bottom: 24px">
+    <h1 class="oq-h3">Project settings</h1>
+    <p class="oq-muted oq-small">Changes apply on save. Keys marked <span class="oq-chip oq-sm oq-warning">restart</span> take effect after the next restart.</p>
+  </div>
+
+  <nav class="sec-chips sx-scroll-x" aria-label="Settings sections (short)">
+    <a class="oq-chip oq-neutral" href="#general">General</a><a class="oq-chip oq-neutral" href="#network">Network</a><a class="oq-chip oq-neutral" href="#headers">Headers</a><a class="oq-chip oq-neutral" href="#detection">Detection</a><a class="oq-chip oq-neutral" href="#notifications">Notifications</a><a class="oq-chip oq-neutral" href="#keys">API keys</a><a class="oq-chip oq-neutral" href="#danger">Danger zone</a>
+  </nav>
+
+  <div class="layout">
+    <nav class="oq-nav" aria-label="Settings sections">
+      <a class="oq-nav__item" href="#general" aria-current="page">General</a>
+      <a class="oq-nav__item" href="#network">Network</a>
+      <a class="oq-nav__item" href="#headers">Upstream headers</a>
+      <a class="oq-nav__item" href="#detection">Detection</a>
+      <a class="oq-nav__item" href="#notifications">Notifications</a>
+      <a class="oq-nav__item" href="#keys">API keys</a>
+      <a class="oq-nav__item" href="#danger">Danger zone</a>
+    </nav>
+
+    <form class="oq-form oq-stack oq-gap-6" id="form" novalidate>
+      <div id="summary"></div>
+
+      <section class="oq-card" id="general">
+        <div class="oq-card__header"><div class="section-head"><h2 class="oq-card__title">General</h2><span class="oq-card__subtitle">Name and listener</span></div></div>
+        <div class="oq-card__body oq-grid" style="--min: 260px; --gap: 5">
+          <div class="oq-field" data-field="name"><label class="oq-label" for="f-name">Project name <span class="oq-req">*</span></label><input class="oq-input" id="f-name" name="name" value="edge-production"><span class="oq-help" data-help>Lowercase letters, digits and dashes.</span></div>
+          <div class="oq-field"><label class="oq-label" for="f-env">Environment</label>
+            <select class="oq-select" id="f-env" name="env"><option>production</option><option>staging</option><option>development</option></select></div>
+          <div class="oq-field" data-field="port"><label class="oq-label" for="f-port">Port <span class="oq-chip oq-sm oq-warning">restart</span></label><input class="oq-input" id="f-port" name="port" value="9110" inputmode="numeric"><span class="oq-help" data-help>1–65535.</span></div>
+          <div class="oq-field" data-field="timeout"><label class="oq-label" for="f-timeout">Request timeout</label>
+            <div class="oq-input-group"><input class="oq-input" id="f-timeout" name="timeout" value="2500" inputmode="numeric"><span class="oq-addon">ms</span></div><span class="oq-help" data-help>100–60 000 ms.</span></div>
+        </div>
+      </section>
+
+      <section class="oq-card" id="network">
+        <div class="oq-card__header"><div class="section-head"><h2 class="oq-card__title">Network</h2><span class="oq-card__subtitle">Who is trusted to set client addresses</span></div></div>
+        <div class="oq-card__body oq-grid" style="--min: 300px; --gap: 5">
+          <div class="oq-field" data-ip="cidr"><label class="oq-label" for="f-proxy">Trusted proxy network</label><div class="oq-input-group oq-ip"><input class="oq-input oq-input--mono" id="f-proxy" name="proxy" value="10.0.0.0/8" spellcheck="false"><span class="oq-addon oq-ip__version"></span></div><div class="oq-help"></div></div>
+          <div class="oq-field" data-ip="cidr"><label class="oq-label" for="f-admin">Admin allowlist</label><div class="oq-input-group oq-ip"><input class="oq-input oq-input--mono" id="f-admin" name="admin" value="192.168.10.0/24" spellcheck="false"><span class="oq-addon oq-ip__version"></span></div><div class="oq-help"></div></div>
+          <div class="oq-field" data-ip="ip"><label class="oq-label" for="f-upstream">Upstream address</label><div class="oq-input-group oq-ip"><input class="oq-input oq-input--mono" id="f-upstream" name="upstream" value="10.0.12.7" spellcheck="false"><span class="oq-addon oq-ip__version"></span></div><div class="oq-help"></div></div>
+          <div class="oq-callout oq-primary" style="align-self: start">{{icon:info}}<div class="oq-callout__body"><strong>X-Forwarded-For</strong> is read only from the trusted proxy network. Everything else sees the socket address.</div></div>
+        </div>
+      </section>
+
+      <section class="oq-card" id="headers">
+        <div class="oq-card__header"><div class="section-head"><h2 class="oq-card__title">Upstream headers</h2><span class="oq-card__subtitle">Added to every request passed upstream</span></div></div>
+        <div class="oq-card__body"><div id="kv"></div></div>
+      </section>
+
+      <section class="oq-card" id="detection">
+        <div class="oq-card__header"><div class="section-head"><h2 class="oq-card__title">Detection</h2><span class="oq-card__subtitle">What happens to a request that scores high</span></div></div>
+        <div class="oq-card__body oq-stack oq-gap-5">
+          <div class="oq-stack oq-gap-2" role="radiogroup" aria-label="Mode">
+            <span class="oq-label">Mode</span>
+            <label class="oq-check"><input type="radio" class="oq-radio" name="mode" value="monitor"> Monitor only <span class="oq-small oq-faint">— log, never block</span></label>
+            <label class="oq-check"><input type="radio" class="oq-radio" name="mode" value="challenge" checked> Challenge <span class="oq-small oq-faint">— ask suspicious clients to prove themselves</span></label>
+            <label class="oq-check"><input type="radio" class="oq-radio" name="mode" value="block"> Block <span class="oq-small oq-faint">— reject above the threshold</span></label>
+          </div>
+          <label class="oq-field" style="max-width: 420px">
+            <span class="oq-row oq-between"><span class="oq-label">Score threshold</span><span class="oq-mono oq-small" id="thr-out">60</span></span>
+            <input type="range" class="oq-range" name="threshold" min="0" max="100" value="60" id="thr">
+            <span class="oq-help">Detectors cap at 100; a threshold above that can never fire.</span>
+          </label>
+          <div class="oq-table-wrap" style="border: 0; border-radius: 0">
+          <table class="oq-table oq-table--dense sx-nowrap">
+            <thead><tr><th>Detector</th><th class="sx-hide-sm">Description</th><th class="oq-num">Weight</th><th>Enabled</th></tr></thead>
+            <tbody>
+              <tr><td class="oq-mono">user-agent</td><td class="oq-muted sx-hide-sm">Known automation and empty agents</td><td class="oq-num">20</td><td><input type="checkbox" role="switch" class="oq-switch" name="d-ua" checked aria-label="user-agent"></td></tr>
+              <tr><td class="oq-mono">rate</td><td class="oq-muted sx-hide-sm">Bursts per client over a sliding window</td><td class="oq-num">35</td><td><input type="checkbox" role="switch" class="oq-switch" name="d-rate" checked aria-label="rate"></td></tr>
+              <tr><td class="oq-mono">tor-exit</td><td class="oq-muted sx-hide-sm">Tor exit node list, refreshed hourly</td><td class="oq-num">40</td><td><input type="checkbox" role="switch" class="oq-switch" name="d-tor" checked aria-label="tor-exit"></td></tr>
+              <tr><td class="oq-mono">headers</td><td class="oq-muted sx-hide-sm">Header order and missing browser headers</td><td class="oq-num">15</td><td><input type="checkbox" role="switch" class="oq-switch" name="d-headers" aria-label="headers"></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="oq-card" id="notifications">
+        <div class="oq-card__header"><div class="section-head"><h2 class="oq-card__title">Notifications</h2><span class="oq-card__subtitle">Who hears about what</span></div></div>
+        <div class="oq-card__body oq-stack oq-gap-4">
+          <label class="oq-check"><input type="checkbox" class="oq-checkbox" name="n-down" checked> Node goes down</label>
+          <label class="oq-check"><input type="checkbox" class="oq-checkbox" name="n-block" checked> Block rate above 5 % for 10 minutes</label>
+          <label class="oq-check"><input type="checkbox" class="oq-checkbox" name="n-deploy"> Every deploy</label>
+          <div class="oq-field" style="max-width: 560px">
+            <span class="oq-label" id="recipients-label">Recipients</span>
+            <oq-tag-input class="oq-tags" id="recipients" value="ops@osqd.dev,michal@osqd.dev" pattern="[^\s@]+@[^\s@]+\.[^\s@]+">
+              <input aria-labelledby="recipients-label" placeholder="name@example.com, Enter to add">
+            </oq-tag-input>
+            <span class="oq-help">Press Enter or comma to add; Backspace removes the last one.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="oq-card" id="keys">
+        <div class="oq-card__header"><div class="section-head"><h2 class="oq-card__title">API keys</h2><span class="oq-card__subtitle">For the dashboard client and CI</span></div>
+          <div class="oq-card__actions"><button class="oq-btn oq-sm" type="button" id="new-key">{{icon:plus:oq-sm}} New key</button></div></div>
+        <div class="oq-card__body oq-card__body--flush">
+          <div class="oq-table-wrap" style="border: 0; border-radius: 0">
+            <table class="oq-table sx-nowrap">
+              <thead><tr><th>Name</th><th>Key</th><th>Scope</th><th class="sx-hide-sm">Last used</th><th></th></tr></thead>
+              <tbody id="key-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="oq-card oq-card--accent oq-danger" id="danger">
+        <div class="oq-card__header"><h2 class="oq-card__title oq-text-c">Danger zone</h2></div>
+        <div class="oq-card__body oq-stack oq-gap-4">
+          <div class="oq-row oq-between oq-wrap"><div><div class="oq-strong">Reset statistics</div><div class="oq-small oq-muted">Clears counters and history. Rules are kept.</div></div><button class="oq-btn oq-btn--outline oq-danger" type="button" data-confirm="Reset statistics">Reset</button></div>
+          <hr class="oq-divider" style="margin: 0">
+          <div class="oq-row oq-between oq-wrap"><div><div class="oq-strong">Delete project</div><div class="oq-small oq-muted">Removes the project, its nodes and all history.</div></div><button class="oq-btn oq-danger" type="button" data-confirm="Delete project">Delete project</button></div>
+        </div>
+      </section>
+
+      <div class="oq-savebar oq-savebar--sticky" id="savebar" hidden role="region" aria-label="Unsaved changes">
+        <span class="oq-dot oq-warning" aria-hidden="true"></span>
+        <span class="oq-savebar__message">Unsaved changes<span class="oq-savebar__errors"></span></span>
+        <span class="oq-spacer"></span>
+        <button type="button" class="oq-btn oq-btn--ghost oq-neutral" id="discard">Discard</button>
+        <button type="submit" class="oq-btn" id="save">Save changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<oq-dialog id="confirm">
+  <dialog class="oq-dialog oq-confirm" style="--w: 440px">
+    <div class="oq-dialog__header"><h3 class="oq-dialog__title" id="confirm-title"></h3></div>
+    <div class="oq-dialog__body oq-stack">
+      <p class="oq-confirm__message oq-muted">This cannot be undone. Type <code>edge-production</code> to confirm.</p>
+      <input class="oq-input oq-input--mono oq-confirm__type" id="confirm-input" aria-label="Project name" autocomplete="off">
+    </div>
+    <div class="oq-dialog__footer"><button class="oq-btn oq-btn--ghost oq-neutral" data-close="cancel">Cancel</button><button class="oq-btn oq-danger" id="confirm-ok" data-close="ok" disabled>Confirm</button></div>
+  </dialog>
+</oq-dialog>
+
+<script>
+addEventListener("DOMContentLoaded", () => {
+  const { $, $$, esc, kvEditor, ipField, toast, icon } = OQX;
+  const V = OQForms.validators;
+  const form = $("#form");
+
+  // Fields and their rules (the same validators as the React useForm).
+  const rules = {
+    name: [V.required("A name is required."), V.pattern(/^[a-z0-9-]+$/, "Use lowercase letters, digits and dashes.")],
+    port: [V.required(), V.port()],
+    timeout: [V.required(), V.integer(), V.min(100), V.max(60000)],
+  };
+  const labels = { name: "Project name", port: "Port", timeout: "Request timeout", headers: "Upstream headers", proxy: "Trusted proxy network", admin: "Admin allowlist", upstream: "Upstream address" };
+  const ips = $$("[data-ip]").map((box) => ({ name: $("input", box).name, field: ipField(box) }));
+  let pairs = [{ key: "X-Edge-Node", value: "fra-02" }, { key: "X-Request-Id", value: "${request.id}" }, { key: "Via", value: "1.1 osqd-edge" }];
+  const kv = kvEditor($("#kv"), pairs, { caseInsensitive: true, keyPattern: /^[A-Za-z0-9-]+$/, keyPatternMessage: "Header names use letters, digits and dashes.", keyPlaceholder: "Header", valuePlaceholder: "value", onChange: () => { if (submitted) validate(); renderBar(); } });
+  const tags = $("#recipients");
+  let recipients = (tags.getAttribute("value") ?? "").split(",").filter(Boolean);
+  tags.addEventListener("oq-change", (e) => { recipients = e.detail.tags; renderBar(); });
+  tags.addEventListener("oq-reject", (e) => toast(`“${e.detail.value}” is not an e-mail address`, "warning"));
+
+  const state = () => JSON.stringify({ form: [...new FormData(form)], pairs, recipients });
+  let baseline = state(), submitted = false, errors = {};
+
+  const setFieldError = (name, msg) => {
+    const box = $(`[data-field="${name}"]`, form); if (!box) return;
+    box.classList.toggle("is-invalid", Boolean(msg));
+    $("input", box).setAttribute("aria-invalid", String(Boolean(msg)));
+    const help = $("[data-help]", box);
+    help.dataset.default ??= help.textContent;
+    help.textContent = msg || help.dataset.default;
+  };
+  const validate = () => {
+    errors = {};
+    for (const [name, list] of Object.entries(rules)) {
+      const msg = OQForms.runValidators(list, form.elements[name].value);
+      if (msg) errors[name] = msg;
+      setFieldError(name, msg);
+    }
+    for (const { name, field } of ips) if (!field.check()) errors[name] = "Not a valid address.";
+    const kvp = kv.problems();
+    if (kvp.length) errors.headers = kvp[0];
+    renderSummary();
+    return Object.keys(errors).length === 0;
+  };
+  const renderSummary = () => {
+    const entries = Object.entries(errors);
+    $("#summary").innerHTML = submitted && entries.length ? `<div class="oq-error-summary" role="alert" tabindex="-1">
+      <div class="oq-error-summary__title">${icon("close")}${entries.length} ${entries.length === 1 ? "field needs" : "fields need"} attention</div>
+      <ul class="oq-error-summary__list">${entries.map(([k, m]) => `<li><a href="#" data-focus="${k}"><strong>${labels[k]}</strong> — ${esc(m)}</a></li>`).join("")}</ul></div>` : "";
+  };
+  const renderBar = () => {
+    $("#savebar").hidden = state() === baseline;
+    const n = submitted ? Object.keys(errors).length : 0;
+    $(".oq-savebar__errors").textContent = n ? ` · ${n} to fix` : "";
+    $("#savebar .oq-dot").className = `oq-dot ${n ? "oq-danger" : "oq-warning"}`;
+  };
+  $("#summary").addEventListener("click", (e) => {
+    const a = e.target.closest("[data-focus]"); if (!a) return;
+    e.preventDefault();
+    const k = a.dataset.focus;
+    (k === "headers" ? $("#kv [aria-invalid=true]") : form.elements[k])?.focus();
+  });
+  form.addEventListener("input", () => { if (submitted) validate(); renderBar(); });
+  form.addEventListener("change", renderBar);
+  form.addEventListener("focusout", (e) => { const n = e.target.name; if (rules[n]) { const msg = OQForms.runValidators(rules[n], e.target.value); setFieldError(n, msg); } });
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    submitted = true;
+    if (!validate()) { renderBar(); $(".oq-error-summary")?.focus(); toast("Fix the highlighted fields", "danger"); return; }
+    const b = $("#save");
+    b.setAttribute("aria-busy", "true");
+    setTimeout(() => { b.removeAttribute("aria-busy"); baseline = state(); submitted = false; renderSummary(); renderBar(); toast("Settings saved", "success", "3 keys changed, 1 needs a restart."); }, 600);
+  });
+  $("#discard").onclick = () => location.reload();
+  $("#thr").oninput = (e) => ($("#thr-out").textContent = e.target.value);
+
+  // API keys with <oq-copy>.
+  const keys = [["dashboard", "osqd_live_9f2c41a71e", "read", "2 min ago"], ["ci-deployer", "osqd_live_0b7dc412ab", "write", "yesterday"]];
+  const renderKeys = () => {
+    $("#key-rows").innerHTML = keys.map(([n, k, s, u], i) => `<tr><td>${esc(n)}</td>
+      <td><span class="oq-row oq-gap-1"><code id="key-${i}">${k.slice(0, 14)}…${k.slice(-4)}</code><oq-copy text="${k}"><button type="button" class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon oq-sm" aria-label="Copy key">{{icon:copy:oq-sm}}</button></oq-copy></span></td>
+      <td><span class="oq-chip oq-sm oq-${s === "write" ? "warning" : "neutral"}">${s}</span></td><td class="oq-muted oq-small sx-hide-sm">${u}</td>
+      <td class="oq-num"><button type="button" class="oq-btn oq-btn--ghost oq-danger oq-sm" data-revoke="${i}">Revoke</button></td></tr>`).join("");
+  };
+  $("#key-rows").addEventListener("click", (e) => { const i = e.target.dataset.revoke; if (i !== undefined) { const [n] = keys.splice(+i, 1)[0]; renderKeys(); toast(`Key ${n} revoked`, "warning"); } });
+  $("#key-rows").addEventListener("oq-copy", () => toast("Key copied"));
+  $("#new-key").onclick = () => { const k = `osqd_live_${crypto.getRandomValues(new Uint32Array(2)).join("").slice(0, 10)}`; keys.unshift([`key-${keys.length + 1}`, k, "read", "never"]); renderKeys(); toast("Key created", "success", "Copy it now; it is shown once."); };
+  renderKeys();
+
+  // Typed confirmation for destructive actions.
+  const confirm = $("#confirm");
+  let pending = "";
+  $$("[data-confirm]").forEach((b) => b.addEventListener("click", () => {
+    pending = b.dataset.confirm;
+    $("#confirm-title").textContent = `${pending}?`;
+    $("#confirm-input").value = ""; $("#confirm-ok").disabled = true;
+    confirm.show();
+    setTimeout(() => $("#confirm-input").focus(), 30);
+  }));
+  $("#confirm-input").addEventListener("input", (e) => ($("#confirm-ok").disabled = e.target.value !== "edge-production"));
+  confirm.addEventListener("oq-close", (e) => { if (e.detail.returnValue === "ok") toast(`${pending}: done`, "danger"); });
+
+  // Active section in the side nav, and in the chip row phones get instead (kept in view as it changes).
+  const links = $$(".layout > nav a, .sec-chips a");
+  const spy = new IntersectionObserver((es) => es.forEach((en) => {
+    if (!en.isIntersecting) return;
+    links.forEach((a) => (a.hash === `#${en.target.id}` ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
+    const chip = $(`.sec-chips a[href="#${en.target.id}"]`), row = $(".sec-chips");
+    if (chip && row.scrollWidth > row.clientWidth) row.scrollTo({ left: chip.offsetLeft - 12, behavior: "smooth" });
+  }), { rootMargin: "-20% 0px -70% 0px" });
+  $$("form > section").forEach((s) => spy.observe(s));
+  renderBar();
+});
+</script>
+</body>
+</html>

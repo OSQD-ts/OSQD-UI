@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Server Error</title>
+<link rel="stylesheet" href="../styles/index.css">
+<script>
+  // Same theme as the galleries (they store it under this key); dark when nothing is stored.
+  try { document.documentElement.dataset.theme = localStorage.getItem("oq-preview-theme") || "dark"; } catch {}
+</script>
+<style>
+  html, body { margin: 0; }
+  .top { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; padding: 14px 20px; }
+</style>
+</head>
+<body class="oq">
+  <header class="top">
+    <a class="oq-appbar__brand" href="../preview-layout.html">
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+      OSQD
+    </a>
+  </header>
+  <main class="oq-error-page oq-error-page--full oq-danger">
+      <svg class="oq-illustration" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="106" rx="54" ry="6" style="fill:var(--oq-hover, #403e41);stroke:none"/><rect x="36" y="22" width="68" height="22" rx="4" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><circle cx="47" cy="33" r="3" style="fill:var(--oq-success, #a9dc76);stroke:none"/><path d="M60 33h32" style="fill:none;stroke:var(--oq-text-faint, #939293)"/><rect x="36" y="50" width="68" height="22" rx="4" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><circle cx="47" cy="61" r="3" style="fill:var(--oq-danger, #ff6188);stroke:none"/><path d="M60 61h32" style="fill:none;stroke:var(--oq-text-faint, #939293)"/><rect x="36" y="78" width="68" height="22" rx="4" style="fill:var(--oq-surface, #2d2a2e);stroke:var(--oq-border-strong, #5b595c)"/><circle cx="47" cy="89" r="3" style="fill:var(--oq-text-faint, #939293);stroke:none"/><path d="M60 89h32" style="fill:none;stroke:var(--oq-text-faint, #939293)"/><path d="M118 44 141 84H95z" style="fill:var(--oq-danger, #ff6188);stroke:var(--oq-danger, #ff6188);stroke-width:4"/><path d="M118 58v12" style="fill:none;stroke:var(--oq-surface, #2d2a2e);stroke-width:4"/><circle cx="118" cy="77" r="2.2" style="fill:var(--oq-surface, #2d2a2e);stroke:none"/></svg>
+      <div class="oq-error-page__code">500</div>
+      <h1 class="oq-error-page__title">Something went wrong</h1>
+      <p class="oq-error-page__message">The server hit an error it could not recover from. Try again in a moment; if it keeps happening, the details below help whoever looks into it.</p>
+      <details class="oq-error-page__details">
+        <summary>Technical details</summary>
+        <pre class="oq-pre">Request ID  9f2c-a71e-4b10
+Time        <span id="when"></span>
+Error       ECONNREFUSED 10.0.0.4:6379 (store)</pre>
+      </details>
+      <div class="oq-error-page__actions">
+        <button class="oq-btn" type="button" onclick="location.reload()">Try again</button>
+        <a class="oq-btn oq-btn--outline oq-neutral" href="../preview-layout.html">Go to start</a>
+      </div>
+      <div class="oq-error-page__foot">Status checks: <a href="#">status page</a></div>
+  </main>
+  <script>
+    document.getElementById("when").textContent = new Date().toISOString();
+  </script>
+</body>
+</html>

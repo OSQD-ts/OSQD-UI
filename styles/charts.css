@@ -1,0 +1,423 @@
+/* Charts and date picker. Same conventions as components.css: theme variables only, intents via --oq-c. */
+
+/* ========== Series palette ==========
+ * Eight categorical slots for chart series, separate from the intents: success, warning and
+ * danger mean state, so they must not double as "series 4". Assigned in this order and never
+ * cycled; a ninth series belongs in "Other". Validated for colour-vision deficiency and
+ * contrast against every theme's surface: the dark set on dark, graphite, midnight and
+ * contrast; the light set on light, paper and slate. On light surfaces slots 3–5 sit just
+ * under 3:1, which is why every chart has a legend, a tooltip and a table view.
+ */
+:root,
+[data-theme] {
+  --oq-series-1: #3987e5;
+  --oq-series-2: #d95926;
+  --oq-series-3: #199e70;
+  --oq-series-4: #c98500;
+  --oq-series-5: #d55181;
+  --oq-series-6: #008300;
+  --oq-series-7: #9085e9;
+  --oq-series-8: #e66767;
+}
+[data-theme="light"],
+[data-theme="paper"],
+[data-theme="slate"] {
+  --oq-series-1: #2a78d6;
+  --oq-series-2: #eb6834;
+  --oq-series-3: #1baf7a;
+  --oq-series-4: #eda100;
+  --oq-series-5: #e87ba4;
+  --oq-series-6: #008300;
+  --oq-series-7: #6250d6;
+  --oq-series-8: #e34948;
+}
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] {
+    --oq-series-1: #2a78d6;
+    --oq-series-2: #eb6834;
+    --oq-series-3: #1baf7a;
+    --oq-series-4: #eda100;
+    --oq-series-5: #e87ba4;
+    --oq-series-6: #008300;
+    --oq-series-7: #6250d6;
+    --oq-series-8: #e34948;
+  }
+}
+
+/* ========== Chart frame ========== */
+
+.oq-chart {
+  /* The colour the 2px gaps between marks are cut from: the card a chart sits on. */
+  --oq-chart-surface: var(--oq-surface);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--oq-space) * 3);
+  width: 100%;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+.oq-chart__plot { position: relative; width: 100%; }
+.oq-chart__plot:focus-visible { outline: 2px solid var(--oq-focus); outline-offset: 2px; border-radius: var(--oq-radius-sm); }
+.oq-chart__svg { display: block; overflow: visible; }
+
+/* Recessive grid and axes: they support the data, they do not compete with it. */
+.oq-chart__grid line { stroke: var(--oq-border); stroke-width: 1; shape-rendering: crispEdges; }
+.oq-chart__grid line[data-zero] { stroke: var(--oq-border-strong); }
+.oq-chart__tick {
+  fill: var(--oq-text-faint);
+  font-family: var(--oq-font-sans);
+  font-size: 11px;
+}
+
+/* Marks. */
+.oq-chart__bar { transition: opacity var(--oq-motion); }
+.oq-chart__band[data-active] .oq-chart__hover { fill: var(--oq-hover); opacity: 0.6; }
+.oq-chart__hover { fill: transparent; }
+.oq-chart__hit { fill: transparent; cursor: default; }
+.oq-chart__line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.oq-chart__area { opacity: 0.16; }
+.oq-chart__area--stacked { opacity: 0.55; }
+.oq-chart__point { stroke: var(--oq-chart-surface); stroke-width: 1.5; }
+.oq-chart__crosshair { stroke: var(--oq-text-faint); stroke-width: 1; stroke-dasharray: 3 3; }
+/* Hover dots wear a 2px surface ring so they read over lines and areas. */
+.oq-chart__dot { stroke: var(--oq-chart-surface); stroke-width: 2; }
+
+/* Legend: toggles series; colour beside the label, text stays in text colours. */
+.oq-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--oq-space) * 1) calc(var(--oq-space) * 3);
+  font-size: var(--oq-text-sm);
+  color: var(--oq-text-muted);
+}
+.oq-chart__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 1.5);
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border: 0;
+  border-radius: var(--oq-radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+button.oq-chart__legend-item { cursor: pointer; }
+button.oq-chart__legend-item:hover { color: var(--oq-text); background: var(--oq-hover); }
+button.oq-chart__legend-item:focus-visible { outline: 2px solid var(--oq-focus); outline-offset: 1px; }
+.oq-chart__legend-item[aria-pressed="false"] { color: var(--oq-text-faint); text-decoration: line-through; }
+.oq-chart__legend-item[aria-pressed="false"] .oq-chart__swatch { background: transparent !important; box-shadow: inset 0 0 0 1.5px var(--oq-border-strong); }
+.oq-chart__legend-value { color: var(--oq-text-faint); margin-left: 2px; }
+.oq-chart__swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+
+/* Tooltip. */
+.oq-chart__tooltip {
+  position: absolute;
+  z-index: 5;
+  min-width: 140px;
+  padding: calc(var(--oq-space) * 2) calc(var(--oq-space) * 2.5);
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-md);
+  background: var(--oq-raised);
+  box-shadow: var(--oq-shadow-md);
+  color: var(--oq-text);
+  font-size: var(--oq-text-sm);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.oq-chart__tooltip-title { font-weight: 600; margin-bottom: 4px; }
+.oq-chart__tooltip-row { display: flex; align-items: center; gap: calc(var(--oq-space) * 2); line-height: 1.6; }
+.oq-chart__tooltip-label { color: var(--oq-text-muted); }
+.oq-chart__tooltip-value { margin-left: auto; padding-left: calc(var(--oq-space) * 3); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.oq-chart__empty {
+  display: grid;
+  place-content: center;
+  border: 1px dashed var(--oq-border-strong);
+  border-radius: var(--oq-radius-md);
+  color: var(--oq-text-faint);
+  font-size: var(--oq-text-sm);
+}
+
+/* "View as table". */
+.oq-chart__table > summary {
+  width: fit-content;
+  color: var(--oq-text-muted);
+  font-size: var(--oq-text-sm);
+  cursor: pointer;
+  user-select: none;
+}
+.oq-chart__table > summary:hover { color: var(--oq-text); }
+.oq-chart__table > .oq-table-wrap { margin-top: calc(var(--oq-space) * 2); max-height: 260px; }
+
+/* Donut. */
+.oq-chart--donut { align-items: center; }
+.oq-chart--donut .oq-chart__legend { justify-content: center; }
+.oq-donut { flex: none; }
+.oq-donut__track { fill: none; stroke: var(--oq-hover); }
+.oq-donut__slice { stroke: var(--oq-chart-surface); stroke-width: 2; transition: opacity var(--oq-motion); }
+.oq-donut__slice[data-dim] { opacity: 0.35; }
+.oq-donut__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+.oq-donut__value { font-size: var(--oq-text-xl); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+.oq-donut__label { font-size: var(--oq-text-xs); color: var(--oq-text-faint); }
+
+/* Heatmap. */
+.oq-heatmap__cell { transition: opacity var(--oq-motion); }
+.oq-heatmap__cell[data-empty] { fill: transparent; stroke: var(--oq-border); stroke-dasharray: 2 2; }
+.oq-heatmap__cell[data-active] { stroke: var(--oq-text); stroke-width: 1.5; }
+.oq-heatmap__scale {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  align-self: flex-end;
+  font-size: var(--oq-text-xs);
+  color: var(--oq-text-faint);
+}
+.oq-heatmap__scale > span:first-child { margin-right: 6px; }
+.oq-heatmap__scale > span:last-child { margin-left: 6px; }
+.oq-heatmap__step { width: 18px; height: 10px; border-radius: 2px; }
+
+/* ========== Calendar ========== */
+
+.oq-calendar { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 2); width: max-content; }
+.oq-calendar__header {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 2);
+}
+.oq-calendar__title { flex: 1 1 0; text-align: center; font-weight: 600; font-size: var(--oq-text-md); }
+.oq-calendar__months { display: flex; gap: calc(var(--oq-space) * 6); }
+.oq-calendar--double .oq-calendar__header { gap: calc(var(--oq-space) * 6); }
+.oq-calendar__grid { border-collapse: separate; border-spacing: 0 2px; }
+.oq-calendar__weekday {
+  width: 34px;
+  padding-bottom: 4px;
+  color: var(--oq-text-faint);
+  font-size: var(--oq-text-xs);
+  font-weight: 600;
+  text-align: center;
+}
+.oq-calendar__grid td { padding: 0; text-align: center; }
+.oq-calendar__day {
+  position: relative;
+  width: 34px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--oq-radius-md);
+  background: transparent;
+  color: var(--oq-text);
+  font: inherit;
+  font-size: var(--oq-text-md);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.oq-calendar__day:hover { background: var(--oq-hover); }
+.oq-calendar__day:focus-visible { outline: 2px solid var(--oq-focus); outline-offset: -2px; }
+.oq-calendar__day[data-outside] { color: var(--oq-text-faint); }
+.oq-calendar__day[data-today] { font-weight: 700; }
+.oq-calendar__day[data-today]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--oq-primary);
+}
+.oq-calendar__day:disabled { color: var(--oq-text-faint); opacity: 0.45; cursor: not-allowed; background: transparent; text-decoration: line-through; }
+
+/* Range: the band between the ends is a soft fill that runs edge to edge. */
+.oq-calendar__day[data-range="middle"] { border-radius: 0; background: var(--oq-selection); }
+.oq-calendar__day[data-range="start"] { border-radius: var(--oq-radius-md) 0 0 var(--oq-radius-md); }
+.oq-calendar__day[data-range="end"] { border-radius: 0 var(--oq-radius-md) var(--oq-radius-md) 0; }
+.oq-calendar__day[data-selected] { background: var(--oq-primary); color: var(--oq-on-primary); font-weight: 600; }
+.oq-calendar__day[data-selected]::after { background: var(--oq-on-primary); }
+.oq-calendar__day[data-preview][data-range="middle"] { background: color-mix(in srgb, var(--oq-primary) 10%, transparent); }
+.oq-calendar__day[data-preview][data-range="end"],
+.oq-calendar__day[data-preview][data-range="start"]:not([data-selected]) {
+  background: color-mix(in srgb, var(--oq-primary) 30%, transparent);
+  color: var(--oq-text);
+}
+
+/* ========== Date picker ========== */
+
+.oq-datepicker { position: relative; display: inline-block; min-width: 180px; }
+.oq-datepicker__trigger {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 2);
+  text-align: left;
+  cursor: pointer;
+}
+.oq-datepicker__icon { color: var(--oq-text-faint); flex: none; }
+.oq-datepicker__value,
+.oq-datepicker__placeholder { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.oq-datepicker__placeholder { color: var(--oq-text-faint); }
+.oq-datepicker__trigger[aria-expanded="true"] {
+  border-color: var(--oq-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--oq-focus) 22%, transparent);
+}
+.oq-datepicker__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--oq-space) * 3);
+  padding: calc(var(--oq-space) * 3);
+  border: 1px solid var(--oq-border-strong);
+  border-radius: var(--oq-radius-lg);
+  background: var(--oq-raised);
+  box-shadow: var(--oq-shadow-lg);
+  animation: oq-pop var(--oq-motion) ease-out;
+}
+.oq-datepicker--end > .oq-datepicker__panel { left: auto; right: 0; }
+.oq-datepicker__footer {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--oq-space) * 2);
+  padding-top: calc(var(--oq-space) * 3);
+  border-top: 1px solid var(--oq-border);
+}
+.oq-datepicker__time { width: 110px; }
+
+.oq-rangepicker { min-width: 240px; }
+.oq-rangepicker__body { display: flex; gap: calc(var(--oq-space) * 4); }
+.oq-rangepicker__summary { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.oq-datepicker__presets {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 140px;
+  padding-right: calc(var(--oq-space) * 3);
+  border-right: 1px solid var(--oq-border);
+}
+.oq-datepicker__preset {
+  height: 30px;
+  padding: 0 calc(var(--oq-space) * 2.5);
+  border: 0;
+  border-radius: var(--oq-radius-sm);
+  background: transparent;
+  color: var(--oq-text-muted);
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.oq-datepicker__preset:hover { background: var(--oq-hover); color: var(--oq-text); }
+.oq-datepicker__preset:focus-visible { outline: 2px solid var(--oq-focus); outline-offset: -2px; }
+.oq-datepicker__preset[aria-selected="true"] { background: var(--oq-selection); color: var(--oq-primary); font-weight: 500; }
+
+/* ========== Small screens and touch ========== */
+
+/* Plots let the page scroll vertically under a finger; a horizontal drag scrubs the line chart. */
+.oq-chart__plot { touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+
+/* On a narrow plot the tooltip docks across the top instead of following the pointer. */
+.oq-chart__tooltip--pinned {
+  top: 0;
+  left: 0;
+  right: 0;
+  min-width: 0;
+  white-space: normal;
+}
+
+/* The heatmap keeps its cells tappable and scrolls sideways when they do not fit. */
+.oq-heatmap__scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+.oq-heatmap__scroll > svg { display: block; }
+
+/* A donut never grows past its container; its SVG scales down with it. */
+.oq-donut > .oq-chart__svg { width: 100%; height: 100%; }
+
+@media (pointer: coarse) {
+  .oq-chart__legend { gap: calc(var(--oq-space) * 1) calc(var(--oq-space) * 2); }
+  .oq-chart__legend-item { min-height: 32px; padding: 4px 8px; margin: 0; }
+  .oq-chart__table > summary { display: flex; align-items: center; min-height: 32px; }
+  .oq-calendar__weekday { width: 40px; }
+  .oq-calendar__day { width: 40px; height: 40px; }
+  .oq-datepicker__preset { height: 36px; }
+}
+
+@media (max-width: 640px) {
+  /* The picker panel becomes a bottom sheet; the wide shadow dims the page behind it, and a tap
+     on the dimmed page closes it (the picker listens for pointerdown outside). */
+  .oq-datepicker { min-width: 0; max-width: 100%; }
+  .oq-datepicker__panel {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: calc(var(--oq-space) * 4) calc(var(--oq-space) * 4) calc(var(--oq-space) * 4 + env(safe-area-inset-bottom, 0px));
+    border-width: 1px 0 0;
+    border-radius: var(--oq-radius-lg) var(--oq-radius-lg) 0 0;
+    box-shadow: 0 0 0 100vmax var(--oq-overlay);
+    animation: oq-sheet var(--oq-motion) ease-out;
+  }
+  .oq-datepicker--end > .oq-datepicker__panel { left: 0; right: 0; }
+  .oq-datepicker__panel .oq-calendar { width: 100%; align-items: stretch; }
+  .oq-datepicker__panel .oq-calendar__grid { width: 100%; table-layout: fixed; }
+  .oq-datepicker__panel .oq-calendar__day,
+  .oq-datepicker__panel .oq-calendar__weekday { width: 100%; }
+  .oq-datepicker__footer { flex-wrap: wrap; }
+  .oq-datepicker__footer > .oq-spacer { display: none; }
+  .oq-datepicker__footer > .oq-btn { flex: 1 1 auto; }
+  .oq-datepicker__time { width: auto; flex: 1 1 120px; }
+
+  .oq-rangepicker { min-width: 0; }
+  .oq-rangepicker__body { flex-direction: column; gap: calc(var(--oq-space) * 3); }
+  .oq-rangepicker__summary { flex: 1 1 100%; white-space: normal; }
+  /* Quick ranges: one scrollable row of chips. */
+  .oq-datepicker__presets {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: calc(var(--oq-space) * 1.5);
+    min-width: 0;
+    margin: 0 calc(var(--oq-space) * -4);
+    padding: 0 calc(var(--oq-space) * 4) calc(var(--oq-space) * 3);
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--oq-border);
+    scrollbar-width: none;
+  }
+  .oq-datepicker__preset {
+    flex: none;
+    height: 32px;
+    border: 1px solid var(--oq-border-strong);
+    border-radius: 16px;
+  }
+  .oq-datepicker__preset[aria-selected="true"] { border-color: var(--oq-primary); }
+  .oq-calendar__months { flex-direction: column; }
+
+  /* Legends centre under narrow plots; donut and legend already stack. */
+  .oq-chart--donut .oq-chart__legend { max-width: 100%; }
+}
+
+/* The smallest phones (320px): a touch calendar still fits beside the page gutters. */
+@media (max-width: 360px) {
+  .oq-calendar { max-width: 100%; }
+  .oq-calendar__weekday,
+  .oq-calendar__day { width: 36px; }
+}
+
+@keyframes oq-sheet { from { transform: translateY(24px); opacity: 0; } }
