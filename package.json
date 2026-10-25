@@ -12,6 +12,17 @@
   ],
   "author": "Michał Płatosz <platosz.michal@gmail.com>",
   "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OSQD-ts/OSQD-UI.git"
+  },
+  "homepage": "https://github.com/OSQD-ts/OSQD-UI#readme",
+  "bugs": {
+    "url": "https://github.com/OSQD-ts/OSQD-UI/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -55,7 +66,8 @@
     "styles",
     "assets",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "tokens": "node scripts/tokens.mjs",
@@ -76,7 +88,10 @@
     "typecheck:types": "tsc --noEmit --strict --jsx react-jsx --module esnext --moduleResolution bundler --target es2022 --skipLibCheck --exactOptionalPropertyTypes --noUncheckedIndexedAccess tests/types/*.tsx",
     "samples": "node examples/build.mjs",
     "samples:check": "node examples/build.mjs --check",
-    "audit:mobile": "node scripts/responsive-audit.mjs"
+    "audit:mobile": "node scripts/responsive-audit.mjs",
+    "check:package": "npm run build && node scripts/check-package.mjs",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react": ">=18",

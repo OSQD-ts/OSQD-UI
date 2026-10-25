@@ -212,6 +212,19 @@ All of the colours, sizes and fonts live in `src/theme/index.ts`. The `styles/to
 
 To make your own, open `theme-builder.html`: start from any built-in theme, change colours, watch the contrast checks, and export the result.
 
+## Releases
+
+Every push to `main` can publish to npm. `.github/workflows/publish.yml` re-runs every check, works out the version from the commit messages since the last `v*` tag (`scripts/next-version.mjs`), publishes with provenance, then commits the version and tags it:
+
+| Commit | Release |
+|---|---|
+| `feat:` / `fix:` / `perf:` | patch |
+| `!` after the type, or a `BREAKING CHANGE:` footer | minor while the major is 0, then major |
+| `docs:` / `ci:` / `test:` / `chore:` / `refactor:` … | nothing |
+| `Release-As: 1.0.0` or `Release-As: minor` footer | exactly that |
+
+Until the first tag exists, the first release is the version already in `package.json`. A run started by hand (`workflow_dispatch`) is a dry run by default.
+
 ## Development
 
 ```
