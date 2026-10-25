@@ -1,4 +1,4 @@
-import { emit, fitPanel, OqElement, resetPanel, rootOf } from "./base";
+import { emit, eventInside, fitPanel, OqElement, resetPanel, rootOf, treeOf } from "./base";
 
 /**
  * `<oq-dropdown>` around a `<details class="oq-dropdown">` whose `<summary>` is the trigger and
@@ -41,8 +41,10 @@ export class OqDropdown extends OqElement {
       this.syncing = false;
       emit(this, "oq-toggle", { open: d.open });
     });
-    this.ls.on(document, "click", (e) => {
-      if (d.open && !d.contains(e.target as Node)) this.close(false);
+    // On the document so any click elsewhere closes it; judged on the composed path, because a
+    // click inside a shadow root reaches the document retargeted to the shadow host.
+    this.ls.on(this.ownerDocument, "click", (e) => {
+      if (d.open && !eventInside(e, d)) this.close(false);
     });
     this.ls.on(d, "click", (e) => {
       const item = (e.target as Element).closest<HTMLElement>(".oq-menu__item");
@@ -61,7 +63,7 @@ export class OqDropdown extends OqElement {
       const items = [...d.querySelectorAll<HTMLElement>(".oq-menu__item:not(:disabled)")];
       if (items.length === 0) return;
       ke.preventDefault();
-      const i = items.indexOf(document.activeElement as HTMLElement);
+      const i = items.indexOf(treeOf(d).activeElement as HTMLElement);
       const next = ke.key === "ArrowDown" ? items[(i + 1) % items.length] : items[(i - 1 + items.length) % items.length];
       next?.focus();
     });

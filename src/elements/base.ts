@@ -56,23 +56,96 @@ export function uid(prefix: string): string {
   return `${prefix}-${seq}`;
 }
 
-export function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+/*
+ * Everything below builds DOM with createElement and textContent, never from markup strings.
+ * The dashboards that embed these elements refuse every markup-string sink in anything they
+ * ship (scripts/elements.mjs lists them and checks these sources and the bundle), and text set
+ * through textContent can never become markup, so nothing here needs escaping.
+ */
+
+type Child = Node | string | null | undefined | false;
+type Attrs = Record<string, string | boolean | undefined>;
+
+/**
+ * `h(doc, "li", { class: "oq-option", "aria-selected": "true" }, "Label")`. `class` sets the
+ * class list; `true` sets an empty attribute; `false` and `undefined` leave it out. Strings among
+ * the children become text nodes.
+ */
+export function h<K extends keyof HTMLElementTagNameMap>(doc: Document, tag: K, attrs: Attrs = {}, ...children: Child[]): HTMLElementTagNameMap[K] {
+  const el = doc.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v === undefined || v === false) continue;
+    if (k === "class") el.className = String(v);
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of children) if (c !== null && c !== undefined && c !== false) el.append(c);
+  return el;
 }
 
-/** `text` with the first case-insensitive occurrence of `query` wrapped in <mark>. */
-export function highlight(text: string, query: string): string {
+/** `text` with the first case-insensitive occurrence of `query` wrapped in <mark>, as nodes. */
+export function marked(doc: Document, text: string, query: string): DocumentFragment {
+  const frag = doc.createDocumentFragment();
   const i = query ? text.toLowerCase().indexOf(query.toLowerCase()) : -1;
-  if (i < 0) return escapeHtml(text);
-  return `${escapeHtml(text.slice(0, i))}<mark>${escapeHtml(text.slice(i, i + query.length))}</mark>${escapeHtml(text.slice(i + query.length))}`;
+  if (i < 0) {
+    frag.append(text);
+    return frag;
+  }
+  frag.append(text.slice(0, i), h(doc, "mark", {}, text.slice(i, i + query.length)), text.slice(i + query.length));
+  return frag;
 }
 
-/** Small inline icons the elements create themselves (same drawing rules as the icon set). */
-export const glyph = {
-  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
-  minus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>',
-  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
-};
+const GLYPHS = {
+  plus: "M12 5v14M5 12h14",
+  minus: "M5 12h14",
+  close: "M6 6l12 12M18 6 6 18",
+} as const;
+
+/** A small inline icon drawn with the icon set's rules (24×24, 1.75 stroke). */
+export function glyph(doc: Document, name: keyof typeof GLYPHS): SVGSVGElement {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = doc.createElementNS(ns, "svg");
+  for (const [k, v] of Object.entries({ viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "1.75", "stroke-linecap": "round", "aria-hidden": "true" })) {
+    svg.setAttribute(k, v);
+  }
+  const path = doc.createElementNS(ns, "path");
+  path.setAttribute("d", GLYPHS[name]);
+  svg.append(path);
+  return svg;
+}
+
+/**
+ * The tree an element lives in: its shadow root when it is inside one, else its document.
+ * Lookups by id and "is this outside me" checks go through this, so an element mounted in a
+ * dashboard's shadow root finds its own dialog rather than one on the host page.
+ */
+export function treeOf(node: Node): Document | ShadowRoot {
+  const r = node.getRootNode?.();
+  return r && (r.nodeType === 9 || r.nodeType === 11) ? (r as Document | ShadowRoot) : (node.ownerDocument ?? document);
+}
+
+/** `getElementById` within the given tree (a shadow root has no id index on every engine). */
+export function byId<T extends HTMLElement = HTMLElement>(tree: Document | ShadowRoot, id: string): T | null {
+  if (!id) return null;
+  return tree.querySelector<T>(`[id="${id.replace(/["\\]/g, "\\$&")}"]`);
+}
+
+/** Whether `node` sits in its document's own tree rather than inside a shadow root. */
+export function inLightDom(node: Node): boolean {
+  return treeOf(node).nodeType === 9;
+}
+
+/** The first element in an event's composed path matching `selector`; sees into open shadow roots. */
+export function closestInPath<T extends Element = HTMLElement>(e: Event, selector: string): T | null {
+  for (const n of e.composedPath()) {
+    if (n instanceof Element && n.matches(selector)) return n as T;
+  }
+  return null;
+}
+
+/** Whether the event happened inside `el`, even when it started in a shadow root within it. */
+export function eventInside(e: Event, el: Element): boolean {
+  return e.composedPath().includes(el);
+}
 
 /** The visible part of the window: on a phone the on-screen keyboard shrinks it, innerHeight does not. */
 function viewport(): { width: number; height: number; top: number } {
@@ -90,7 +163,7 @@ function viewport(): { width: number; height: number; top: number } {
 export function fitPanel(panel: HTMLElement, anchor: Element, { gap = 4, margin = 8, max = 360 } = {}): void {
   resetPanel(panel);
   const vp = viewport();
-  const vw = Math.min(vp.width, document.documentElement.clientWidth || vp.width);
+  const vw = Math.min(vp.width, panel.ownerDocument.documentElement.clientWidth || vp.width);
   const a = anchor.getBoundingClientRect();
   const below = vp.top + vp.height - a.bottom - gap - margin;
   const above = a.top - vp.top - gap - margin;
@@ -122,10 +195,12 @@ let saved = "";
 /**
  * Stop the page behind a modal from scrolling (a native modal dialog does not, and on a phone
  * the page under a sheet scrolls with the finger). Counted, so nested modals unlock in order.
+ * A modal inside a shadow root leaves the page alone: the page belongs to whoever embedded it.
  */
-export function lockScroll(on: boolean): void {
+export function lockScroll(on: boolean, from?: Node): void {
   if (typeof document === "undefined") return;
-  const html = document.documentElement;
+  if (from && !inLightDom(from)) return;
+  const html = (from?.ownerDocument ?? document).documentElement;
   if (on) {
     if (locks++ === 0) {
       saved = html.style.overflow;
@@ -144,7 +219,7 @@ export function numberAttr(el: Element, name: string, fallback: number): number 
 /**
  * The base every element extends. It defers `setup()` until the element's children exist:
  * a script in <head> sees elements connect before the parser has reached their children, and
- * `innerHTML` in some environments connects the parent first too. So setup runs at
+ * markup parsed in one go may connect the parent first too. So setup runs at
  * DOMContentLoaded while the page is still loading, else after the current microtask.
  *
  * Listeners added through `this.ls` are released when the element disconnects; `ready` is true

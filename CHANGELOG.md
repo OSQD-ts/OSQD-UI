@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.5.0 — 2026-10-25
+
+Pieces the OSQD dashboards need, all usable as plain HTML and CSS under a strict CSP and inside a shadow root.
+
+- **Shadow DOM:** every theme rule now also targets `:host` and `:host([data-theme="…"])`, including `auto`, the series palette, the ramps and the hue modes. A stylesheet adopted into a shadow root themes it from the host's `data-theme`.
+- **Ramps:** sequential `--oq-seq-0…12` and ordinal `--oq-ord-1…5`, mixed from each theme's surface and primary.
+- **Fill classes:** `.oq-fill-series-1…8`, `.oq-fill-seq-0…12`, `.oq-fill-ord-1…5` and `.oq-stroke-series-1…8` colour SVG marks, HTML bars and the intent pair. `.oq-w-0…100` set `--value` without a style attribute.
+- **Hashed-hue tags:** `.oq-hue-0…11`, readable at 4.5:1 in all seven themes, which a test checks. React: `hueIndex(text)` and `<Chip hue>`.
+- **Plain-HTML data displays:** ranked bars (`.oq-bars`), 100% stacked bar (`.oq-stackbar`), funnel (`.oq-funnel`), histogram with threshold (`.oq-histogram`), percentile strip (`.oq-percentiles`) and HTML heat grid (`.oq-heatgrid`). React: `RankedBars`, `StackBar`, `Funnel`, `Histogram`, `PercentileStrip`. There is also a documented recipe for line, area and bar SVG with the existing `.oq-chart__*` classes.
+- **Tables:**
+  - expandable detail rows (`.oq-table__expander`, `tr.oq-table__detail`);
+  - group header rows (`tr.oq-table__group`);
+  - intent row accent (`tr.oq-row-accent`);
+  - new `DataTable` props `renderDetail`, `expanded` / `defaultExpanded` / `onExpandedChange`, `groupBy`, `renderGroup` and `rowAccent`. Existing props are unchanged.
+- **Other new pieces:**
+  - skip link (`.oq-skip-link`, `SkipLink`);
+  - two-click confirm (`.oq-btn[data-armed]`, `ConfirmButton`);
+  - sortable list with drag, keys and move buttons (`.oq-sortable`, `SortableList`);
+  - chip grid for long value lists (`.oq-chipgrid`, `ChipGrid`);
+  - iframe preview at device widths (`.oq-frame`, `PreviewFrame`);
+  - value flash (`.oq-flash`, `useFlash`);
+  - stale data (`[data-stale="true"]`, `.oq-stale-mark`);
+  - card fold and pin (`.oq-card__tools`, `CardTools`, `CardTool`);
+  - evidence chips (`.oq-chip--proven`, `.oq-chip--suspected`, `<Chip evidence>`).
+- **Forced colours:** a `@media (forced-colors: active)` pass over components and data marks.
+
 ## 0.4.0 — 2026-10-25
 
 Full mobile and touch support, checked page by page with `npm run audit:mobile` (every gallery, sample, error and docs page at 320, 375, 414, 768 and 1024 px, in dark and light).

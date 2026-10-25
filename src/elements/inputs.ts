@@ -1,4 +1,4 @@
-import { emit, escapeHtml, glyph, numberAttr, OqElement, rootOf } from "./base";
+import { emit, glyph, h, numberAttr, OqElement, rootOf, treeOf } from "./base";
 
 /**
  * `<oq-number class="oq-number">` — a spin button around a text input.
@@ -29,12 +29,12 @@ export class OqNumber extends OqElement {
     let dec = root.querySelector<HTMLButtonElement>("[data-dec]");
     let inc = root.querySelector<HTMLButtonElement>("[data-inc]");
     if (!dec) {
-      dec = this.button("Decrease", glyph.minus);
+      dec = this.button("Decrease", "minus");
       dec.dataset.dec = "";
       root.prepend(dec);
     }
     if (!inc) {
-      inc = this.button("Increase", glyph.plus);
+      inc = this.button("Increase", "plus");
       inc.dataset.inc = "";
       root.append(inc);
     }
@@ -92,13 +92,10 @@ export class OqNumber extends OqElement {
     this.set(base + times * this.step, true);
   }
 
-  private button(label: string, icon: string): HTMLButtonElement {
-    const b = this.ownerDocument.createElement("button");
-    b.type = "button";
+  private button(label: string, icon: "plus" | "minus"): HTMLButtonElement {
+    const doc = this.ownerDocument;
+    const b = h(doc, "button", { type: "button", class: "oq-number__btn", "aria-label": label }, glyph(doc, icon));
     b.tabIndex = -1;
-    b.className = "oq-number__btn";
-    b.setAttribute("aria-label", label);
-    b.innerHTML = icon;
     return b;
   }
 
@@ -279,11 +276,10 @@ export class OqTagInput extends OqElement {
     const input = this.input;
     for (const chip of root.querySelectorAll(":scope > .oq-chip")) chip.remove();
     for (const t of this.list) {
-      const chip = this.ownerDocument.createElement("span");
-      chip.className = "oq-chip oq-neutral";
-      chip.innerHTML = `${escapeHtml(t)}<button type="button" class="oq-chip__remove" aria-label="Remove ${escapeHtml(t)}">×</button>`;
-      (chip.querySelector("button") as HTMLElement).dataset.tag = t;
-      root.insertBefore(chip, input);
+      const doc = this.ownerDocument;
+      const remove = h(doc, "button", { type: "button", class: "oq-chip__remove", "aria-label": `Remove ${t}` }, "×");
+      remove.dataset.tag = t;
+      root.insertBefore(h(doc, "span", { class: "oq-chip oq-neutral" }, t, remove), input);
     }
     const name = this.getAttribute("name");
     if (name) {
@@ -406,23 +402,34 @@ export class OqDropzone extends OqElement {
 
   private listEl(): HTMLElement | null {
     const sel = this.getAttribute("list");
-    return sel ? this.ownerDocument.querySelector(sel) : null;
+    // Looked up in this element's own tree first, so a list inside the same shadow root is found.
+    return sel ? (treeOf(this).querySelector<HTMLElement>(sel) ?? null) : null;
   }
 
   private renderList(rejected: DropRejection[]): void {
     const list = this.listEl();
     if (!list) return;
+    const doc = this.ownerDocument;
     const row = (f: File, meta: string, i: number | null, error: boolean) => {
       const ext = (f.name.split(".").pop() ?? "").slice(0, 4);
-      return `<li class="oq-file${error ? " oq-danger" : ""}"${error ? ' data-state="error"' : ""}>
-        <span class="oq-file__icon">${escapeHtml(ext)}</span>
-        <span class="oq-file__name"><span>${escapeHtml(f.name)}</span><span class="oq-file__meta">${escapeHtml(meta)}</span></span>
-        ${i === null ? "<span></span>" : `<button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" aria-label="Remove ${escapeHtml(f.name)}" data-file-index="${i}">${glyph.close}</button>`}
-      </li>`;
+      let end: HTMLElement;
+      if (i === null) end = h(doc, "span");
+      else {
+        end = h(doc, "button", { type: "button", class: "oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm", "aria-label": `Remove ${f.name}`, "data-file-index": String(i) }, glyph(doc, "close"));
+      }
+      return h(
+        doc,
+        "li",
+        { class: error ? "oq-file oq-danger" : "oq-file", "data-state": error ? "error" : undefined },
+        h(doc, "span", { class: "oq-file__icon" }, ext),
+        h(doc, "span", { class: "oq-file__name" }, h(doc, "span", {}, f.name), h(doc, "span", { class: "oq-file__meta" }, meta)),
+        end,
+      );
     };
-    list.innerHTML =
-      this.kept.map((f, i) => row(f, formatBytes(f.size), i, false)).join("") +
-      rejected.map((r) => row(r.file, r.reason === "size" ? `${formatBytes(r.file.size)} — too large` : "File type not accepted", null, true)).join("");
+    list.replaceChildren(
+      ...this.kept.map((f, i) => row(f, formatBytes(f.size), i, false)),
+      ...rejected.map((r) => row(r.file, r.reason === "size" ? `${formatBytes(r.file.size)} — too large` : "File type not accepted", null, true)),
+    );
   }
 }
 

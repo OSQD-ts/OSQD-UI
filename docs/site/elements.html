@@ -159,6 +159,7 @@
       <a class="oq-nav__item" href="components/calendar.html">Calendar</a>
       <a class="oq-nav__item" href="components/checkbox.html">Checkbox</a>
       <a class="oq-nav__item" href="components/combobox.html">Combobox</a>
+      <a class="oq-nav__item" href="components/confirm-button.html">ConfirmButton</a>
       <a class="oq-nav__item" href="components/date-picker.html">DatePicker</a>
       <a class="oq-nav__item" href="components/date-range-picker.html">DateRangePicker</a>
       <a class="oq-nav__item" href="components/drop-zone.html">DropZone</a>
@@ -200,6 +201,8 @@
       <a class="oq-nav__item" href="components/card-body.html">CardBody</a>
       <a class="oq-nav__item" href="components/card-footer.html">CardFooter</a>
       <a class="oq-nav__item" href="components/card-header.html">CardHeader</a>
+      <a class="oq-nav__item" href="components/card-tool.html">CardTool</a>
+      <a class="oq-nav__item" href="components/card-tools.html">CardTools</a>
       <a class="oq-nav__item" href="components/chip.html">Chip</a>
       <a class="oq-nav__item" href="components/code-block.html">CodeBlock</a>
       <a class="oq-nav__item" href="components/description-list.html">DescriptionList</a>
@@ -208,11 +211,14 @@
       <a class="oq-nav__item" href="components/list.html">List</a>
       <a class="oq-nav__item" href="components/list-item.html">ListItem</a>
       <a class="oq-nav__item" href="components/paper.html">Paper</a>
+      <a class="oq-nav__item" href="components/preview-frame.html">PreviewFrame</a>
+      <a class="oq-nav__item" href="components/sortable-list.html">SortableList</a>
       <a class="oq-nav__item" href="components/stat.html">Stat</a>
       <a class="oq-nav__item" href="components/status-dot.html">StatusDot</a>
       <a class="oq-nav__item" href="components/timeline.html">Timeline</a>
       <a class="oq-nav__item" href="components/tree-view.html">TreeView</a>
       <div class="oq-nav__section oq-overline docs-nav-area">Data</div>
+      <a class="oq-nav__item" href="components/chip-grid.html">ChipGrid</a>
       <a class="oq-nav__item" href="components/data-table.html">DataTable</a>
       <a class="oq-nav__item" href="components/diff-view.html">DiffView</a>
       <a class="oq-nav__item" href="components/json-inspector.html">JsonInspector</a>
@@ -224,11 +230,16 @@
       <a class="oq-nav__item" href="components/area-chart.html">AreaChart</a>
       <a class="oq-nav__item" href="components/bar-chart.html">BarChart</a>
       <a class="oq-nav__item" href="components/donut-chart.html">DonutChart</a>
+      <a class="oq-nav__item" href="components/funnel.html">Funnel</a>
       <a class="oq-nav__item" href="components/gauge.html">Gauge</a>
       <a class="oq-nav__item" href="components/heatmap.html">Heatmap</a>
+      <a class="oq-nav__item" href="components/histogram.html">Histogram</a>
       <a class="oq-nav__item" href="components/line-chart.html">LineChart</a>
       <a class="oq-nav__item" href="components/meter.html">Meter</a>
+      <a class="oq-nav__item" href="components/percentile-strip.html">PercentileStrip</a>
+      <a class="oq-nav__item" href="components/ranked-bars.html">RankedBars</a>
       <a class="oq-nav__item" href="components/sparkline.html">Sparkline</a>
+      <a class="oq-nav__item" href="components/stack-bar.html">StackBar</a>
       <div class="oq-nav__section oq-overline docs-nav-area">Navigation</div>
       <a class="oq-nav__item" href="components/app-bar.html">AppBar</a>
       <a class="oq-nav__item" href="components/breadcrumbs.html">Breadcrumbs</a>
@@ -236,6 +247,7 @@
       <a class="oq-nav__item" href="components/nav-item.html">NavItem</a>
       <a class="oq-nav__item" href="components/nav-section.html">NavSection</a>
       <a class="oq-nav__item" href="components/pagination.html">Pagination</a>
+      <a class="oq-nav__item" href="components/skip-link.html">SkipLink</a>
       <a class="oq-nav__item" href="components/stepper.html">Stepper</a>
       <a class="oq-nav__item" href="components/tabs.html">Tabs</a>
       <a class="oq-nav__item" href="components/toolbar.html">Toolbar</a>
@@ -374,7 +386,7 @@
     <section class="oq-card" id="oq-theme-select"><div class="oq-card__body docs-el">
       <div class="oq-row oq-wrap oq-gap-2"><h2 class="oq-h4 oq-mono">&lt;oq-theme-select&gt;</h2><code>OqThemeSelect</code></div>
       <div class="docs-prose"><p><code>&lt;oq-theme-select&gt;</code> binds a <code>&lt;select&gt;</code> to a theme: choosing an option sets <code>data-theme</code> on the target and remembers the choice.</p>
-<ul><li>A <code>&lt;select&gt;</code> inside is used as is; with none, one is created listing every built-in theme plus &quot;auto&quot;.</li><li><code>target</code>: selector of the element to theme (default <code>html</code>). <code>storage-key</code>: where the choice is kept in localStorage (default <code>oq-theme</code>; empty turns remembering off). <code>default</code>: the theme when nothing is stored (else the target's current <code>data-theme</code>).</li><li>Several pickers can share a target (an app bar and a phone menu): each follows the target's <code>data-theme</code>, so they never disagree about the current theme.</li><li>Event <code>oq-change</code> with <code>{ theme }</code>.</li></ul></div>
+<ul><li>A <code>&lt;select&gt;</code> inside is used as is; with none, one is created listing every built-in theme plus &quot;auto&quot;.</li><li><code>target</code>: selector of the element to theme (default <code>html</code>), looked up in the picker's own tree first, so inside a shadow root <code>#panel</code> finds the dashboard's element. <code>target=&quot;closest&quot;</code> themes the nearest ancestor that has a <code>data-theme</code> (crossing out of a shadow root to its host). <code>storage-key</code>: where the choice is kept in localStorage (default <code>oq-theme</code>; empty turns remembering off). <code>default</code>: the theme when nothing is stored (else the target's current <code>data-theme</code>).</li><li>Several pickers can share a target (an app bar and a phone menu): each follows the target's <code>data-theme</code>, so they never disagree about the current theme.</li><li>Event <code>oq-change</code> with <code>{ theme }</code>.</li></ul></div>
       <div class="oq-row oq-wrap oq-gap-1 oq-small"><span class="oq-faint">React:</span><a class="oq-chip oq-neutral oq-sm" href="components/theme-provider.html">ThemeProvider</a></div>
     </div></section>
     <section class="oq-card" id="oq-number"><div class="oq-card__body docs-el">

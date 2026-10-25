@@ -1,4 +1,4 @@
-import { emit, fitPanel, highlight, OqElement, rootOf, uid } from "./base";
+import { emit, fitPanel, h, marked, OqElement, rootOf, uid } from "./base";
 
 export interface ComboOption {
   value: string;
@@ -142,20 +142,30 @@ export class OqCombobox extends OqElement {
     const input = this.input;
     if (!list || !input) return;
     const vis = this.visible(query);
+    const doc = this.ownerDocument;
     if (vis.length === 0) {
-      const text = this.getAttribute("empty-text") ?? "No results";
-      list.innerHTML = `<li class="oq-listbox__empty" role="presentation">${highlight(text, "")}</li>`;
+      list.replaceChildren(h(doc, "li", { class: "oq-listbox__empty", role: "presentation" }, this.getAttribute("empty-text") ?? "No results"));
       input.removeAttribute("aria-activedescendant");
       return;
     }
-    list.innerHTML = vis
-      .map(
-        ({ o, i }, n) =>
-          `<li class="oq-option" role="option" id="${list.id}-${i}" data-index="${i}" aria-selected="${o.value === this.value}"${
-            o.disabled ? ' aria-disabled="true"' : ""
-          }${n === this.active ? ' data-active="true"' : ""}>${highlight(o.label, query.trim())}</li>`,
-      )
-      .join("");
+    list.replaceChildren(
+      ...vis.map(({ o, i }, n) =>
+        h(
+          doc,
+          "li",
+          {
+            class: "oq-option",
+            role: "option",
+            id: `${list.id}-${i}`,
+            "data-index": String(i),
+            "aria-selected": String(o.value === this.value),
+            "aria-disabled": o.disabled ? "true" : undefined,
+            "data-active": n === this.active ? "true" : undefined,
+          },
+          marked(doc, o.label, query.trim()),
+        ),
+      ),
+    );
     const act = vis[this.active];
     if (act) {
       input.setAttribute("aria-activedescendant", `${list.id}-${act.i}`);

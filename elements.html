@@ -16,6 +16,7 @@
   .pv-live { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; padding: 16px; min-height: 64px; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-lg); background: var(--oq-surface); }
   .pv-live > oq-combobox, .pv-live > oq-tag-input, .pv-live > oq-tabs, .pv-live > oq-sortable-table, .pv-live > oq-tree, .pv-live > oq-dropzone, .pv-live > .oq-filelist, .pv-live > .oq-input-group { flex: 1 1 100%; }
   .pv-live > oq-sortable-table, .pv-live > oq-tabs, .pv-live > oq-tree { display: block; }
+  .pv-live > .pv-shadow-host { display: block; flex: 1 1 100%; min-width: 0; }
   .pv-pair .oq-pre { max-height: 360px; font-size: 12px; }
   .pv-main { max-width: 1240px; }
   .pv-sidebar { position: sticky; top: 48px; height: calc(100vh - 48px); }
@@ -158,6 +159,8 @@
       <a class="oq-nav__item" href="#number">Number</a>
       <a class="oq-nav__item" href="#tags">Tag input</a>
       <a class="oq-nav__item" href="#dropzone">Drop zone</a>
+      <div class="oq-nav__section oq-overline">Embedding</div>
+      <a class="oq-nav__item" href="#shadow">Inside a shadow root</a>
     </nav>
   </aside>
 
@@ -606,6 +609,76 @@
 &lt;/oq-dropzone&gt;
 &lt;ul class=&quot;oq-filelist&quot; id=&quot;demo-files&quot;&gt;&lt;/ul&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
 <pre class="oq-pre"><code><span class="oq-code-line">&lt;oq-dropzone class="oq-dropzone" list="#demo-files" max-size="52428800"&gt;</span><span class="oq-code-line">  &lt;svg …&gt;</span><span class="oq-code-line">  &lt;span class="oq-dropzone__title"&gt;Drop files here or &lt;u&gt;browse&lt;/u&gt;&lt;/span&gt;</span><span class="oq-code-line">  &lt;span class="oq-dropzone__hint"&gt;CSV, JSON or logs · up to 50 MB each&lt;/span&gt;</span><span class="oq-code-line">  &lt;input type="file" multiple accept=".csv,.json,.log,.txt"&gt;</span><span class="oq-code-line">&lt;/oq-dropzone&gt;</span><span class="oq-code-line">&lt;ul class="oq-filelist" id="demo-files"&gt;&lt;/ul&gt;</span></code></pre>
+    </div>
+    </div>
+  </section>
+  <section class="pv-section" id="shadow">
+    <header>
+      <div class="oq-row oq-between oq-wrap"><h2 class="oq-h3">Inside a shadow root</h2><code>attachShadow</code></div>
+      <p class="oq-muted">The elements work inside an open shadow root, the way the OSQD dashboards embed their UI. Openers, panels and toast regions are looked up in the element's own root. Outside clicks are judged on the event's composed path. A modal there leaves the page's scroll alone. The shadow root links the kit's CSS itself, and <code>target="closest"</code> lets a theme picker theme just the embedded part.</p>
+      <div class="oq-row oq-wrap oq-gap-1"><span class="oq-overline">Also</span><span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">OQ.toast({ …, root })</span> <span class="oq-chip oq-sm oq-chip--square oq-neutral oq-mono">no markup-string sinks</span></div>
+    </header>
+    <div class="pv-pair">
+      <div class="pv-live">
+<div class="pv-shadow-host">
+  <template shadowrootmode="open">
+    <link rel="stylesheet" href="styles/index.css">
+    <div class="oq oq-paper oq-p-4 oq-stack" data-theme="midnight">
+      <div class="oq-row oq-between oq-wrap">
+        <strong>Embedded dashboard</strong>
+        <oq-theme-select target="closest" storage-key="" default="midnight"></oq-theme-select>
+      </div>
+      <oq-tabs>
+        <div class="oq-tabs" role="tablist" aria-label="Embedded">
+          <button class="oq-tab" role="tab" id="s-t1" aria-controls="s-p1">Overview</button>
+          <button class="oq-tab" role="tab" id="s-t2" aria-controls="s-p2">Rules</button>
+        </div>
+        <div class="oq-tabpanel" role="tabpanel" id="s-p1" aria-labelledby="s-t1">
+          <div class="oq-row oq-wrap">
+            <button class="oq-btn" data-oq-open="s-dialog">Open dialog</button>
+            <button class="oq-btn oq-btn--soft oq-success" data-oq-toast-title="Saved" data-oq-toast-message="The toast lands in this root's own region." data-oq-toast-color="success">Show toast</button>
+            <oq-dropdown>
+              <details class="oq-dropdown">
+                <summary class="oq-btn oq-btn--outline oq-neutral">Actions</summary>
+                <div class="oq-menu" role="menu">
+                  <button class="oq-menu__item" role="menuitem">Reload</button>
+                  <button class="oq-menu__item" role="menuitem">Export</button>
+                </div>
+              </details>
+            </oq-dropdown>
+          </div>
+        </div>
+        <div class="oq-tabpanel" role="tabpanel" id="s-p2" aria-labelledby="s-t2">
+          <p class="oq-muted">Panels are found by id inside this shadow root.</p>
+        </div>
+      </oq-tabs>
+      <oq-dialog id="s-dialog">
+        <dialog class="oq-dialog">
+          <div class="oq-dialog__header"><h3 class="oq-dialog__title">Inside the shadow root</h3></div>
+          <div class="oq-dialog__body">Opened by a button in the same root; the page behind keeps its own scroll.</div>
+          <div class="oq-dialog__footer"><button class="oq-btn" data-close>Close</button></div>
+        </dialog>
+      </oq-dialog>
+      <oq-toast-region></oq-toast-region>
+    </div>
+  </template>
+</div>
+      </div>
+      <div class="oq-codeblock">
+      <div class="oq-codeblock__header"><span class="oq-codeblock__lang">html</span>
+        <oq-copy class="oq-codeblock__copy" text="&lt;div id=&quot;host&quot;&gt;
+  &lt;template shadowrootmode=&quot;open&quot;&gt;          &lt;!-- or host.attachShadow({ mode: &quot;open&quot; }) --&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;styles/index.css&quot;&gt;
+    &lt;div class=&quot;oq&quot; data-theme=&quot;midnight&quot;&gt;
+      &lt;oq-theme-select target=&quot;closest&quot;&gt;&lt;/oq-theme-select&gt;
+      &lt;button class=&quot;oq-btn&quot; data-oq-open=&quot;s-dialog&quot;&gt;Open dialog&lt;/button&gt;
+      &lt;button data-oq-toast-title=&quot;Saved&quot;&gt;Show toast&lt;/button&gt;
+      &lt;oq-dialog id=&quot;s-dialog&quot;&gt;…&lt;/oq-dialog&gt;
+      &lt;oq-toast-region&gt;&lt;/oq-toast-region&gt;
+    &lt;/div&gt;
+  &lt;/template&gt;
+&lt;/div&gt;"><button class="oq-btn oq-btn--ghost oq-neutral oq-sm" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy</button></oq-copy></div>
+<pre class="oq-pre"><code><span class="oq-code-line">&lt;div id="host"&gt;</span><span class="oq-code-line">  &lt;template shadowrootmode="open"&gt;          &lt;!-- or host.attachShadow({ mode: "open" }) --&gt;</span><span class="oq-code-line">    &lt;link rel="stylesheet" href="styles/index.css"&gt;</span><span class="oq-code-line">    &lt;div class="oq" data-theme="midnight"&gt;</span><span class="oq-code-line">      &lt;oq-theme-select target="closest"&gt;&lt;/oq-theme-select&gt;</span><span class="oq-code-line">      &lt;button class="oq-btn" data-oq-open="s-dialog"&gt;Open dialog&lt;/button&gt;</span><span class="oq-code-line">      &lt;button data-oq-toast-title="Saved"&gt;Show toast&lt;/button&gt;</span><span class="oq-code-line">      &lt;oq-dialog id="s-dialog"&gt;…&lt;/oq-dialog&gt;</span><span class="oq-code-line">      &lt;oq-toast-region&gt;&lt;/oq-toast-region&gt;</span><span class="oq-code-line">    &lt;/div&gt;</span><span class="oq-code-line">  &lt;/template&gt;</span><span class="oq-code-line">&lt;/div&gt;</span></code></pre>
     </div>
     </div>
   </section>

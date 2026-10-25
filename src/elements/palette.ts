@@ -1,4 +1,4 @@
-import { emit, escapeHtml, highlight, OqElement, rootOf, uid } from "./base";
+import { emit, h, marked, OqElement, rootOf, uid } from "./base";
 import { closeDialog, installOpener, showDialog } from "./dialog";
 
 export interface PaletteCommand {
@@ -72,7 +72,7 @@ export class OqCommandPalette extends OqElement {
       });
     }
     this.filter();
-    this.ls.on(document, "keydown", (e) => {
+    this.ls.on(this.ownerDocument, "keydown", (e) => {
       const ke = e as KeyboardEvent;
       if (matchesHotkey(ke, this.getAttribute("hotkey") ?? "mod+k")) {
         ke.preventDefault();
@@ -143,24 +143,36 @@ export class OqCommandPalette extends OqElement {
     const list = this.list;
     const input = this.input;
     if (!list || !input) return;
+    const doc = this.ownerDocument;
     if (this.shown.length === 0) {
-      list.innerHTML = `<li class="oq-listbox__empty" role="presentation">${escapeHtml(this.getAttribute("empty-text") ?? "No matching commands")}</li>`;
+      list.replaceChildren(h(doc, "li", { class: "oq-listbox__empty", role: "presentation" }, this.getAttribute("empty-text") ?? "No matching commands"));
       input.removeAttribute("aria-activedescendant");
       return;
     }
     const q = input.value.trim();
     let group: string | undefined;
-    let html = "";
+    const items: HTMLLIElement[] = [];
     this.shown.forEach((c, i) => {
-      if (c.group && c.group !== group) {
-        html += `<li class="oq-listbox__group oq-overline" role="presentation">${escapeHtml(c.group)}</li>`;
-      }
+      if (c.group && c.group !== group) items.push(h(doc, "li", { class: "oq-listbox__group oq-overline", role: "presentation" }, c.group));
       group = c.group;
-      html += `<li class="oq-option" role="option" id="${list.id}-${i}" data-index="${i}" aria-selected="${i === this.active}"${
-        i === this.active ? ' data-active="true"' : ""
-      }><span>${highlight(c.label, q)}</span>${c.hint ? `<span class="oq-option__hint">${escapeHtml(c.hint)}</span>` : ""}</li>`;
+      items.push(
+        h(
+          doc,
+          "li",
+          {
+            class: "oq-option",
+            role: "option",
+            id: `${list.id}-${i}`,
+            "data-index": String(i),
+            "aria-selected": String(i === this.active),
+            "data-active": i === this.active ? "true" : undefined,
+          },
+          h(doc, "span", {}, marked(doc, c.label, q)),
+          c.hint ? h(doc, "span", { class: "oq-option__hint" }, c.hint) : null,
+        ),
+      );
     });
-    list.innerHTML = html;
+    list.replaceChildren(...items);
     input.setAttribute("aria-activedescendant", `${list.id}-${this.active}`);
     list.querySelector('[data-active="true"]')?.scrollIntoView?.({ block: "nearest" });
   }

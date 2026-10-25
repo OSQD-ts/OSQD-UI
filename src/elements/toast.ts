@@ -1,4 +1,4 @@
-import { emit, escapeHtml, glyph, numberAttr, OqElement } from "./base";
+import { closestInPath, emit, glyph, h, numberAttr, OqElement, treeOf } from "./base";
 
 export type ToastColor = "primary" | "secondary" | "success" | "warning" | "danger" | "info" | "neutral";
 
@@ -8,6 +8,11 @@ export interface ToastOptions {
   color?: ToastColor;
   /** Milliseconds before it goes; 0 keeps it until dismissed. Defaults to the region's `duration`. */
   duration?: number;
+  /**
+   * Where to show it: a node whose tree (document or shadow root) holds — or will be given — the
+   * `<oq-toast-region>`. Defaults to the tree of the focused element, else the document.
+   */
+  root?: Node;
 }
 
 /**
@@ -50,10 +55,19 @@ export class OqToastRegion extends OqElement {
     el.className = `oq-toast oq-${color}`;
     el.dataset.toastId = String(id);
     el.setAttribute("role", color === "danger" ? "alert" : "status");
-    el.innerHTML = `<div class="oq-toast__body">${options.title ? `<div class="oq-toast__title">${escapeHtml(options.title)}</div>` : ""}${
-      options.message ? `<div class="oq-toast__message">${escapeHtml(options.message)}</div>` : ""
-    }</div><button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" aria-label="Dismiss">${glyph.close}</button>`;
-    el.querySelector("button")?.addEventListener("click", () => this.dismiss(id));
+    const doc = this.ownerDocument;
+    const close = h(doc, "button", { type: "button", class: "oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm", "aria-label": "Dismiss" }, glyph(doc, "close"));
+    close.addEventListener("click", () => this.dismiss(id));
+    el.append(
+      h(
+        doc,
+        "div",
+        { class: "oq-toast__body" },
+        options.title ? h(doc, "div", { class: "oq-toast__title" }, options.title) : null,
+        options.message ? h(doc, "div", { class: "oq-toast__message" }, options.message) : null,
+      ),
+      close,
+    );
     swipeAway(el, () => this.dismiss(id));
     this.append(el);
     const duration = options.duration ?? numberAttr(this, "duration", 4500);
@@ -64,7 +78,7 @@ export class OqToastRegion extends OqElement {
   }
 
   dismiss(id: number): void {
-    const el = this.querySelector(`[data-toast-id="${id}"]`);
+    const el = [...this.querySelectorAll<HTMLElement>(".oq-toast")].find((t) => t.dataset.toastId === String(id));
     clearTimeout(this.timers.get(id));
     this.timers.delete(id);
     if (!el) return;
@@ -115,16 +129,27 @@ function swipeAway(el: HTMLElement, dismiss: () => void): void {
   el.style.touchAction = "pan-y";
 }
 
+/** The focused element, looking through open shadow roots to the innermost one. */
+function deepActive(doc: Document): Element | null {
+  let a: Element | null = doc.activeElement;
+  while (a?.shadowRoot?.activeElement) a = a.shadowRoot.activeElement;
+  return a;
+}
+
 /**
- * Show a toast from anywhere. Uses the first `<oq-toast-region>` on the page and creates one at
- * the end of `<body>` if there is none. Returns the toast's id, or -1 outside a browser.
+ * Show a toast from anywhere. It goes to the `<oq-toast-region>` in the tree of `options.root`
+ * (or of the focused element, or the document): a dashboard inside a shadow root gets its toasts
+ * inside that root. A region is created at the end of that tree if it has none. Returns the
+ * toast's id, or -1 outside a browser.
  */
 export function toast(options: ToastOptions): number {
   if (typeof document === "undefined") return -1;
-  let region = document.querySelector<OqToastRegion>("oq-toast-region");
+  const from = options.root ?? deepActive(document) ?? document;
+  const tree = treeOf(from);
+  let region = tree.querySelector<OqToastRegion>("oq-toast-region");
   if (!region) {
     region = document.createElement("oq-toast-region") as OqToastRegion;
-    document.body.append(region);
+    (tree.nodeType === 9 ? (tree as Document).body : tree).append(region);
   }
   if (typeof region.show !== "function") return -1; // not defined yet
   return region.show(options);
@@ -137,10 +162,11 @@ export function installToastTrigger(): void {
   if (triggerInstalled || typeof document === "undefined") return;
   triggerInstalled = true;
   document.addEventListener("click", (e) => {
-    const el = (e.target as Element | null)?.closest?.<HTMLElement>("[data-oq-toast-title], [data-oq-toast-message]");
+    // The composed path sees into open shadow roots, so triggers inside a dashboard work too.
+    const el = closestInPath(e, "[data-oq-toast-title], [data-oq-toast-message]");
     if (!el) return;
     const d = el.dataset;
-    const opts: ToastOptions = {};
+    const opts: ToastOptions = { root: el };
     if (d.oqToastTitle) opts.title = d.oqToastTitle;
     if (d.oqToastMessage) opts.message = d.oqToastMessage;
     if (d.oqToastColor) opts.color = d.oqToastColor as ToastColor;

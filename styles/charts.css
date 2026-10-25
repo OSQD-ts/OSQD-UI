@@ -9,7 +9,9 @@
  * under 3:1, which is why every chart has a legend, a tooltip and a table view.
  */
 :root,
-[data-theme] {
+:host,
+[data-theme],
+:host([data-theme]) {
   --oq-series-1: #3987e5;
   --oq-series-2: #d95926;
   --oq-series-3: #199e70;
@@ -21,7 +23,10 @@
 }
 [data-theme="light"],
 [data-theme="paper"],
-[data-theme="slate"] {
+[data-theme="slate"],
+:host([data-theme="light"]),
+:host([data-theme="paper"]),
+:host([data-theme="slate"]) {
   --oq-series-1: #2a78d6;
   --oq-series-2: #eb6834;
   --oq-series-3: #1baf7a;
@@ -32,7 +37,8 @@
   --oq-series-8: #e34948;
 }
 @media (prefers-color-scheme: light) {
-  [data-theme="auto"] {
+  [data-theme="auto"],
+  :host([data-theme="auto"]) {
     --oq-series-1: #2a78d6;
     --oq-series-2: #eb6834;
     --oq-series-3: #1baf7a;
@@ -43,6 +49,105 @@
     --oq-series-8: #e34948;
   }
 }
+
+/* ========== Ramps ==========
+ * Sequential (--oq-seq-0…12): magnitude, from just above the surface to the primary, for heat
+ * grids and density. Ordinal (--oq-ord-1…5): ordered stages, e.g. a funnel. Both are mixed from
+ * the theme's own surface and primary, so they follow every theme and a nested data-theme; they
+ * are declared on every theme scope so a nested theme recomputes them.
+ */
+:root,
+:host,
+[data-theme],
+:host([data-theme]) {
+  --oq-seq-0: color-mix(in oklab, var(--oq-primary) 6%, var(--oq-surface));
+  --oq-seq-1: color-mix(in oklab, var(--oq-primary) 14%, var(--oq-surface));
+  --oq-seq-2: color-mix(in oklab, var(--oq-primary) 22%, var(--oq-surface));
+  --oq-seq-3: color-mix(in oklab, var(--oq-primary) 30%, var(--oq-surface));
+  --oq-seq-4: color-mix(in oklab, var(--oq-primary) 37%, var(--oq-surface));
+  --oq-seq-5: color-mix(in oklab, var(--oq-primary) 45%, var(--oq-surface));
+  --oq-seq-6: color-mix(in oklab, var(--oq-primary) 53%, var(--oq-surface));
+  --oq-seq-7: color-mix(in oklab, var(--oq-primary) 61%, var(--oq-surface));
+  --oq-seq-8: color-mix(in oklab, var(--oq-primary) 69%, var(--oq-surface));
+  --oq-seq-9: color-mix(in oklab, var(--oq-primary) 76%, var(--oq-surface));
+  --oq-seq-10: color-mix(in oklab, var(--oq-primary) 84%, var(--oq-surface));
+  --oq-seq-11: color-mix(in oklab, var(--oq-primary) 92%, var(--oq-surface));
+  --oq-seq-12: color-mix(in oklab, var(--oq-primary) 100%, var(--oq-surface));
+  --oq-ord-1: color-mix(in oklab, var(--oq-primary) 32%, var(--oq-surface));
+  --oq-ord-2: color-mix(in oklab, var(--oq-primary) 49%, var(--oq-surface));
+  --oq-ord-3: color-mix(in oklab, var(--oq-primary) 66%, var(--oq-surface));
+  --oq-ord-4: color-mix(in oklab, var(--oq-primary) 83%, var(--oq-surface));
+  --oq-ord-5: color-mix(in oklab, var(--oq-primary) 100%, var(--oq-surface));
+}
+
+/* ========== Fill and stroke classes ==========
+ * One class colours a mark: SVG shapes (fill / stroke), HTML bars and cells (background), and
+ * anything that reads the intent pair — a dot, chip or badge gets the same colour. CSP-safe:
+ * no style attribute is needed to colour anything.
+ */
+.oq-fill-series-1 { --oq-fill: var(--oq-series-1); }
+.oq-fill-series-2 { --oq-fill: var(--oq-series-2); }
+.oq-fill-series-3 { --oq-fill: var(--oq-series-3); }
+.oq-fill-series-4 { --oq-fill: var(--oq-series-4); }
+.oq-fill-series-5 { --oq-fill: var(--oq-series-5); }
+.oq-fill-series-6 { --oq-fill: var(--oq-series-6); }
+.oq-fill-series-7 { --oq-fill: var(--oq-series-7); }
+.oq-fill-series-8 { --oq-fill: var(--oq-series-8); }
+.oq-fill-seq-0 { --oq-fill: var(--oq-seq-0); }
+.oq-fill-seq-1 { --oq-fill: var(--oq-seq-1); }
+.oq-fill-seq-2 { --oq-fill: var(--oq-seq-2); }
+.oq-fill-seq-3 { --oq-fill: var(--oq-seq-3); }
+.oq-fill-seq-4 { --oq-fill: var(--oq-seq-4); }
+.oq-fill-seq-5 { --oq-fill: var(--oq-seq-5); }
+.oq-fill-seq-6 { --oq-fill: var(--oq-seq-6); }
+.oq-fill-seq-7 { --oq-fill: var(--oq-seq-7); }
+.oq-fill-seq-8 { --oq-fill: var(--oq-seq-8); }
+.oq-fill-seq-9 { --oq-fill: var(--oq-seq-9); }
+.oq-fill-seq-10 { --oq-fill: var(--oq-seq-10); }
+.oq-fill-seq-11 { --oq-fill: var(--oq-seq-11); }
+.oq-fill-seq-12 { --oq-fill: var(--oq-seq-12); }
+.oq-fill-ord-1 { --oq-fill: var(--oq-ord-1); }
+.oq-fill-ord-2 { --oq-fill: var(--oq-ord-2); }
+.oq-fill-ord-3 { --oq-fill: var(--oq-ord-3); }
+.oq-fill-ord-4 { --oq-fill: var(--oq-ord-4); }
+.oq-fill-ord-5 { --oq-fill: var(--oq-ord-5); }
+[class*="oq-fill-"] {
+  --oq-c: var(--oq-fill);
+  --oq-soft: color-mix(in srgb, var(--oq-fill) 16%, transparent);
+  fill: var(--oq-fill);
+}
+.oq-stroke-series-1 { --oq-stroke: var(--oq-series-1); stroke: var(--oq-series-1); }
+.oq-stroke-series-2 { --oq-stroke: var(--oq-series-2); stroke: var(--oq-series-2); }
+.oq-stroke-series-3 { --oq-stroke: var(--oq-series-3); stroke: var(--oq-series-3); }
+.oq-stroke-series-4 { --oq-stroke: var(--oq-series-4); stroke: var(--oq-series-4); }
+.oq-stroke-series-5 { --oq-stroke: var(--oq-series-5); stroke: var(--oq-series-5); }
+.oq-stroke-series-6 { --oq-stroke: var(--oq-series-6); stroke: var(--oq-series-6); }
+.oq-stroke-series-7 { --oq-stroke: var(--oq-series-7); stroke: var(--oq-series-7); }
+.oq-stroke-series-8 { --oq-stroke: var(--oq-series-8); stroke: var(--oq-series-8); }
+
+/* --value utilities: `.oq-w-35` sets --value: 35% for bars, bins, segments and markers when
+ * markup is static and a style attribute is not allowed. From script, set --value directly. */
+.oq-w-0 { --value: 0%; }
+.oq-w-5 { --value: 5%; }
+.oq-w-10 { --value: 10%; }
+.oq-w-15 { --value: 15%; }
+.oq-w-20 { --value: 20%; }
+.oq-w-25 { --value: 25%; }
+.oq-w-30 { --value: 30%; }
+.oq-w-35 { --value: 35%; }
+.oq-w-40 { --value: 40%; }
+.oq-w-45 { --value: 45%; }
+.oq-w-50 { --value: 50%; }
+.oq-w-55 { --value: 55%; }
+.oq-w-60 { --value: 60%; }
+.oq-w-65 { --value: 65%; }
+.oq-w-70 { --value: 70%; }
+.oq-w-75 { --value: 75%; }
+.oq-w-80 { --value: 80%; }
+.oq-w-85 { --value: 85%; }
+.oq-w-90 { --value: 90%; }
+.oq-w-95 { --value: 95%; }
+.oq-w-100 { --value: 100%; }
 
 /* ========== Chart frame ========== */
 
@@ -421,3 +526,224 @@ button.oq-chart__legend-item:focus-visible { outline: 2px solid var(--oq-focus);
 }
 
 @keyframes oq-sheet { from { transform: translateY(24px); opacity: 0; } }
+
+/* ========== Ranked bars (.oq-bars) ==========
+ * <ol class="oq-bars">
+ *   <li class="oq-bars__item oq-w-80"><span class="oq-bars__label">185.220.101.4</span>
+ *     <span class="oq-bars__track"><span class="oq-bars__bar"></span></span>
+ *     <span class="oq-bars__value">4 210</span></li>
+ * The bar is --value wide (an .oq-w-N class, or el.style.setProperty("--value", "62%")).
+ * A fill class on the list or an item colours it; the default is series 1.
+ */
+.oq-bars {
+  --oq-fill: var(--oq-series-1);
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(60px, 1fr) max-content;
+  gap: calc(var(--oq-space) * 1.5) calc(var(--oq-space) * 3);
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--oq-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.oq-bars__item { display: contents; }
+.oq-bars__label { min-width: 0; max-width: 24ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--oq-text); }
+.oq-bars__label:is(a) { color: var(--oq-text); text-decoration: none; }
+.oq-bars__track { position: relative; height: 10px; border-radius: 2px; background: color-mix(in srgb, var(--oq-hover) 70%, transparent); overflow: hidden; }
+.oq-bars__bar { display: block; height: 100%; width: var(--value, 0%); border-radius: 2px; background: var(--oq-fill); transition: width var(--oq-motion) ease-out; }
+.oq-bars__value { text-align: right; color: var(--oq-text-muted); }
+.oq-bars__share { color: var(--oq-text-faint); margin-left: 4px; }
+@media (hover: hover) {
+  .oq-bars__label:is(a):hover { color: var(--oq-primary); text-decoration: underline; }
+}
+@media (pointer: coarse) {
+  .oq-bars__label:is(a) { padding-block: 10px; margin-block: -10px; }
+}
+/* Narrow: each item becomes its own grid — label and value on one line, the bar under them. */
+@media (max-width: 480px) {
+  .oq-bars { display: flex; flex-direction: column; align-items: stretch; gap: calc(var(--oq-space) * 2.5); }
+  .oq-bars__item { display: grid; grid-template-columns: minmax(0, 1fr) max-content; gap: calc(var(--oq-space) * 1) calc(var(--oq-space) * 2); align-items: center; }
+  .oq-bars__label { max-width: none; }
+  .oq-bars__track { grid-column: 1 / -1; order: 1; }
+}
+
+/* ========== 100% stacked bar (.oq-stackbar) ==========
+ * <div class="oq-stackbar">
+ *   <div class="oq-stackbar__track" role="img" aria-label="Responses: 62% allowed, 30% blocked, 8% challenged">
+ *     <span class="oq-stackbar__seg oq-fill-series-1 oq-w-60"></span> …
+ *   </div>
+ *   <ul class="oq-stackbar__legend"><li class="oq-fill-series-1">Allowed <b>62%</b></li> …</ul>
+ * </div>
+ */
+.oq-stackbar { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 2); min-width: 0; }
+.oq-stackbar__track {
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--oq-hover) 70%, transparent);
+}
+.oq-stackbar--lg .oq-stackbar__track { height: 22px; }
+.oq-stackbar__seg { flex: 0 1 var(--value, 0%); min-width: 0; background: var(--oq-fill, var(--oq-series-1)); }
+.oq-stackbar__seg:empty { display: block; }
+.oq-stackbar__legend { display: flex; flex-wrap: wrap; gap: calc(var(--oq-space) * 1) calc(var(--oq-space) * 4); margin: 0; padding: 0; list-style: none; font-size: var(--oq-text-sm); color: var(--oq-text-muted); }
+.oq-stackbar__legend > li { display: inline-flex; align-items: center; gap: calc(var(--oq-space) * 1.5); }
+.oq-stackbar__legend > li::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--oq-fill, var(--oq-c)); flex: none; }
+.oq-stackbar__legend b { color: var(--oq-text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* ========== Funnel (.oq-funnel) ==========
+ * <ol class="oq-funnel">
+ *   <li class="oq-funnel__stage oq-fill-ord-1 oq-w-100">
+ *     <span class="oq-funnel__label">Probed</span><span class="oq-funnel__bar"></span>
+ *     <span class="oq-funnel__value">12 480</span><span class="oq-funnel__rate">100%</span></li> …
+ * Each bar is centred and --value wide; ordinal fills read lightest-to-strongest by stage.
+ */
+.oq-funnel {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(80px, 1fr) max-content max-content;
+  gap: calc(var(--oq-space) * 1.5) calc(var(--oq-space) * 3);
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--oq-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.oq-funnel__stage { display: contents; }
+.oq-funnel__label { color: var(--oq-text); white-space: nowrap; }
+.oq-funnel__bar {
+  justify-self: center;
+  width: var(--value, 0%);
+  min-width: 2px;
+  height: 22px;
+  border-radius: 3px;
+  background: var(--oq-fill, var(--oq-series-1));
+}
+.oq-funnel__value { text-align: right; color: var(--oq-text); }
+.oq-funnel__rate { text-align: right; color: var(--oq-text-faint); min-width: 5ch; }
+@media (max-width: 480px) {
+  .oq-funnel { display: flex; flex-direction: column; align-items: stretch; gap: calc(var(--oq-space) * 2.5); }
+  .oq-funnel__stage { display: grid; grid-template-columns: minmax(0, 1fr) max-content max-content; gap: calc(var(--oq-space) * 1) calc(var(--oq-space) * 3); align-items: center; }
+  .oq-funnel__bar { grid-column: 1 / -1; order: 1; height: 16px; }
+}
+
+/* ========== Histogram (.oq-histogram) ==========
+ * <figure class="oq-histogram">
+ *   <div class="oq-histogram__plot" role="img" aria-label="Score distribution">
+ *     <span class="oq-histogram__bin oq-w-40" data-label="0–10: 412"></span> …
+ *     <span class="oq-histogram__threshold oq-w-60" data-label="Block ≥ 60"></span>
+ *   </div>
+ *   <div class="oq-histogram__axis"><span>0</span><span>50</span><span>100</span></div>
+ * </figure>
+ * A bin is --value tall; the threshold sits --value from the left. Bins past the threshold can
+ * take an intent or fill class.
+ */
+.oq-histogram { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 1); margin: 0; min-width: 0; }
+.oq-histogram__plot {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: var(--oq-histogram-h, 120px);
+  padding-top: 18px;
+  border-bottom: 1px solid var(--oq-border-strong);
+}
+.oq-histogram__bin {
+  flex: 1 1 0;
+  min-width: 2px;
+  height: var(--value, 0%);
+  border-radius: 2px 2px 0 0;
+  background: var(--oq-fill, var(--oq-series-1));
+}
+.oq-histogram__bin.oq-primary, .oq-histogram__bin.oq-secondary, .oq-histogram__bin.oq-success, .oq-histogram__bin.oq-warning,
+.oq-histogram__bin.oq-danger, .oq-histogram__bin.oq-info, .oq-histogram__bin.oq-neutral { background: var(--oq-c); }
+.oq-histogram__threshold {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--value, 0%);
+  width: 0;
+  border-left: 2px dashed var(--oq-danger);
+}
+.oq-histogram__threshold::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 0;
+  left: 4px;
+  font-size: var(--oq-text-xs);
+  font-weight: 600;
+  color: var(--oq-danger);
+  white-space: nowrap;
+}
+.oq-histogram__axis { display: flex; justify-content: space-between; font-size: var(--oq-text-xs); color: var(--oq-text-faint); font-variant-numeric: tabular-nums; }
+
+/* ========== Percentile strip (.oq-percentiles) ==========
+ * <div class="oq-percentiles" role="img" aria-label="Latency p50 38 ms, p95 84 ms, p99 210 ms of 400 ms">
+ *   <div class="oq-percentiles__track">
+ *     <span class="oq-percentiles__mark oq-w-10" data-label="p50 38"></span>
+ *     <span class="oq-percentiles__mark oq-w-20" data-label="p95 84"></span> …
+ *   </div>
+ * </div>
+ * Each mark sits --value along the track; the track fills up to the last mark.
+ */
+.oq-percentiles { padding: 4px 0 22px; min-width: 0; }
+.oq-percentiles__track { position: relative; height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--oq-hover) 70%, transparent); }
+.oq-percentiles__mark {
+  position: absolute;
+  top: -4px;
+  left: var(--value, 0%);
+  width: 2px;
+  height: 16px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--oq-fill, var(--oq-text-muted));
+}
+.oq-percentiles__mark::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  translate: -50% 0;
+  font-size: var(--oq-text-xs);
+  color: var(--oq-text-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.oq-percentiles__mark:nth-child(1 of .oq-percentiles__mark)::after { translate: -10% 0; }
+.oq-percentiles__mark:last-child::after { translate: -90% 0; }
+.oq-percentiles__range {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--value, 0%);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--oq-fill, var(--oq-series-1)) 45%, transparent);
+}
+
+/* Heat cells that are HTML instead of SVG: <span class="oq-heatcell oq-fill-seq-7"></span>. */
+.oq-heatgrid { display: grid; grid-template-columns: repeat(var(--cols, 24), minmax(6px, 1fr)); gap: 2px; min-width: 0; }
+.oq-heatcell { display: block; aspect-ratio: 1; min-height: 6px; border-radius: 2px; background: var(--oq-fill, var(--oq-seq-0)); }
+.oq-heatcell[data-empty] { background: transparent; outline: 1px dashed var(--oq-border); outline-offset: -1px; }
+.oq-heatmap__cell[class*="oq-fill-"] { fill: var(--oq-fill); }
+.oq-chart__swatch[class*="oq-fill-"] { background: var(--oq-fill); }
+.oq-chart__bar[class*="oq-fill-"], .oq-chart__area[class*="oq-fill-"] { fill: var(--oq-fill); }
+.oq-chart__line[class*="oq-stroke-"] { stroke: var(--oq-stroke); }
+.oq-heatgrid--cols-7 { --cols: 7; }
+.oq-heatgrid--cols-12 { --cols: 12; }
+.oq-heatgrid--cols-24 { --cols: 24; }
+
+/* ========== Forced colours (Windows high contrast) ==========
+ * The system palette replaces backgrounds, which would erase every bar. Data marks keep their
+ * own colours (forced-color-adjust: none) and gain a CanvasText edge, so they stay visible and
+ * distinct; legends, tables and labels follow the system colours as usual.
+ */
+@media (forced-colors: active) {
+  .oq-bars__bar, .oq-stackbar__seg, .oq-funnel__bar, .oq-histogram__bin, .oq-percentiles__mark, .oq-percentiles__range,
+  .oq-heatcell, .oq-stackbar__legend > li::before, .oq-chart svg, .oq-sparkline, .oq-meter__bar, .oq-gauge {
+    forced-color-adjust: none;
+  }
+  .oq-bars__track, .oq-stackbar__track, .oq-percentiles__track { border: 1px solid CanvasText; }
+  .oq-histogram__threshold { border-left-color: Highlight; }
+  .oq-histogram__threshold::after { color: Highlight; }
+}

@@ -1,19 +1,22 @@
-import { emit, lockScroll, OqElement, rootOf } from "./base";
+import { byId, closestInPath, emit, lockScroll, OqElement, rootOf, treeOf } from "./base";
 
 let openerInstalled = false;
 
 /**
  * Any element with `data-oq-open="<id>"` opens the dialog-like element with that id when
  * clicked (an `<oq-dialog>` or `<oq-command-palette>`). One listener on the document serves
- * every opener, so buttons added later work too.
+ * every opener, so buttons added later work too — including openers inside an open shadow root:
+ * the opener is found on the click's composed path and the id is looked up in the opener's own
+ * tree, so a dashboard's button opens the dashboard's dialog and not one on the host page.
  */
 export function installOpener(): void {
   if (openerInstalled || typeof document === "undefined") return;
   openerInstalled = true;
   document.addEventListener("click", (e) => {
-    const opener = (e.target as Element | null)?.closest?.("[data-oq-open]");
+    const opener = closestInPath(e, "[data-oq-open]");
     if (!opener) return;
-    const target = document.getElementById(opener.getAttribute("data-oq-open") ?? "") as (HTMLElement & { show?: () => void }) | null;
+    const id = opener.getAttribute("data-oq-open") ?? "";
+    const target = (byId(treeOf(opener), id) ?? byId(document, id)) as (HTMLElement & { show?: () => void }) | null;
     if (target?.show) {
       e.preventDefault();
       target.show();
@@ -27,8 +30,9 @@ export function showDialog(d: HTMLDialogElement): void {
   if (typeof d.showModal === "function") d.showModal();
   else d.setAttribute("open", "");
   // The page behind stays put while the dialog is open (a phone would scroll it under the sheet).
-  lockScroll(true);
-  d.addEventListener("close", () => lockScroll(false), { once: true });
+  // Inside a shadow root the page is the embedder's, so it is left alone (see lockScroll).
+  lockScroll(true, d);
+  d.addEventListener("close", () => lockScroll(false, d), { once: true });
 }
 
 export function closeDialog(d: HTMLDialogElement, value?: string): void {

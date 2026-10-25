@@ -17,6 +17,11 @@
   .pv-swatch { display: flex; flex-direction: column; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-md); overflow: hidden; background: var(--oq-surface); }
   .pv-swatch > div:first-child { height: 40px; }
   .pv-swatch > div:last-child { padding: 6px 10px; font-size: 12px; display: flex; justify-content: space-between; gap: 8px; }
+  .pv-ramp { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pv-ramp__step { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 28px; }
+  .pv-ramp__step .oq-heatcell { width: 28px; }
+  .pv-cols { --min: 340px; }
+  .pv-recipe-svg { max-width: 100%; height: auto; }
 </style>
 </head>
 <body class="oq">
@@ -141,6 +146,12 @@
       <a class="oq-nav__item" href="#line">Line &amp; area</a>
       <a class="oq-nav__item" href="#donut">Donut</a>
       <a class="oq-nav__item" href="#heatmap">Heatmap</a>
+      <div class="oq-nav__section oq-overline">Plain HTML</div>
+      <a class="oq-nav__item" href="#ramps">Ramps &amp; fills</a>
+      <a class="oq-nav__item" href="#ranked">Ranked bars</a>
+      <a class="oq-nav__item" href="#stackbar">Stacked bar &amp; funnel</a>
+      <a class="oq-nav__item" href="#histogram">Histogram &amp; percentiles</a>
+      <a class="oq-nav__item" href="#recipe">Vanilla SVG recipe</a>
       <div class="oq-nav__section oq-overline">Dates</div>
       <a class="oq-nav__item" href="#datepicker">Date picker</a>
       <a class="oq-nav__item" href="#rangepicker">Date range picker</a>
@@ -279,6 +290,116 @@
       </div>
       <div class="oq-card__body"><div id="c-together"></div></div>
     </div>
+  </section>
+
+
+  <!-- ================= Ramps & fills ================= -->
+  <section class="pv-section" id="ramps">
+    <header>
+      <div class="oq-overline">Plain HTML</div>
+      <h2 class="oq-h2">Ramps &amp; fill classes</h2>
+      <p class="oq-muted">A sequential ramp <code>--oq-seq-0…12</code> for magnitude and an ordinal ramp <code>--oq-ord-1…5</code> for stages, both mixed from the theme's surface and primary, so they follow every theme. One class colours any mark: <code>.oq-fill-series-N</code>, <code>.oq-fill-seq-N</code>, <code>.oq-fill-ord-N</code> set the SVG fill, the bar background and the intent pair; <code>.oq-stroke-series-N</code> sets a line. <code>.oq-w-0…100</code> (steps of 5) set <code>--value</code> for static markup; from script, set <code>--value</code> directly. Nothing on this page uses a <code>style</code> attribute.</p>
+    </header>
+    <div class="oq-card"><div class="oq-card__body oq-stack">
+      <div class="oq-overline">Sequential</div>
+      <div class="pv-ramp"><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-0"></span><span class="oq-tiny oq-faint">0</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-1"></span><span class="oq-tiny oq-faint">1</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-tiny oq-faint">2</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-tiny oq-faint">3</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-tiny oq-faint">4</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-tiny oq-faint">5</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-tiny oq-faint">6</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-tiny oq-faint">7</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-tiny oq-faint">8</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-tiny oq-faint">9</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-10"></span><span class="oq-tiny oq-faint">10</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-11"></span><span class="oq-tiny oq-faint">11</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-seq-12"></span><span class="oq-tiny oq-faint">12</span></span></div>
+      <div class="oq-overline">Ordinal</div>
+      <div class="pv-ramp"><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-ord-1"></span><span class="oq-tiny oq-faint">1</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-ord-2"></span><span class="oq-tiny oq-faint">2</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-ord-3"></span><span class="oq-tiny oq-faint">3</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-ord-4"></span><span class="oq-tiny oq-faint">4</span></span><span class="pv-ramp__step"><span class="oq-heatcell oq-fill-ord-5"></span><span class="oq-tiny oq-faint">5</span></span></div>
+      <div class="oq-overline">Heat grid in HTML — requests by hour × weekday</div>
+      <div class="oq-heatgrid oq-heatgrid--cols-24" role="img" aria-label="Requests by hour and weekday, busiest 08:00–19:00"><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell" data-empty></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-12"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-0"></span><span class="oq-heatcell oq-fill-seq-0"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell" data-empty></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-0"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-11"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-10"></span><span class="oq-heatcell" data-empty></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-0"></span><span class="oq-heatcell oq-fill-seq-1"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell" data-empty></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell" data-empty></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell" data-empty></span><span class="oq-heatcell oq-fill-seq-12"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-12"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-0"></span><span class="oq-heatcell oq-fill-seq-10"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-1"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-11"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell" data-empty></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-12"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-8"></span><span class="oq-heatcell oq-fill-seq-10"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-1"></span><span class="oq-heatcell oq-fill-seq-5"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-0"></span><span class="oq-heatcell oq-fill-seq-0"></span><span class="oq-heatcell oq-fill-seq-2"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-7"></span><span class="oq-heatcell oq-fill-seq-10"></span><span class="oq-heatcell oq-fill-seq-10"></span><span class="oq-heatcell oq-fill-seq-11"></span><span class="oq-heatcell oq-fill-seq-12"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-6"></span><span class="oq-heatcell oq-fill-seq-10"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-10"></span><span class="oq-heatcell oq-fill-seq-9"></span><span class="oq-heatcell oq-fill-seq-10"></span><span class="oq-heatcell" data-empty></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-4"></span><span class="oq-heatcell oq-fill-seq-3"></span><span class="oq-heatcell oq-fill-seq-4"></span></div>
+      <div class="oq-overline">Series fills on dots, chips and badges</div>
+      <div class="oq-row oq-wrap"><span class="oq-status"><span class="oq-dot oq-fill-series-1"></span>series 1</span><span class="oq-status"><span class="oq-dot oq-fill-series-2"></span>series 2</span><span class="oq-status"><span class="oq-dot oq-fill-series-3"></span>series 3</span><span class="oq-status"><span class="oq-dot oq-fill-series-4"></span>series 4</span><span class="oq-status"><span class="oq-dot oq-fill-series-5"></span>series 5</span><span class="oq-status"><span class="oq-dot oq-fill-series-6"></span>series 6</span><span class="oq-status"><span class="oq-dot oq-fill-series-7"></span>series 7</span><span class="oq-status"><span class="oq-dot oq-fill-series-8"></span>series 8</span></div>
+    </div></div>
+  </section>
+
+  <!-- ================= Ranked bars ================= -->
+  <section class="pv-section" id="ranked">
+    <header>
+      <div class="oq-overline">Plain HTML</div>
+      <h2 class="oq-h2">Ranked bars</h2>
+      <p class="oq-muted">Top-N lists: label, bar, value. <code>.oq-bars</code> with <code>.oq-bars__item.oq-w-N</code>. A fill class on an item colours it — here the scanner paths are series 2. React: <code>&lt;RankedBars&gt;</code>.</p>
+    </header>
+    <div class="oq-grid pv-cols">
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Top source IPs</h3><span class="oq-card__subtitle">24 h</span></div><div class="oq-card__body"><ol class="oq-bars"><li class="oq-bars__item oq-w-100"><a class="oq-bars__label" href="#ranked">185.220.101.4</a><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">4 210</span></li><li class="oq-bars__item oq-w-75"><a class="oq-bars__label" href="#ranked">45.155.205.233</a><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">3 120</span></li><li class="oq-bars__item oq-w-45"><a class="oq-bars__label" href="#ranked">193.32.162.159</a><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">1 980</span></li><li class="oq-bars__item oq-w-30"><a class="oq-bars__label" href="#ranked">89.248.165.52</a><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">1 204</span></li><li class="oq-bars__item oq-w-15"><a class="oq-bars__label" href="#ranked">162.142.125.10</a><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">660</span></li><li class="oq-bars__item oq-w-5"><a class="oq-bars__label" href="#ranked">71.6.135.131</a><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">310</span></li></ol></div></div>
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Top paths</h3></div><div class="oq-card__body"><ol class="oq-bars"><li class="oq-bars__item oq-fill-series-2 oq-w-100"><span class="oq-bars__label oq-mono">/wp-login.php</span><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">2 310</span></li><li class="oq-bars__item oq-fill-series-2 oq-w-80"><span class="oq-bars__label oq-mono">/.env</span><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">1 880</span></li><li class="oq-bars__item oq-fill-series-1 oq-w-40"><span class="oq-bars__label oq-mono">/api/login</span><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">940</span></li><li class="oq-bars__item oq-fill-series-2 oq-w-20"><span class="oq-bars__label oq-mono">/phpmyadmin/</span><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">420</span></li><li class="oq-bars__item oq-fill-series-1 oq-w-5"><span class="oq-bars__label oq-mono">/robots.txt</span><span class="oq-bars__track"><span class="oq-bars__bar"></span></span><span class="oq-bars__value">130</span></li></ol></div></div>
+    </div>
+  </section>
+
+  <!-- ================= Stacked bar & funnel ================= -->
+  <section class="pv-section" id="stackbar">
+    <header>
+      <div class="oq-overline">Plain HTML</div>
+      <h2 class="oq-h2">100% stacked bar &amp; funnel</h2>
+      <p class="oq-muted">A share of the whole with a legend (<code>.oq-stackbar</code>), and stages that narrow, lightest to strongest (<code>.oq-funnel</code>, ordinal fills). React: <code>&lt;StackBar&gt;</code>, <code>&lt;Funnel&gt;</code>.</p>
+    </header>
+    <div class="oq-grid pv-cols">
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Response mix</h3></div><div class="oq-card__body oq-stack">
+        <div class="oq-stackbar oq-stackbar--lg">
+          <div class="oq-stackbar__track" role="img" aria-label="Allowed 60%, blocked 25%, challenged 10%, rate-limited 5%"><span class="oq-stackbar__seg oq-fill-series-1 oq-w-60"></span><span class="oq-stackbar__seg oq-fill-series-2 oq-w-25"></span><span class="oq-stackbar__seg oq-fill-series-3 oq-w-10"></span><span class="oq-stackbar__seg oq-fill-series-4 oq-w-5"></span></div>
+          <ul class="oq-stackbar__legend"><li class="oq-fill-series-1">Allowed <b>60%</b></li><li class="oq-fill-series-2">Blocked <b>25%</b></li><li class="oq-fill-series-3">Challenged <b>10%</b></li><li class="oq-fill-series-4">Rate-limited <b>5%</b></li></ul>
+        </div>
+        <div class="oq-stackbar">
+          <div class="oq-stackbar__track" role="img" aria-label="Proven 35%, suspected 65%"><span class="oq-stackbar__seg oq-fill-series-5 oq-w-35"></span><span class="oq-stackbar__seg oq-fill-series-7 oq-w-65"></span></div>
+          <ul class="oq-stackbar__legend"><li class="oq-fill-series-5">Proven <b>35%</b></li><li class="oq-fill-series-7">Suspected <b>65%</b></li></ul>
+        </div>
+      </div></div>
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Escalation funnel</h3><span class="oq-card__subtitle">share of probed</span></div><div class="oq-card__body">
+        <ol class="oq-funnel">
+          <li class="oq-funnel__stage oq-fill-ord-1 oq-w-100"><span class="oq-funnel__label">Probed</span><span class="oq-funnel__bar"></span><span class="oq-funnel__value">12 480</span><span class="oq-funnel__rate">100%</span></li>
+          <li class="oq-funnel__stage oq-fill-ord-2 oq-w-55"><span class="oq-funnel__label">Engaged a decoy</span><span class="oq-funnel__bar"></span><span class="oq-funnel__value">6 830</span><span class="oq-funnel__rate">55%</span></li>
+          <li class="oq-funnel__stage oq-fill-ord-3 oq-w-30"><span class="oq-funnel__label">Trapped</span><span class="oq-funnel__bar"></span><span class="oq-funnel__value">3 702</span><span class="oq-funnel__rate">30%</span></li>
+          <li class="oq-funnel__stage oq-fill-ord-4 oq-w-15"><span class="oq-funnel__label">Tarpitted</span><span class="oq-funnel__bar"></span><span class="oq-funnel__value">1 911</span><span class="oq-funnel__rate">15%</span></li>
+          <li class="oq-funnel__stage oq-fill-ord-5 oq-w-5"><span class="oq-funnel__label">Blocked</span><span class="oq-funnel__bar"></span><span class="oq-funnel__value">640</span><span class="oq-funnel__rate">5.1%</span></li>
+        </ol>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ================= Histogram & percentiles ================= -->
+  <section class="pv-section" id="histogram">
+    <header>
+      <div class="oq-overline">Plain HTML</div>
+      <h2 class="oq-h2">Histogram &amp; percentile strip</h2>
+      <p class="oq-muted">Counts per bucket with a threshold marker (<code>.oq-histogram</code>; bins past it take <code>.oq-danger</code>), and where p50/p95/p99 fall on one track (<code>.oq-percentiles</code>). React: <code>&lt;Histogram&gt;</code>, <code>&lt;PercentileStrip&gt;</code>.</p>
+    </header>
+    <div class="oq-grid pv-cols">
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Bot score distribution</h3></div><div class="oq-card__body">
+        <figure class="oq-histogram">
+          <div class="oq-histogram__plot" role="img" aria-label="Bot scores 0 to 100 in ten buckets, block threshold at 70"><span class="oq-histogram__bin oq-w-5" title="0–10: 21"></span><span class="oq-histogram__bin oq-w-15" title="10–20: 56"></span><span class="oq-histogram__bin oq-w-35" title="20–30: 147"></span><span class="oq-histogram__bin oq-w-70" title="30–40: 308"></span><span class="oq-histogram__bin oq-w-100" title="40–50: 434"></span><span class="oq-histogram__bin oq-w-95" title="50–60: 406"></span><span class="oq-histogram__bin oq-w-60" title="60–70: 259"></span><span class="oq-histogram__bin oq-w-35 oq-danger" title="70–80: 154"></span><span class="oq-histogram__bin oq-w-50 oq-danger" title="80–90: 210"></span><span class="oq-histogram__bin oq-w-65 oq-danger" title="90–100: 287"></span><span class="oq-histogram__threshold oq-w-70" data-label="Block ≥ 70"></span></div>
+          <div class="oq-histogram__axis"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+        </figure>
+      </div></div>
+      <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Latency</h3><span class="oq-card__subtitle">of 400 ms budget</span></div><div class="oq-card__body oq-stack">
+        <div class="oq-percentiles" role="img" aria-label="p50 40 ms, p95 100 ms, p99 220 ms of 400 ms"><div class="oq-percentiles__track"><span class="oq-percentiles__range oq-w-55"></span><span class="oq-percentiles__mark oq-w-10" data-label="p50 40"></span><span class="oq-percentiles__mark oq-w-25" data-label="p95 100"></span><span class="oq-percentiles__mark oq-w-55" data-label="p99 220"></span></div></div>
+        <div class="oq-percentiles oq-fill-series-2" role="img" aria-label="Upstream p50 120 ms, p95 260 ms, p99 380 ms of 400 ms"><div class="oq-percentiles__track"><span class="oq-percentiles__range oq-w-95"></span><span class="oq-percentiles__mark oq-w-30" data-label="p50 120"></span><span class="oq-percentiles__mark oq-w-65" data-label="p95 260"></span><span class="oq-percentiles__mark oq-w-95" data-label="p99 380"></span></div></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ================= Vanilla recipe ================= -->
+  <section class="pv-section" id="recipe">
+    <header>
+      <div class="oq-overline">Plain HTML</div>
+      <h2 class="oq-h2">Vanilla SVG chart recipe</h2>
+      <p class="oq-muted">Without React, draw the geometry yourself and let the kit's classes do the styling: <code>svg.oq-chart__svg</code>, <code>g.oq-chart__grid</code> lines, <code>text.oq-chart__tick</code>, <code>path.oq-chart__line.oq-stroke-series-N</code>, <code>path.oq-chart__area.oq-fill-series-N</code>, <code>rect.oq-chart__bar.oq-fill-series-N</code>, and a legend of <code>.oq-chart__legend-item</code> buttons with <code>.oq-chart__swatch.oq-fill-series-N</code>. Every chart also needs a table view (<code>details.oq-chart__table</code>) and an accessible name. Draw at the size you measure (a <code>ResizeObserver</code> on <code>.oq-chart__plot</code>) so 11 px ticks stay 11 px; this static example keeps its natural 480 × 180 and only shrinks to fit.</p>
+    </header>
+    <div class="oq-card"><div class="oq-card__header"><h3 class="oq-card__title">Requests per hour</h3></div><div class="oq-card__body">
+      <figure class="oq-chart">
+        <div class="oq-chart__plot">
+          <svg class="oq-chart__svg pv-recipe-svg" width="480" height="180" viewBox="0 0 480 180" role="img" aria-labelledby="recipe-title">
+            <title id="recipe-title">Allowed and blocked requests per hour over 12 hours</title>
+            <g class="oq-chart__grid"><line x1="32" x2="476" y1="20" y2="20"/><line x1="32" x2="476" y1="70" y2="70"/><line x1="32" x2="476" y1="120" y2="120"/><line x1="32" x2="476" y1="160" y2="160" data-zero=""/></g>
+            <text class="oq-chart__tick" x="26" y="24" text-anchor="end">300</text><text class="oq-chart__tick" x="26" y="74" text-anchor="end">200</text><text class="oq-chart__tick" x="26" y="124" text-anchor="end">100</text><text class="oq-chart__tick" x="26" y="164" text-anchor="end">0</text>
+            <path class="oq-chart__area oq-fill-series-1" d="M32,110 L72,96 L112,84 L152,60 L192,48 L232,56 L272,40 L312,52 L352,70 L392,64 L432,88 L472,100 L472,160 L32,160 Z"/>
+            <path class="oq-chart__line oq-stroke-series-1" d="M32,110 L72,96 L112,84 L152,60 L192,48 L232,56 L272,40 L312,52 L352,70 L392,64 L432,88 L472,100"/>
+            <path class="oq-chart__line oq-stroke-series-2" d="M32,150 L72,146 L112,140 L152,128 L192,132 L232,118 L272,124 L312,136 L352,130 L392,140 L432,146 L472,150"/>
+            <text class="oq-chart__tick" x="32" y="176">00:00</text><text class="oq-chart__tick" x="252" y="176" text-anchor="middle">06:00</text><text class="oq-chart__tick" x="472" y="176" text-anchor="end">12:00</text>
+          </svg>
+        </div>
+        <div class="oq-chart__legend"><button class="oq-chart__legend-item" aria-pressed="true"><span class="oq-chart__swatch oq-fill-series-1"></span>Allowed</button><button class="oq-chart__legend-item" aria-pressed="true"><span class="oq-chart__swatch oq-fill-series-2"></span>Blocked</button></div>
+        <details class="oq-chart__table"><summary>View as table</summary><table class="oq-table oq-table--dense"><thead><tr><th>Hour</th><th class="oq-num">Allowed</th><th class="oq-num">Blocked</th></tr></thead><tbody><tr><td>00:00</td><td class="oq-num">100</td><td class="oq-num">20</td></tr><tr><td>06:00</td><td class="oq-num">208</td><td class="oq-num">84</td></tr><tr><td>12:00</td><td class="oq-num">120</td><td class="oq-num">20</td></tr></tbody></table></details>
+      </figure>
+    </div></div>
   </section>
 
   </div>

@@ -159,6 +159,7 @@
       <a class="oq-nav__item" href="../components/calendar.html">Calendar</a>
       <a class="oq-nav__item" href="../components/checkbox.html">Checkbox</a>
       <a class="oq-nav__item" href="../components/combobox.html">Combobox</a>
+      <a class="oq-nav__item" href="../components/confirm-button.html">ConfirmButton</a>
       <a class="oq-nav__item" href="../components/date-picker.html">DatePicker</a>
       <a class="oq-nav__item" href="../components/date-range-picker.html">DateRangePicker</a>
       <a class="oq-nav__item" href="../components/drop-zone.html">DropZone</a>
@@ -200,6 +201,8 @@
       <a class="oq-nav__item" href="../components/card-body.html">CardBody</a>
       <a class="oq-nav__item" href="../components/card-footer.html">CardFooter</a>
       <a class="oq-nav__item" href="../components/card-header.html">CardHeader</a>
+      <a class="oq-nav__item" href="../components/card-tool.html">CardTool</a>
+      <a class="oq-nav__item" href="../components/card-tools.html">CardTools</a>
       <a class="oq-nav__item" href="../components/chip.html">Chip</a>
       <a class="oq-nav__item" href="../components/code-block.html">CodeBlock</a>
       <a class="oq-nav__item" href="../components/description-list.html">DescriptionList</a>
@@ -208,11 +211,14 @@
       <a class="oq-nav__item" href="../components/list.html">List</a>
       <a class="oq-nav__item" href="../components/list-item.html">ListItem</a>
       <a class="oq-nav__item" href="../components/paper.html">Paper</a>
+      <a class="oq-nav__item" href="../components/preview-frame.html">PreviewFrame</a>
+      <a class="oq-nav__item" href="../components/sortable-list.html">SortableList</a>
       <a class="oq-nav__item" href="../components/stat.html">Stat</a>
       <a class="oq-nav__item" href="../components/status-dot.html">StatusDot</a>
       <a class="oq-nav__item" href="../components/timeline.html">Timeline</a>
       <a class="oq-nav__item" href="../components/tree-view.html">TreeView</a>
       <div class="oq-nav__section oq-overline docs-nav-area">Data</div>
+      <a class="oq-nav__item" href="../components/chip-grid.html">ChipGrid</a>
       <a class="oq-nav__item" href="../components/data-table.html" aria-current="page">DataTable</a>
       <a class="oq-nav__item" href="../components/diff-view.html">DiffView</a>
       <a class="oq-nav__item" href="../components/json-inspector.html">JsonInspector</a>
@@ -224,11 +230,16 @@
       <a class="oq-nav__item" href="../components/area-chart.html">AreaChart</a>
       <a class="oq-nav__item" href="../components/bar-chart.html">BarChart</a>
       <a class="oq-nav__item" href="../components/donut-chart.html">DonutChart</a>
+      <a class="oq-nav__item" href="../components/funnel.html">Funnel</a>
       <a class="oq-nav__item" href="../components/gauge.html">Gauge</a>
       <a class="oq-nav__item" href="../components/heatmap.html">Heatmap</a>
+      <a class="oq-nav__item" href="../components/histogram.html">Histogram</a>
       <a class="oq-nav__item" href="../components/line-chart.html">LineChart</a>
       <a class="oq-nav__item" href="../components/meter.html">Meter</a>
+      <a class="oq-nav__item" href="../components/percentile-strip.html">PercentileStrip</a>
+      <a class="oq-nav__item" href="../components/ranked-bars.html">RankedBars</a>
       <a class="oq-nav__item" href="../components/sparkline.html">Sparkline</a>
+      <a class="oq-nav__item" href="../components/stack-bar.html">StackBar</a>
       <div class="oq-nav__section oq-overline docs-nav-area">Navigation</div>
       <a class="oq-nav__item" href="../components/app-bar.html">AppBar</a>
       <a class="oq-nav__item" href="../components/breadcrumbs.html">Breadcrumbs</a>
@@ -236,6 +247,7 @@
       <a class="oq-nav__item" href="../components/nav-item.html">NavItem</a>
       <a class="oq-nav__item" href="../components/nav-section.html">NavSection</a>
       <a class="oq-nav__item" href="../components/pagination.html">Pagination</a>
+      <a class="oq-nav__item" href="../components/skip-link.html">SkipLink</a>
       <a class="oq-nav__item" href="../components/stepper.html">Stepper</a>
       <a class="oq-nav__item" href="../components/tabs.html">Tabs</a>
       <a class="oq-nav__item" href="../components/toolbar.html">Toolbar</a>
@@ -404,6 +416,48 @@
         <td data-label="About" class="oq-small"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
       </tr>
 <tr>
+        <td><span class="oq-row oq-wrap oq-gap-2"><span class="oq-mono oq-strong">renderDetail</span></span></td>
+        <td data-label="Type"><span class="docs-type docs-cell">(row: Row) =&gt; ReactNode</span></td>
+        <td data-label="Default"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
+        <td data-label="About" class="oq-small"><span class="docs-cell">Content of an expandable detail row under each row. Adds an expander button as the first column (<code>.oq-table__expander</code>); the detail row is <code>tr.oq-table__detail</code>.</span></td>
+      </tr>
+<tr>
+        <td><span class="oq-row oq-wrap oq-gap-2"><span class="oq-mono oq-strong">expanded</span></span></td>
+        <td data-label="Type"><span class="docs-type docs-cell">Key[]</span></td>
+        <td data-label="Default"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
+        <td data-label="About" class="oq-small"><span class="docs-cell">Controlled set of expanded row keys.</span></td>
+      </tr>
+<tr>
+        <td><span class="oq-row oq-wrap oq-gap-2"><span class="oq-mono oq-strong">defaultExpanded</span></span></td>
+        <td data-label="Type"><span class="docs-type docs-cell">Key[]</span></td>
+        <td data-label="Default"><span class="docs-cell"><code>[]</code></span></td>
+        <td data-label="About" class="oq-small"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
+      </tr>
+<tr>
+        <td><span class="oq-row oq-wrap oq-gap-2"><span class="oq-mono oq-strong">onExpandedChange</span></span></td>
+        <td data-label="Type"><span class="docs-type docs-cell">(keys: Key[]) =&gt; void</span></td>
+        <td data-label="Default"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
+        <td data-label="About" class="oq-small"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
+      </tr>
+<tr>
+        <td><span class="oq-row oq-wrap oq-gap-2"><span class="oq-mono oq-strong">groupBy</span></span></td>
+        <td data-label="Type"><span class="docs-type docs-cell">(row: Row) =&gt; string</span></td>
+        <td data-label="Default"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
+        <td data-label="About" class="oq-small"><span class="docs-cell">Group rows under header rows (<code>tr.oq-table__group</code>), in the order the groups first appear. Groups keep the table's sort inside them.</span></td>
+      </tr>
+<tr>
+        <td><span class="oq-row oq-wrap oq-gap-2"><span class="oq-mono oq-strong">renderGroup</span></span></td>
+        <td data-label="Type"><span class="docs-type docs-cell">(group: string, rows: Row[]) =&gt; ReactNode</span></td>
+        <td data-label="Default"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
+        <td data-label="About" class="oq-small"><span class="docs-cell">Header row content for a group; defaults to the group name and its row count.</span></td>
+      </tr>
+<tr>
+        <td><span class="oq-row oq-wrap oq-gap-2"><span class="oq-mono oq-strong">rowAccent</span></span></td>
+        <td data-label="Type"><span class="docs-type docs-cell">(row: Row) =&gt; Color | undefined</span></td>
+        <td data-label="Default"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
+        <td data-label="About" class="oq-small"><span class="docs-cell">A left-edge accent in an intent colour (<code>tr.oq-row-accent</code>), e.g. for blocked requests.</span></td>
+      </tr>
+<tr>
         <td><span class="oq-row oq-wrap oq-gap-2"><span class="oq-mono oq-strong">dense</span></span></td>
         <td data-label="Type"><span class="docs-type docs-cell">boolean</span></td>
         <td data-label="Default"><span class="docs-cell"><span class="oq-faint">—</span></span></td>
@@ -450,7 +504,7 @@
     </section>
     <section class="docs-section" id="classes"><h2 class="oq-h4">CSS classes</h2>
       <p class="oq-small oq-muted">The classes this component renders, for styling the same thing in plain HTML.</p>
-      <div class="oq-row oq-wrap oq-gap-1"><code>.oq-empty</code> <code>.oq-mono</code> <code>.oq-num</code> <code>.oq-table__check</code> <code>.oq-table__check-hit</code></div></section>
+      <div class="oq-row oq-wrap oq-gap-1"><code>.oq-detail-*</code> <code>.oq-empty</code> <code>.oq-mono</code> <code>.oq-num</code> <code>.oq-row-accent</code> <code>.oq-sr-only</code> <code>.oq-table__check</code> <code>.oq-table__check-hit</code> <code>.oq-table__detail</code> <code>.oq-table__expand-col</code> <code>.oq-table__expander</code> <code>.oq-table__group</code> <code>.oq-table__group-count</code></div></section>
     
     <section class="docs-section"><h2 class="oq-h4">Without React</h2>
       <p class="oq-muted">In plain HTML, <a href="../elements.html#oq-sortable-table"><code>&lt;oq-sortable-table&gt;</code></a> gives the same markup its behaviour.</p></section>

@@ -1,5 +1,5 @@
 import { themes } from "../theme/index";
-import { emit, OqElement } from "./base";
+import { emit, h, OqElement, treeOf } from "./base";
 
 /**
  * `<oq-theme-select>` binds a `<select>` to a theme: choosing an option sets `data-theme` on
@@ -7,7 +7,10 @@ import { emit, OqElement } from "./base";
  *
  * - A `<select>` inside is used as is; with none, one is created listing every built-in theme
  *   plus "auto".
- * - `target`: selector of the element to theme (default `html`). `storage-key`: where the
+ * - `target`: selector of the element to theme (default `html`), looked up in the picker's own
+ *   tree first, so inside a shadow root `#panel` finds the dashboard's element. `target="closest"`
+ *   themes the nearest ancestor that has a `data-theme` (crossing out of a shadow root to its host).
+ *   `storage-key`: where the
  *   choice is kept in localStorage (default `oq-theme`; empty turns remembering off).
  *   `default`: the theme when nothing is stored (else the target's current `data-theme`).
  * - Several pickers can share a target (an app bar and a phone menu): each follows the
@@ -21,7 +24,14 @@ export class OqThemeSelect extends OqElement {
     return this.querySelector("select");
   }
   private get target(): HTMLElement | null {
-    return this.ownerDocument.querySelector<HTMLElement>(this.getAttribute("target") ?? "html");
+    const sel = this.getAttribute("target") ?? "html";
+    if (sel === "closest") {
+      for (let n: Node | null = this.parentNode; n; n = n.parentNode ?? (n as ShadowRoot).host ?? null) {
+        if (n instanceof HTMLElement && n.hasAttribute("data-theme")) return n;
+      }
+      return this.ownerDocument.documentElement;
+    }
+    return treeOf(this).querySelector<HTMLElement>(sel) ?? this.ownerDocument.querySelector<HTMLElement>(sel);
   }
   private get key(): string {
     return this.getAttribute("storage-key") ?? "oq-theme";
@@ -34,7 +44,8 @@ export class OqThemeSelect extends OqElement {
       select.className = "oq-select oq-sm";
       select.setAttribute("aria-label", "Theme");
       const names = [...Object.keys(themes), "auto"];
-      select.innerHTML = names.map((n) => `<option value="${n}">${n === "auto" ? "Auto (system)" : n[0]?.toUpperCase() + n.slice(1)}</option>`).join("");
+      const doc = this.ownerDocument;
+      select.append(...names.map((n) => h(doc, "option", { value: n }, n === "auto" ? "Auto (system)" : `${n[0]?.toUpperCase()}${n.slice(1)}`)));
       this.append(select);
     }
     const initial = this.stored() ?? this.getAttribute("default") ?? this.target?.dataset.theme ?? select.value;

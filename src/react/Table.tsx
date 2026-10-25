@@ -1,7 +1,7 @@
-import { type HTMLAttributes, type Key, type ReactNode, type TableHTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
-import { cx } from "./cx";
+import { Fragment, type HTMLAttributes, type Key, type ReactNode, type TableHTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
+import { type Color, colorClass, cx } from "./cx";
 import { Checkbox } from "./Form";
-import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "./icons";
 
 export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
   dense?: boolean;
@@ -107,6 +107,24 @@ export interface DataTableProps<Row> extends Omit<TableProps, "children"> {
   onSelectedChange?: (keys: Key[]) => void;
   onRowClick?: (row: Row) => void;
   empty?: ReactNode;
+  /**
+   * Content of an expandable detail row under each row. Adds an expander button as the first
+   * column (`.oq-table__expander`); the detail row is `tr.oq-table__detail`.
+   */
+  renderDetail?: (row: Row) => ReactNode;
+  /** Controlled set of expanded row keys. */
+  expanded?: Key[];
+  defaultExpanded?: Key[];
+  onExpandedChange?: (keys: Key[]) => void;
+  /**
+   * Group rows under header rows (`tr.oq-table__group`), in the order the groups first appear.
+   * Groups keep the table's sort inside them.
+   */
+  groupBy?: (row: Row) => string;
+  /** Header row content for a group; defaults to the group name and its row count. */
+  renderGroup?: (group: string, rows: Row[]) => ReactNode;
+  /** A left-edge accent in an intent colour (`tr.oq-row-accent`), e.g. for blocked requests. */
+  rowAccent?: (row: Row) => Color | undefined;
 }
 
 const cellValue = (row: unknown, key: string) => (row as Record<string, unknown>)[key];
@@ -133,9 +151,23 @@ export function DataTable<Row>({
   onRowClick,
   empty = "No rows",
   hover,
+  renderDetail,
+  expanded: expandedProp,
+  defaultExpanded = [],
+  onExpandedChange,
+  groupBy,
+  renderGroup,
+  rowAccent,
   ...rest
 }: DataTableProps<Row>) {
   const [innerSort, setInnerSort] = useState<SortState | null>(defaultSort);
+  const [innerExpanded, setInnerExpanded] = useState<Key[]>(defaultExpanded);
+  const expanded = new Set(expandedProp ?? innerExpanded);
+  const toggleExpanded = (k: Key) => {
+    const next = expanded.has(k) ? [...expanded].filter((x) => x !== k) : [...expanded, k];
+    if (expandedProp === undefined) setInnerExpanded(next);
+    onExpandedChange?.(next);
+  };
   const [innerSelected, setInnerSelected] = useState<Key[]>([]);
   const sort = sortProp !== undefined ? sortProp : innerSort;
   const selected = selectedProp ?? innerSelected;
@@ -174,11 +206,30 @@ export function DataTable<Row>({
   const allOn = allKeys.length > 0 && allKeys.every((k) => chosen.has(k));
   const someOn = !allOn && allKeys.some((k) => chosen.has(k));
   const align = (c: Column<Row>) => (c.align === "right" ? "oq-num" : undefined);
+  const span = columns.length + (selectable ? 1 : 0) + (renderDetail ? 1 : 0);
+
+  // Groups in order of first appearance; without groupBy, one unnamed group.
+  const groups = useMemo(() => {
+    if (!groupBy) return [{ name: "", rows: sorted.map((row, i) => ({ row, i })) }];
+    const byName = new Map<string, Array<{ row: Row; i: number }>>();
+    sorted.forEach((row, i) => {
+      const name = groupBy(row);
+      const list = byName.get(name);
+      if (list) list.push({ row, i });
+      else byName.set(name, [{ row, i }]);
+    });
+    return [...byName].map(([name, rows]) => ({ name, rows }));
+  }, [sorted, groupBy]);
 
   return (
     <Table {...rest} hover={hover ?? Boolean(onRowClick || selectable)}>
       <thead>
         <tr>
+          {renderDetail && (
+            <th className="oq-table__expand-col">
+              <span className="oq-sr-only">Details</span>
+            </th>
+          )}
           {selectable && (
             <th className="oq-table__check">
               <label className="oq-table__check-hit">
@@ -218,45 +269,86 @@ export function DataTable<Row>({
       <tbody>
         {sorted.length === 0 ? (
           <tr>
-            <td colSpan={columns.length + (selectable ? 1 : 0)}>
+            <td colSpan={span}>
               <div className="oq-empty">{empty}</div>
             </td>
           </tr>
         ) : (
-          sorted.map((row, i) => {
-            const k = keyOf(row, i);
-            const isSel = chosen.has(k);
-            return (
-              <tr
-                key={k}
-                aria-selected={selectable ? isSel : undefined}
-                onClick={onRowClick ? () => onRowClick(row) : undefined}
-                style={onRowClick ? { cursor: "pointer" } : undefined}
-              >
-                {selectable && (
-                  <td className="oq-table__check" onClick={(e) => e.stopPropagation()}>
-                    <label className="oq-table__check-hit">
-                      <Checkbox
-                        aria-label="Select row"
-                        checked={isSel}
-                        onChange={() => setSelected(isSel ? selected.filter((x) => x !== k) : [...selected, k])}
-                      />
-                    </label>
-                  </td>
-                )}
-                {columns.map((c) => (
-                  <td
-                    key={c.key}
-                    className={cx(align(c), c.mono && "oq-mono")}
-                    style={c.align === "center" ? { textAlign: "center" } : undefined}
-                    data-label={typeof c.header === "string" ? c.header : undefined}
-                  >
-                    {c.render ? c.render(row, i) : (cellValue(row, c.key) as ReactNode)}
-                  </td>
-                ))}
-              </tr>
-            );
-          })
+          groups.map((group) => (
+            <Fragment key={`g:${group.name}`}>
+              {groupBy && (
+                <tr className="oq-table__group">
+                  <th colSpan={span} scope="colgroup">
+                    {renderGroup ? (
+                      renderGroup(group.name, group.rows.map((r) => r.row))
+                    ) : (
+                      <>
+                        {group.name} <span className="oq-table__group-count">{group.rows.length}</span>
+                      </>
+                    )}
+                  </th>
+                </tr>
+              )}
+              {group.rows.map(({ row, i }) => {
+                const k = keyOf(row, i);
+                const isSel = chosen.has(k);
+                const open = renderDetail ? expanded.has(k) : false;
+                const accent = rowAccent?.(row);
+                const detailId = renderDetail ? `oq-detail-${String(k).replace(/[^\w-]/g, "_")}` : undefined;
+                return (
+                  <Fragment key={k}>
+                    <tr
+                      aria-selected={selectable ? isSel : undefined}
+                      className={accent ? cx("oq-row-accent", colorClass(accent)) : undefined}
+                      onClick={onRowClick ? () => onRowClick(row) : undefined}
+                      style={onRowClick ? { cursor: "pointer" } : undefined}
+                    >
+                      {renderDetail && (
+                        <td className="oq-table__expand-col" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            type="button"
+                            className="oq-table__expander"
+                            aria-expanded={open}
+                            aria-controls={detailId}
+                            aria-label={open ? "Hide details" : "Show details"}
+                            onClick={() => toggleExpanded(k)}
+                          >
+                            <ChevronDownIcon />
+                          </button>
+                        </td>
+                      )}
+                      {selectable && (
+                        <td className="oq-table__check" onClick={(e) => e.stopPropagation()}>
+                          <label className="oq-table__check-hit">
+                            <Checkbox
+                              aria-label="Select row"
+                              checked={isSel}
+                              onChange={() => setSelected(isSel ? selected.filter((x) => x !== k) : [...selected, k])}
+                            />
+                          </label>
+                        </td>
+                      )}
+                      {columns.map((c) => (
+                        <td
+                          key={c.key}
+                          className={cx(align(c), c.mono && "oq-mono")}
+                          style={c.align === "center" ? { textAlign: "center" } : undefined}
+                          data-label={typeof c.header === "string" ? c.header : undefined}
+                        >
+                          {c.render ? c.render(row, i) : (cellValue(row, c.key) as ReactNode)}
+                        </td>
+                      ))}
+                    </tr>
+                    {renderDetail && (
+                      <tr className="oq-table__detail" id={detailId} hidden={!open}>
+                        <td colSpan={span}>{open ? renderDetail(row) : null}</td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </Fragment>
+          ))
         )}
       </tbody>
     </Table>

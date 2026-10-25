@@ -28,9 +28,11 @@
     .pv-jump { display: block; position: sticky; top: 56px; z-index: 5; margin: -4px 0 20px; padding: 6px 0; background: var(--oq-bg); }
     .pv-section { scroll-margin-top: 120px; padding-bottom: 28px; margin-bottom: 28px; }
   }
+  .pv-live { --min: 220px; }
 </style>
 </head>
 <body class="oq">
+<a class="oq-skip-link" href="#pv-main">Skip to content</a>
 
 <div class="oq-shell">
   <header class="oq-appbar oq-appbar--sticky pv-appbar">
@@ -186,10 +188,16 @@
       <a class="oq-nav__item" href="#misc">Accordion &amp; empty</a>
       <a class="oq-nav__item" href="#banners">Banners &amp; callouts</a>
       <a class="oq-nav__item" href="#popovers">Popovers</a>
+      <div class="oq-nav__section oq-overline">Dashboard pieces</div>
+      <a class="oq-nav__item" href="#hue-tags">Hue &amp; evidence tags</a>
+      <a class="oq-nav__item" href="#live-values">Live &amp; stale values</a>
+      <a class="oq-nav__item" href="#confirm">Two-click confirm</a>
+      <a class="oq-nav__item" href="#sortable">Sortable list</a>
+      <a class="oq-nav__item" href="#frame">Preview frame</a>
     </nav>
   </aside>
 
-  <main class="oq-shell__main">
+  <main class="oq-shell__main" id="pv-main" tabindex="-1">
   <div class="pv-main">
   <label class="pv-jump"><span class="oq-sr-only">Jump to section</span><select class="oq-select" id="pv-jump"></select></label>
 
@@ -1097,6 +1105,79 @@ import "@osqd/ui/css";
     </div>
   </section>
 
+
+  <!-- ================= Hue & evidence tags ================= -->
+  <section class="pv-section" id="hue-tags">
+    <header>
+      <div class="oq-overline">Dashboard pieces</div>
+      <h2 class="oq-h2">Hue &amp; evidence tags</h2>
+      <p class="oq-muted">Twelve hashed hues (<code>.oq-hue-0…11</code>) for identity labels — the same detector always gets the same colour (React: <code>hueIndex(text)</code>, <code>&lt;Chip hue&gt;</code>). Every hue reads at 4.5:1 in every theme. Certainty without colour: <code>.oq-chip--proven</code> is solid, <code>.oq-chip--suspected</code> is a dashed outline.</p>
+    </header>
+    <div class="oq-card"><div class="oq-card__body oq-stack">
+      <div class="oq-row oq-wrap" id="hue-row"><span class="oq-chip oq-hue-0">tor-exit</span><span class="oq-chip oq-hue-1">user-agent</span><span class="oq-chip oq-hue-2">rate</span><span class="oq-chip oq-hue-3">headers</span><span class="oq-chip oq-hue-4">decoy-path</span><span class="oq-chip oq-hue-5">asn-reputation</span><span class="oq-chip oq-hue-6">credential-stuffing</span><span class="oq-chip oq-hue-7">scanner</span><span class="oq-chip oq-hue-8">geo-velocity</span><span class="oq-chip oq-hue-9">fingerprint</span><span class="oq-chip oq-hue-10">honeytoken</span><span class="oq-chip oq-hue-11">path-traversal</span></div>
+      <div class="oq-row oq-wrap"><span class="oq-chip oq-chip--solid oq-hue-0">0</span><span class="oq-chip oq-chip--solid oq-hue-1">1</span><span class="oq-chip oq-chip--solid oq-hue-2">2</span><span class="oq-chip oq-chip--solid oq-hue-3">3</span><span class="oq-chip oq-chip--solid oq-hue-4">4</span><span class="oq-chip oq-chip--solid oq-hue-5">5</span><span class="oq-chip oq-chip--solid oq-hue-6">6</span><span class="oq-chip oq-chip--solid oq-hue-7">7</span><span class="oq-chip oq-chip--solid oq-hue-8">8</span><span class="oq-chip oq-chip--solid oq-hue-9">9</span><span class="oq-chip oq-chip--solid oq-hue-10">10</span><span class="oq-chip oq-chip--solid oq-hue-11">11</span></div>
+      <div class="oq-row oq-wrap"><span class="oq-chip oq-chip--proven oq-danger">proven</span><span class="oq-chip oq-chip--suspected oq-warning">suspected</span><span class="oq-chip oq-chip--proven oq-success">verified bot</span><span class="oq-chip oq-chip--suspected oq-neutral">unconfirmed</span></div>
+    </div></div>
+  </section>
+
+  <!-- ================= Live & stale values ================= -->
+  <section class="pv-section" id="live-values">
+    <header>
+      <div class="oq-overline">Dashboard pieces</div>
+      <h2 class="oq-h2">Live &amp; stale values, card tools</h2>
+      <p class="oq-muted"><code>.oq-flash</code> highlights a value the moment it changes (a static underline under reduced motion); <code>[data-stale="true"]</code> greys data that stopped updating and adds a "stale" marker to stat labels and card titles. Card headers take fold and pin buttons (<code>.oq-card__tools</code>, <code>data-folded</code>, <code>data-pinned</code>; React: <code>&lt;CardTools&gt;</code>).</p>
+    </header>
+    <div class="oq-grid pv-live">
+      <div class="oq-stat"><span class="oq-stat__label">Requests / min</span><span class="oq-stat__value" id="live-rpm">12 480</span><span class="oq-stat__delta">updates every 2 s</span></div>
+      <div class="oq-stat" data-stale="true"><span class="oq-stat__label">Blocked</span><span class="oq-stat__value">312</span><span class="oq-stat__delta">last update 4 min ago</span></div>
+      <div class="oq-card" id="tool-card">
+        <div class="oq-card__header"><h3 class="oq-card__title">Traffic</h3>
+          <div class="oq-card__tools"><button type="button" class="oq-card__tool" aria-pressed="false" aria-label="Pin Traffic" data-tool="pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5M9 10.8V4h6v6.8l3 3.2v2H6v-2z"/></svg></button><button type="button" class="oq-card__tool" aria-expanded="true" aria-label="Fold Traffic" data-tool="fold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
+        <div class="oq-card__body oq-small oq-muted">Fold me, pin me. Folded cards keep only their header.</div>
+      </div>
+      <div class="oq-card" data-stale="true"><div class="oq-card__header"><h3 class="oq-card__title">Store latency</h3></div><div class="oq-card__body oq-small">Redis has not reported for 3 minutes.</div></div>
+    </div>
+    <div class="oq-row"><button type="button" class="oq-btn oq-btn--outline oq-neutral oq-sm" id="live-toggle" aria-pressed="true">Pause live updates</button></div>
+  </section>
+
+  <!-- ================= Two-click confirm ================= -->
+  <section class="pv-section" id="confirm">
+    <header>
+      <div class="oq-overline">Dashboard pieces</div>
+      <h2 class="oq-h2">Two-click confirm</h2>
+      <p class="oq-muted">For destructive actions that should not open a dialog: the first click arms the button (<code>data-armed="true"</code>, a new label, announced), a second click within four seconds confirms, and waiting, <kbd class="oq-kbd">Esc</kbd> or leaving disarms it. React: <code>&lt;ConfirmButton&gt;</code>.</p>
+    </header>
+    <div class="oq-row oq-wrap">
+      <button type="button" class="oq-btn oq-btn--outline oq-danger" data-confirm="Click again to reset">Reset counters</button>
+      <button type="button" class="oq-btn oq-btn--outline oq-danger" data-confirm="Click again to delete">Delete label</button>
+      <span class="oq-small oq-muted" id="confirm-out" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <!-- ================= Sortable list ================= -->
+  <section class="pv-section" id="sortable">
+    <header>
+      <div class="oq-overline">Dashboard pieces</div>
+      <h2 class="oq-h2">Sortable list</h2>
+      <p class="oq-muted">Rules in order of evaluation. Drag the handle (mouse, pen or touch), press <kbd class="oq-kbd">↑</kbd> / <kbd class="oq-kbd">↓</kbd> on a focused handle, or use the move buttons. <code>.oq-sortable</code>; React: <code>&lt;SortableList&gt;</code>.</p>
+    </header>
+    <ol class="oq-sortable" id="rules"><li class="oq-sortable__item"><button type="button" class="oq-sortable__handle" aria-label="Move Block known scanners, position 1 of 4 (arrow keys)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></button><div class="oq-sortable__body"><div class="oq-strong">Block known scanners</div><div class="oq-small oq-muted">user-agent matches a scanner list → block</div></div><div class="oq-sortable__moves"><button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-move="-1" aria-label="Move Block known scanners up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button><button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-move="1" aria-label="Move Block known scanners down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button></div></li><li class="oq-sortable__item"><button type="button" class="oq-sortable__handle" aria-label="Move Challenge Tor exits, position 2 of 4 (arrow keys)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></button><div class="oq-sortable__body"><div class="oq-strong">Challenge Tor exits</div><div class="oq-small oq-muted">tor-exit → challenge</div></div><div class="oq-sortable__moves"><button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-move="-1" aria-label="Move Challenge Tor exits up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button><button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-move="1" aria-label="Move Challenge Tor exits down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button></div></li><li class="oq-sortable__item"><button type="button" class="oq-sortable__handle" aria-label="Move Rate-limit logins, position 3 of 4 (arrow keys)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></button><div class="oq-sortable__body"><div class="oq-strong">Rate-limit logins</div><div class="oq-small oq-muted">/api/login over 30/min → 429</div></div><div class="oq-sortable__moves"><button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-move="-1" aria-label="Move Rate-limit logins up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button><button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-move="1" aria-label="Move Rate-limit logins down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button></div></li><li class="oq-sortable__item"><button type="button" class="oq-sortable__handle" aria-label="Move Tarpit decoy hits, position 4 of 4 (arrow keys)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></button><div class="oq-sortable__body"><div class="oq-strong">Tarpit decoy hits</div><div class="oq-small oq-muted">decoy-path → tarpit 30 s</div></div><div class="oq-sortable__moves"><button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-move="-1" aria-label="Move Tarpit decoy hits up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button><button type="button" class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" data-move="1" aria-label="Move Tarpit decoy hits down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button></div></li></ol>
+    <span class="oq-sr-only" aria-live="polite" id="rules-live"></span>
+  </section>
+
+  <!-- ================= Preview frame ================= -->
+  <section class="pv-section" id="frame">
+    <header>
+      <div class="oq-overline">Dashboard pieces</div>
+      <h2 class="oq-h2">Preview frame</h2>
+      <p class="oq-muted">An iframe at phone, tablet or desktop width — the width comes from <code>data-device</code>, so no style attribute is needed. <code>.oq-frame</code>; React: <code>&lt;PreviewFrame&gt;</code>.</p>
+    </header>
+    <div class="oq-frame oq-frame--short" id="pf">
+      <div class="oq-frame__bar"><div class="oq-segmented" role="group" aria-label="Preview width"><button type="button" aria-pressed="false" data-device="phone">Phone</button><button type="button" aria-pressed="false" data-device="tablet">Tablet</button><button type="button" aria-pressed="true" data-device="desktop">Desktop</button></div><span class="oq-frame__url">/challenge?preview=1</span></div>
+      <div class="oq-frame__viewport" data-device="desktop"><iframe class="oq-frame__iframe" srcdoc="&lt;!doctype html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;title&gt;Checking your browser&lt;/title&gt;&lt;body style=&quot;margin:0;min-height:100vh;display:grid;place-items:center;font:15px/1.5 system-ui,sans-serif;background:#f4f4f2;color:#2d2a2e&quot;&gt;&lt;main style=&quot;max-width:340px;padding:24px;text-align:center&quot;&gt;&lt;h1 style=&quot;font-size:20px;margin:0 0 8px&quot;&gt;Checking your browser&lt;/h1&gt;&lt;p style=&quot;margin:0 0 16px;color:#5b595c&quot;&gt;This takes a second. You will be sent on automatically.&lt;/p&gt;&lt;div style=&quot;height:6px;border-radius:3px;background:#e3e2df;overflow:hidden&quot;&gt;&lt;div style=&quot;width:60%;height:100%;background:#0e6f7c&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/main&gt;&lt;/body&gt;&lt;/html&gt;" title="Preview of the challenge page" sandbox="" loading="lazy"></iframe></div>
+    </div>
+  </section>
+
   </div>
   </main>
 </div>
@@ -1774,6 +1855,130 @@ import "@osqd/ui/css";
     }
     jump.addEventListener("change", () => document.querySelector(jump.value)?.scrollIntoView({ block: "start" }));
   })();
+</script>
+
+<script>
+// 0.5.0 demos in plain DOM: live values, card tools, two-click confirm, sortable list, preview frame.
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const nf = new Intl.NumberFormat("en-US").format;
+  // Live value with a flash on each change.
+  let live = true, rpm = 12480;
+  const rpmEl = $("#live-rpm");
+  setInterval(() => {
+    if (!live) return;
+    rpm += Math.round((Math.random() - 0.45) * 400);
+    rpmEl.textContent = nf(rpm).replace(/,/g, " ");
+    rpmEl.classList.remove("oq-flash");
+    void rpmEl.offsetWidth;
+    rpmEl.classList.add("oq-flash");
+  }, 2000);
+  $("#live-toggle").addEventListener("click", (e) => {
+    live = !live;
+    e.currentTarget.setAttribute("aria-pressed", String(live));
+    e.currentTarget.textContent = live ? "Pause live updates" : "Resume live updates";
+    rpmEl.closest(".oq-stat").dataset.stale = String(!live);
+  });
+  // Card tools.
+  $("#tool-card").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-tool]");
+    if (!b) return;
+    const card = $("#tool-card");
+    if (b.dataset.tool === "pin") {
+      const on = b.getAttribute("aria-pressed") !== "true";
+      b.setAttribute("aria-pressed", String(on));
+      card.dataset.pinned = String(on);
+    } else {
+      const open = b.getAttribute("aria-expanded") !== "true";
+      b.setAttribute("aria-expanded", String(open));
+      b.setAttribute("aria-label", `${open ? "Fold" : "Unfold"} Traffic`);
+      card.dataset.folded = String(!open);
+    }
+  });
+  // Two-click confirm.
+  document.querySelectorAll("[data-confirm]").forEach((b) => {
+    const label = b.textContent;
+    let timer;
+    const disarm = () => { clearTimeout(timer); b.removeAttribute("data-armed"); b.textContent = label; };
+    b.addEventListener("click", () => {
+      if (b.dataset.armed === "true") { disarm(); $("#confirm-out").textContent = `${label}: done.`; return; }
+      b.dataset.armed = "true";
+      b.textContent = b.dataset.confirm;
+      $("#confirm-out").textContent = "Press again to confirm.";
+      timer = setTimeout(disarm, 4000);
+    });
+    b.addEventListener("blur", disarm);
+    b.addEventListener("keydown", (e) => { if (e.key === "Escape") disarm(); });
+  });
+  // Sortable list: move buttons, arrow keys on the handle, pointer drag on the handle.
+  const list = $("#rules");
+  const items = () => [...list.children];
+  const announce = (li) => {
+    const i = items().indexOf(li);
+    $("#rules-live").textContent = `${li.querySelector(".oq-strong").textContent} moved to position ${i + 1} of ${items().length}`;
+    items().forEach((x, k) => {
+      const name = x.querySelector(".oq-strong").textContent;
+      x.querySelector(".oq-sortable__handle").setAttribute("aria-label", `Move ${name}, position ${k + 1} of ${items().length} (arrow keys)`);
+      x.querySelector('[data-move="-1"]').disabled = k === 0;
+      x.querySelector('[data-move="1"]').disabled = k === items().length - 1;
+    });
+  };
+  const move = (li, d) => {
+    const sib = d < 0 ? li.previousElementSibling : li.nextElementSibling;
+    if (!sib) return;
+    d < 0 ? sib.before(li) : sib.after(li);
+    announce(li);
+  };
+  announce(list.firstElementChild);
+  $("#rules-live").textContent = "";
+  list.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-move]");
+    if (b) move(b.closest("li"), Number(b.dataset.move));
+  });
+  list.addEventListener("keydown", (e) => {
+    const h = e.target.closest(".oq-sortable__handle");
+    if (!h || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return;
+    e.preventDefault();
+    move(h.closest("li"), e.key === "ArrowUp" ? -1 : 1);
+    h.focus();
+  });
+  let drag = null;
+  list.addEventListener("pointerdown", (e) => {
+    const h = e.target.closest(".oq-sortable__handle");
+    if (!h) return;
+    drag = h.closest("li");
+    drag.dataset.dragging = "true";
+    h.setPointerCapture(e.pointerId);
+  });
+  const target = (y) => {
+    for (const li of items()) { const r = li.getBoundingClientRect(); if (y < r.top + r.height / 2) return [li, "before"]; }
+    return [list.lastElementChild, "after"];
+  };
+  list.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    items().forEach((li) => li.removeAttribute("data-drop"));
+    const [li, side] = target(e.clientY);
+    if (li !== drag) li.dataset.drop = side;
+  });
+  const end = (e) => {
+    if (!drag) return;
+    const [li, side] = target(e.clientY);
+    if (li !== drag) side === "before" ? li.before(drag) : li.after(drag);
+    items().forEach((x) => x.removeAttribute("data-drop"));
+    drag.removeAttribute("data-dragging");
+    announce(drag);
+    drag = null;
+  };
+  list.addEventListener("pointerup", end);
+  list.addEventListener("pointercancel", () => { if (drag) { drag.removeAttribute("data-dragging"); items().forEach((x) => x.removeAttribute("data-drop")); drag = null; } });
+  // Preview frame widths.
+  $("#pf .oq-segmented").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-device]");
+    if (!b) return;
+    $("#pf .oq-segmented").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    $("#pf .oq-frame__viewport").dataset.device = b.dataset.device;
+  });
+})();
 </script>
 </body>
 </html>

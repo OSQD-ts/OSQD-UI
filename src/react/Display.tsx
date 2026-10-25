@@ -14,11 +14,23 @@ export interface ChipProps extends HTMLAttributes<HTMLElement> {
   selected?: boolean;
   /** Renders as a button (implied by `selected` or `onClick`). */
   clickable?: boolean;
+  /** A hashed-hue tag colour (0–11) instead of an intent; pair it with `hueIndex(text)`. */
+  hue?: number;
+  /** Certainty: proven is solid, suspected a dashed outline. */
+  evidence?: "proven" | "suspected";
 }
 
 /** A compact label for a status, tag or filter; can be removable (`onDelete`) or toggleable (`selected`). */
-export function Chip({ color = "neutral", variant = "soft", size, square, onDelete, selected, clickable, className, children, ...rest }: ChipProps) {
-  const cls = cx("oq-chip", colorClass(color), variant !== "soft" && `oq-chip--${variant}`, sizeClass(size), square && "oq-chip--square", className);
+export function Chip({ color = "neutral", variant = "soft", size, square, onDelete, selected, clickable, hue, evidence, className, children, ...rest }: ChipProps) {
+  const cls = cx(
+    "oq-chip",
+    hue === undefined ? colorClass(color) : `oq-hue-${((Math.round(hue) % 12) + 12) % 12}`,
+    variant !== "soft" && `oq-chip--${variant}`,
+    evidence && `oq-chip--${evidence}`,
+    sizeClass(size),
+    square && "oq-chip--square",
+    className,
+  );
   const remove = onDelete && (
     <button
       type="button"

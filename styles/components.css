@@ -1989,3 +1989,371 @@ button.oq-chip { cursor: pointer; font-family: inherit; }
   .oq-shell__main { padding: calc(var(--oq-space) * 3); }
   .oq-appbar { padding-inline: calc(var(--oq-space) * 3); gap: calc(var(--oq-space) * 2); }
 }
+
+/* ===================================================================== 0.5.0 additions */
+
+/* ========== Hashed-hue tags (.oq-hue-0…11) ==========
+ * Twelve hues 30° apart for labelling things that have no meaning of their own beyond identity:
+ * detector ids, tenants, tags. Pick one with hueIndex(text) (React) or any stable hash mod 12.
+ * Lightness is fixed per theme mode, so every hue reads at 4.5:1 on the theme's surfaces
+ * (tests/kit.test.ts checks it). Use on .oq-chip or .oq-badge; .oq-chip--solid works too.
+ */
+:root,
+:host,
+[data-theme],
+:host([data-theme]) {
+  --oq-hue-l: 0.8;
+  --oq-hue-ch: 0.1;
+  --oq-hue-on: #19181a;
+}
+[data-theme="light"], [data-theme="paper"], [data-theme="slate"],
+:host([data-theme="light"]), :host([data-theme="paper"]), :host([data-theme="slate"]) {
+  --oq-hue-l: 0.45;
+  --oq-hue-ch: 0.11;
+  --oq-hue-on: #ffffff;
+}
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"], :host([data-theme="auto"]) {
+    --oq-hue-l: 0.45;
+    --oq-hue-ch: 0.11;
+    --oq-hue-on: #ffffff;
+  }
+}
+.oq-hue-0 { --oq-hue: 0; }
+.oq-hue-1 { --oq-hue: 30; }
+.oq-hue-2 { --oq-hue: 60; }
+.oq-hue-3 { --oq-hue: 90; }
+.oq-hue-4 { --oq-hue: 120; }
+.oq-hue-5 { --oq-hue: 150; }
+.oq-hue-6 { --oq-hue: 180; }
+.oq-hue-7 { --oq-hue: 210; }
+.oq-hue-8 { --oq-hue: 240; }
+.oq-hue-9 { --oq-hue: 270; }
+.oq-hue-10 { --oq-hue: 300; }
+.oq-hue-11 { --oq-hue: 330; }
+[class*="oq-hue-"] {
+  --oq-c: oklch(var(--oq-hue-l) var(--oq-hue-ch) calc(var(--oq-hue) * 1deg));
+  --oq-on-c: var(--oq-hue-on);
+  --oq-soft: color-mix(in srgb, var(--oq-c) 14%, transparent);
+}
+.oq-chip[class*="oq-hue-"] { border-color: color-mix(in srgb, var(--oq-c) 40%, transparent); }
+
+/* ========== Evidence chips ==========
+ * Two levels of certainty that read without colour: proven is solid, suspected is a dashed
+ * outline. <span class="oq-chip oq-chip--proven oq-danger">proven</span>
+ */
+.oq-chip--proven { background: var(--oq-c); color: var(--oq-on-c); font-weight: 600; }
+.oq-chip--suspected { background: transparent; border: 1px dashed color-mix(in srgb, var(--oq-c) 75%, transparent); }
+
+/* ========== Table: expandable rows, group rows, row accent ==========
+ * <tr><td class="oq-table__expand-col"><button class="oq-table__expander" aria-expanded="false"
+ *   aria-controls="d1" aria-label="Show details">…chevron svg…</button></td> …</tr>
+ * <tr class="oq-table__detail" id="d1" hidden><td colspan="5">…</td></tr>
+ * <tr class="oq-table__group"><th colspan="5" scope="colgroup">eu-central-1 <span class="oq-table__group-count">4</span></th></tr>
+ * <tr class="oq-row-accent oq-danger">…</tr>
+ */
+.oq-table .oq-table__expand-col { width: 1%; padding-right: 0; }
+.oq-table__expander {
+  display: inline-grid;
+  place-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--oq-radius-sm);
+  background: transparent;
+  color: var(--oq-text-muted);
+  cursor: pointer;
+}
+.oq-table__expander > svg { width: 16px; height: 16px; transition: rotate var(--oq-motion); rotate: -90deg; }
+.oq-table__expander[aria-expanded="true"] > svg { rotate: 0deg; }
+.oq-table__expander:focus-visible { outline: 2px solid var(--oq-focus); outline-offset: -2px; }
+@media (hover: hover) {
+  .oq-table__expander:hover { background: var(--oq-hover); color: var(--oq-text); }
+}
+.oq-table tr.oq-table__detail[hidden] { display: none; }
+.oq-table tr.oq-table__detail > td {
+  padding: calc(var(--oq-space) * 3) calc(var(--oq-space) * 4);
+  background: var(--oq-raised);
+  border-bottom: 1px solid var(--oq-border);
+}
+.oq-table tbody tr:has(+ tr.oq-table__detail:not([hidden])) > * { border-bottom-color: transparent; background: var(--oq-raised); }
+.oq-table tr.oq-table__group > :is(th, td) {
+  position: static;
+  padding-block: calc(var(--oq-space) * 1.5);
+  background: var(--oq-bg);
+  color: var(--oq-text-muted);
+  font-size: var(--oq-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: left;
+}
+.oq-table__group-count {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--oq-hover);
+  color: var(--oq-text-muted);
+  letter-spacing: 0;
+}
+.oq-table tr.oq-row-accent > :first-child { box-shadow: inset 3px 0 0 var(--oq-c); }
+@media (pointer: coarse) {
+  .oq-table__expander { width: 40px; height: 40px; }
+}
+
+/* ========== Skip link ==========
+ * The first element in <body>: <a class="oq-skip-link" href="#main">Skip to content</a>
+ */
+.oq-skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 14px;
+  border-radius: var(--oq-radius-md);
+  background: var(--oq-primary);
+  color: var(--oq-on-primary);
+  font-weight: 600;
+  text-decoration: none;
+  translate: 0 calc(-100% - 16px);
+  transition: translate var(--oq-motion);
+}
+.oq-skip-link:focus, .oq-skip-link:focus-visible { translate: 0 0; outline: 2px solid var(--oq-focus); outline-offset: 2px; }
+
+/* ========== Two-click confirm (.oq-btn[data-armed]) ==========
+ * A destructive button that asks for a second click instead of a dialog. Script sets
+ * data-armed="true" on the first click (and changes the label, e.g. "Click again to delete"),
+ * confirms on a second click within a few seconds, and disarms on timeout or blur.
+ */
+.oq-btn[data-armed="true"] {
+  background: var(--oq-danger);
+  color: var(--oq-on-danger);
+  border-color: var(--oq-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--oq-danger) 30%, transparent);
+  animation: oq-armed 1.2s ease-in-out infinite;
+}
+@keyframes oq-armed { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--oq-danger) 15%, transparent); } }
+@media (prefers-reduced-motion: reduce) {
+  .oq-btn[data-armed="true"] { animation: none; }
+}
+
+/* ========== Sortable list (.oq-sortable) ==========
+ * <ol class="oq-sortable">
+ *   <li class="oq-sortable__item">
+ *     <button class="oq-sortable__handle" aria-label="Move rule 1 (arrow keys)">…grip svg…</button>
+ *     <div class="oq-sortable__body">…</div>
+ *     <div class="oq-sortable__moves">
+ *       <button class="oq-btn oq-btn--icon oq-btn--ghost oq-neutral oq-sm" aria-label="Move up">…</button>
+ *       <button … aria-label="Move down">…</button></div></li>
+ * States: data-dragging="true" on the item being moved, data-drop="before|after" on the target.
+ */
+.oq-sortable { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 2); margin: 0; padding: 0; list-style: none; }
+.oq-sortable__item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--oq-space) * 2);
+  padding: calc(var(--oq-space) * 2.5) calc(var(--oq-space) * 3);
+  border: 1px solid var(--oq-border);
+  border-radius: var(--oq-radius-lg);
+  background: var(--oq-surface);
+}
+.oq-sortable__body { flex: 1 1 auto; min-width: 0; }
+.oq-sortable__moves { display: flex; gap: 2px; flex: none; }
+.oq-sortable__handle {
+  display: inline-grid;
+  place-content: center;
+  flex: none;
+  width: 24px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--oq-radius-sm);
+  background: transparent;
+  color: var(--oq-text-faint);
+  cursor: grab;
+  touch-action: none;
+}
+.oq-sortable__handle > svg { width: 16px; height: 16px; }
+.oq-sortable__handle:focus-visible { outline: 2px solid var(--oq-focus); outline-offset: 0; color: var(--oq-text); }
+.oq-sortable__item[data-dragging="true"] { opacity: 0.55; box-shadow: var(--oq-shadow-md); }
+.oq-sortable__item[data-dragging="true"] .oq-sortable__handle { cursor: grabbing; }
+.oq-sortable__item[data-drop]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--oq-focus);
+}
+.oq-sortable__item[data-drop="before"]::before { top: calc(var(--oq-space) * -1 - 1px); }
+.oq-sortable__item[data-drop="after"]::before { bottom: calc(var(--oq-space) * -1 - 1px); }
+@media (hover: hover) {
+  .oq-sortable__handle:hover { background: var(--oq-hover); color: var(--oq-text); }
+}
+@media (pointer: coarse) {
+  .oq-sortable__handle { width: 40px; height: 40px; }
+}
+
+/* ========== Chip grid (.oq-chipgrid) ==========
+ * For long value lists (CIDR ranges, ASNs, tags): a filter, a count and a scrolling grid of
+ * fixed-height chips, so thousands stay cheap to lay out (content-visibility skips the rest).
+ * <div class="oq-chipgrid">
+ *   <div class="oq-chipgrid__bar"><input class="oq-input oq-sm" type="search" aria-label="Filter ranges">
+ *     <span class="oq-chipgrid__count">1 204 ranges</span></div>
+ *   <ul class="oq-chipgrid__list"><li class="oq-chip oq-neutral">10.0.0.0/8<button class="oq-chip__remove" aria-label="Remove 10.0.0.0/8">×</button></li> …</ul>
+ * </div>
+ */
+.oq-chipgrid { display: flex; flex-direction: column; gap: calc(var(--oq-space) * 2); min-width: 0; }
+.oq-chipgrid__bar { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--oq-space) * 2); }
+.oq-chipgrid__bar > .oq-input { flex: 1 1 200px; width: auto; }
+.oq-chipgrid__count { font-size: var(--oq-text-sm); color: var(--oq-text-faint); font-variant-numeric: tabular-nums; }
+.oq-chipgrid__list {
+  --oq-chipgrid-h: 26px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--oq-chipgrid-min, 150px), 1fr));
+  grid-auto-rows: var(--oq-chipgrid-h);
+  gap: calc(var(--oq-space) * 1.5);
+  max-height: var(--oq-chipgrid-max, 260px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 2px;
+  list-style: none;
+  overscroll-behavior: contain;
+}
+.oq-chipgrid__list > .oq-chip {
+  height: var(--oq-chipgrid-h);
+  min-width: 0;
+  justify-content: space-between;
+  font-family: var(--oq-font-mono);
+  font-size: var(--oq-text-xs);
+  content-visibility: auto;
+  contain-intrinsic-size: auto var(--oq-chipgrid-h);
+}
+.oq-chipgrid__list > .oq-chip > span { overflow: hidden; text-overflow: ellipsis; }
+.oq-chipgrid__empty { grid-column: 1 / -1; color: var(--oq-text-faint); font-size: var(--oq-text-sm); padding: 4px 2px; }
+@media (pointer: coarse) {
+  .oq-chipgrid__list { --oq-chipgrid-h: 34px; }
+}
+
+/* ========== Preview frame (.oq-frame) ==========
+ * An iframe with device-width toggles; the width comes from data-device, not a style attribute.
+ * <div class="oq-frame">
+ *   <div class="oq-frame__bar"><div class="oq-segmented" role="group" aria-label="Width">
+ *     <button aria-pressed="true" data-device="phone">Phone</button>…</div>
+ *     <span class="oq-frame__url">/challenge?preview=1</span></div>
+ *   <div class="oq-frame__viewport" data-device="phone"><iframe class="oq-frame__iframe" title="Preview" src="…"></iframe></div>
+ * </div>
+ */
+.oq-frame { display: flex; flex-direction: column; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-lg); background: var(--oq-raised); overflow: hidden; min-width: 0; }
+.oq-frame__bar { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--oq-space) * 2); padding: calc(var(--oq-space) * 2) calc(var(--oq-space) * 3); border-bottom: 1px solid var(--oq-border); background: var(--oq-surface); }
+.oq-frame__url { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--oq-font-mono); font-size: var(--oq-text-xs); color: var(--oq-text-faint); }
+.oq-frame__viewport { display: flex; justify-content: center; padding: calc(var(--oq-space) * 3); overflow: auto; background: repeating-linear-gradient(45deg, transparent 0 8px, color-mix(in srgb, var(--oq-hover) 45%, transparent) 8px 16px); }
+.oq-frame__iframe { display: block; width: 100%; height: var(--oq-frame-h, 480px); border: 1px solid var(--oq-border-strong); border-radius: var(--oq-radius-md); background: #fff; }
+.oq-frame__viewport[data-device="phone"] .oq-frame__iframe { width: min(375px, 100%); }
+.oq-frame__viewport[data-device="tablet"] .oq-frame__iframe { width: min(768px, 100%); }
+.oq-frame__viewport[data-device="desktop"] .oq-frame__iframe { width: 100%; }
+.oq-frame--short .oq-frame__iframe { --oq-frame-h: 320px; }
+.oq-frame--tall .oq-frame__iframe { --oq-frame-h: 720px; }
+
+/* ========== Value flash and stale data ==========
+ * .oq-flash: a brief highlight when a live value changes. Script removes and re-adds the class
+ * (or toggles data-flash) on each change. With reduced motion it is a static underline for the
+ * same moment instead of a pulse.
+ * [data-stale="true"]: the value is out of date — greyed; .oq-stat and .oq-card titles also get
+ * a "stale" marker, and <span class="oq-stale-mark">stale</span> can be placed anywhere.
+ */
+.oq-flash, [data-flash="true"] { animation: oq-flash 1s ease-out; border-radius: var(--oq-radius-sm); }
+@keyframes oq-flash {
+  0% { background-color: color-mix(in srgb, var(--oq-warning) 38%, transparent); }
+  100% { background-color: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .oq-flash, [data-flash="true"] { animation: none; text-decoration: underline 2px var(--oq-warning); text-underline-offset: 3px; }
+}
+[data-stale="true"] { color: var(--oq-text-faint); filter: saturate(0.25); }
+.oq-stat[data-stale="true"] .oq-stat__value { color: var(--oq-text-faint); }
+.oq-stale-mark,
+.oq-stat[data-stale="true"] .oq-stat__label::after,
+.oq-card[data-stale="true"] .oq-card__title::after {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border: 1px dashed var(--oq-border-strong);
+  border-radius: 8px;
+  color: var(--oq-text-faint);
+  font-size: var(--oq-text-xs);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  vertical-align: middle;
+}
+.oq-stat[data-stale="true"] .oq-stat__label::after,
+.oq-card[data-stale="true"] .oq-card__title::after { content: "stale"; }
+
+/* ========== Card tools: fold and pin ==========
+ * <div class="oq-card__header"><h3 class="oq-card__title">Traffic</h3>
+ *   <div class="oq-card__tools">
+ *     <button class="oq-card__tool" aria-pressed="false" aria-label="Pin">…pin svg…</button>
+ *     <button class="oq-card__tool" aria-expanded="true" aria-label="Fold">…chevron svg…</button></div></div>
+ * data-folded="true" on the card hides everything but the header; data-pinned="true" marks it.
+ */
+.oq-card__tools { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+.oq-card__actions + .oq-card__tools { margin-left: 0; }
+.oq-card__tool {
+  display: inline-grid;
+  place-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--oq-radius-sm);
+  background: transparent;
+  color: var(--oq-text-faint);
+  cursor: pointer;
+}
+.oq-card__tool > svg { width: 16px; height: 16px; transition: rotate var(--oq-motion); }
+.oq-card__tool[aria-pressed="true"] { color: var(--oq-primary); background: var(--oq-soft); }
+.oq-card__tool[aria-expanded="false"] > svg { rotate: -90deg; }
+.oq-card__tool:focus-visible { outline: 2px solid var(--oq-focus); outline-offset: 0; }
+@media (hover: hover) {
+  .oq-card__tool:hover { background: var(--oq-hover); color: var(--oq-text); }
+}
+@media (pointer: coarse) {
+  .oq-card__tool { width: 40px; height: 40px; }
+}
+.oq-card[data-folded="true"] > :not(.oq-card__header) { display: none; }
+.oq-card[data-folded="true"] > .oq-card__header { border-bottom-color: transparent; }
+.oq-card[data-pinned="true"] { border-color: color-mix(in srgb, var(--oq-primary) 45%, var(--oq-border)); }
+
+/* ========== Forced colours (Windows high contrast) ==========
+ * The system palette replaces colours and drops box-shadows, so anything that is drawn with a
+ * background or a shadow alone is given a border, an outline or a system colour instead.
+ */
+@media (forced-colors: active) {
+  .oq :focus-visible, .oq-btn:focus-visible, .oq-checkbox:focus-visible, .oq-radio:focus-visible, .oq-switch:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+  .oq-btn, .oq-chip, .oq-badge, .oq-segmented > button, .oq-tab, .oq-card__tool, .oq-table__expander, .oq-sortable__handle { border: 1px solid ButtonText; }
+  .oq-tab[aria-selected="true"], .oq-tab[aria-current="page"], .oq-segmented > button[aria-pressed="true"],
+  .oq-segmented > button[aria-selected="true"], .oq-nav__item[aria-current="page"], .oq-chip[aria-pressed="true"],
+  .oq-card__tool[aria-pressed="true"], .oq-pagination > [aria-current="page"], .oq-table tbody tr[aria-selected="true"] > * {
+    background: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+  .oq-tab::after { background: transparent; }
+  .oq-tab[aria-selected="true"]::after { background: HighlightText; }
+  .oq-checkbox, .oq-radio, .oq-switch { border: 2px solid ButtonText; }
+  .oq-checkbox:checked, .oq-checkbox:indeterminate, .oq-switch:checked { background: Highlight; forced-color-adjust: none; }
+  .oq-radio:checked::before, .oq-switch::before { background: ButtonText; forced-color-adjust: none; }
+  .oq-progress, .oq-meter__track { border: 1px solid CanvasText; }
+  .oq-progress__bar, .oq-dot, .oq-skeleton { forced-color-adjust: none; }
+  .oq-alert, .oq-banner, .oq-callout, .oq-toast, .oq-card, .oq-paper, .oq-dialog, .oq-menu, .oq-popover { border: 1px solid CanvasText; }
+  .oq-table tr.oq-row-accent > :first-child { border-left: 3px solid CanvasText; }
+  .oq-btn[data-armed="true"] { outline: 3px solid Highlight; }
+  .oq-chip--suspected { border-style: dashed; }
+}

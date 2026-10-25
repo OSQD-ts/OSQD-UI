@@ -1,4 +1,4 @@
-import { emit, OqElement } from "./base";
+import { byId, emit, OqElement, treeOf } from "./base";
 
 /**
  * `<oq-tabs>` around a `.oq-tabs[role=tablist]` of `[role=tab]` buttons whose `aria-controls`
@@ -97,5 +97,6 @@ const tabValue = (t: HTMLElement) => t.dataset.value ?? t.id;
 const isDisabled = (t: HTMLElement) => t.hasAttribute("disabled") || t.getAttribute("aria-disabled") === "true";
 const panelOf = (t: HTMLElement) => {
   const id = t.getAttribute("aria-controls");
-  return id ? (t.ownerDocument.getElementById(id) as HTMLElement | null) : null;
+  // In the tab's own tree: tabs inside a shadow root have their panels there too.
+  return id ? (byId(treeOf(t), id) ?? (t.ownerDocument.getElementById(id) as HTMLElement | null)) : null;
 };

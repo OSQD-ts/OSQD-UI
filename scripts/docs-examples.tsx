@@ -22,8 +22,11 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  CardTool,
+  CardTools,
   Checkbox,
   Chip,
+  ChipGrid,
   CidrInput,
   Code,
   CodeBlock,
@@ -31,6 +34,7 @@ import {
   ColorInput,
   Combobox,
   CommandPalette,
+  ConfirmButton,
   ConfirmProvider,
   ContextMenu,
   createShortcutRegistry,
@@ -56,9 +60,12 @@ import {
   FileItem,
   FileList,
   Form,
+  Funnel,
   Gauge,
   Grid,
   Heatmap,
+  Histogram,
+  hueIndex,
   Icon,
   IconButton,
   Illustration,
@@ -87,11 +94,14 @@ import {
   Pagination,
   Paper,
   PasswordInput,
+  PercentileStrip,
   Popover,
+  PreviewFrame,
   Progress,
   QueryBuilder,
   Radio,
   RadioGroup,
+  RankedBars,
   Row,
   SaveBar,
   Segmented,
@@ -107,11 +117,14 @@ import {
   SkeletonList,
   SkeletonTable,
   SkeletonText,
+  SkipLink,
   Slider,
+  SortableList,
   Sparkline,
   Spinner,
   SplitPane,
   Stack,
+  StackBar,
   Stat,
   StatusDot,
   Stepper,
@@ -1143,6 +1156,74 @@ export const examples = {
     registry.register({ keys: "g n", label: "Go to Nodes", group: "Navigation" });
     return <ShortcutsOverlay open onClose={noop} registry={registry} />;
   },
+
+  /* ------------------------------------------------------- 0.5.0: dashboards */
+
+  RankedBars: () => (
+    <RankedBars
+      showShare
+      items={[
+        { label: "185.220.101.4", value: 4210 },
+        { label: "45.155.205.233", value: 3120 },
+        { label: "193.32.162.159", value: 1980 },
+        { label: "89.248.165.52", value: 1204 },
+      ]}
+    />
+  ),
+  StackBar: () => (
+    <StackBar
+      size="lg"
+      segments={[
+        { label: "Allowed", value: 7480 },
+        { label: "Blocked", value: 3120 },
+        { label: "Challenged", value: 1250 },
+        { label: "Rate-limited", value: 630 },
+      ]}
+    />
+  ),
+  Funnel: () => (
+    <Funnel
+      stages={[
+        { label: "Probed", value: 12480 },
+        { label: "Engaged a decoy", value: 6830 },
+        { label: "Trapped", value: 3702 },
+        { label: "Blocked", value: 640 },
+      ]}
+    />
+  ),
+  Histogram: () => (
+    <Histogram
+      label="Bot scores"
+      bins={[3, 8, 21, 44, 62, 58, 37, 22, 30, 41].map((count, i) => ({ label: `${i * 10}–${i * 10 + 10}`, count }))}
+      threshold={{ at: 0.7, label: "Block ≥ 70" }}
+      pastThreshold="danger"
+      axis={["0", "50", "100"]}
+    />
+  ),
+  PercentileStrip: () => <PercentileStrip values={{ p50: 40, p95: 100, p99: 220 }} max={400} unit=" ms" />,
+  ConfirmButton: () => <ConfirmButton onConfirm={noop} armedLabel="Click again to reset">Reset counters</ConfirmButton>,
+  SortableList: () => {
+    const rules = ["Block known scanners", "Challenge Tor exits", "Rate-limit logins"];
+    return <SortableList items={rules} getKey={(r) => r} itemLabel={(r) => r} onReorder={noop} renderItem={(r) => <strong>{r}</strong>} />;
+  },
+  ChipGrid: () => (
+    <ChipGrid noun="ranges" filterLabel="Filter ranges" onRemove={noop} values={["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "185.220.101.0/24", "45.155.205.0/24", "193.32.162.0/24"]} />
+  ),
+  PreviewFrame: () => <PreviewFrame src="about:blank" title="Challenge page preview" url="/challenge?preview=1" defaultDevice="phone" height="short" />,
+  CardTools: () => (
+    <Card data-pinned>
+      <CardHeader title="Traffic" actions={<CardTools title="Traffic" pinned onPinnedChange={noop} folded={false} onFoldedChange={noop} />} />
+      <CardBody>Fold me, pin me.</CardBody>
+    </Card>
+  ),
+  CardTool: () => (
+    <CardTools>
+      <CardTool aria-label="Refresh">
+        <Icon name="refresh" />
+      </CardTool>
+    </CardTools>
+  ),
+  SkipLink: () => <SkipLink target="main" />,
 
   /* ------------------------------------------------------------------- Icons */
 

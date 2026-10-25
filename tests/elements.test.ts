@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import { execFileSync } from "node:child_process";
+import { readdirSync, readFileSync } from "node:fs";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import {
   accepts,
@@ -556,5 +557,145 @@ describe("oq-theme-select and oq-copy", () => {
     const btn = el.querySelector("button") as HTMLElement;
     expect(btn.dataset.copied).toBe("true");
     expect(btn.textContent).toBe("Copied");
+  });
+});
+
+describe("safe to embed in a strict dashboard", () => {
+  // Kept in step with scripts/elements.mjs, which refuses to write a bundle containing these.
+  const FORBIDDEN = ["innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function", "</script", "<!--", "-->"];
+
+  it("the standalone bundle has no markup-string sinks, no code from strings, nothing that ends a <script>", () => {
+    const bundle = readFileSync("assets/osqd-ui-elements.js", "utf8");
+    expect(FORBIDDEN.filter((f) => bundle.includes(f))).toEqual([]);
+  });
+
+  it("neither do the sources, comments included (a consumer may bundle them unminified)", () => {
+    const found: string[] = [];
+    for (const name of readdirSync("src/elements")) {
+      const text = readFileSync(`src/elements/${name}`, "utf8");
+      for (const f of FORBIDDEN) if (text.includes(f)) found.push(`${name}: ${f}`);
+    }
+    expect(found).toEqual([]);
+  });
+});
+
+describe("inside a shadow root", () => {
+  /**
+   * A host with an open shadow root holding `html`, the way the dashboards embed their UI. The
+   * light DOM gets decoys with the same ids, so a lookup that wrongly goes to `document` shows.
+   */
+  async function shadow(html: string, decoys = ""): Promise<ShadowRoot> {
+    document.body.innerHTML = `${decoys}<div id="host"></div>`;
+    const root = (document.getElementById("host") as HTMLElement).attachShadow({ mode: "open" });
+    root.innerHTML = html;
+    await Promise.resolve();
+    await Promise.resolve();
+    return root;
+  }
+  const q = <T extends Element = HTMLElement>(root: ShadowRoot, sel: string) => root.querySelector(sel) as T;
+
+  it("an opener opens the dialog in its own root, not a same-id one on the page, and leaves page scroll alone", async () => {
+    const root = await shadow(
+      `<button data-oq-open="d">Open</button><oq-dialog id="d"><dialog class="oq-dialog"><button data-close="ok">OK</button></dialog></oq-dialog>`,
+      `<oq-dialog id="d"><dialog class="oq-dialog"></dialog></oq-dialog>`,
+    );
+    const html = document.documentElement;
+    html.style.overflow = "";
+    q(root, "[data-oq-open]").click();
+    expect(q<OqDialog>(root, "oq-dialog").dialog?.open).toBe(true);
+    expect((document.querySelector("body > oq-dialog dialog") as HTMLDialogElement).open).toBe(false);
+    expect(html.style.overflow).toBe("");
+    q(root, "[data-close]").click();
+    expect(q<OqDialog>(root, "oq-dialog").dialog?.open).toBe(false);
+  });
+
+  it("tabs find their panels inside the root and follow the arrow keys", async () => {
+    const root = await shadow(
+      `<oq-tabs><div class="oq-tabs" role="tablist">
+        <button class="oq-tab" role="tab" id="t1" aria-controls="p1">One</button>
+        <button class="oq-tab" role="tab" id="t2" aria-controls="p2">Two</button></div>
+        <div id="p1" role="tabpanel"></div><div id="p2" role="tabpanel"></div></oq-tabs>`,
+      `<div id="p1"></div><div id="p2"></div>`,
+    );
+    expect(q(root, "#p2").hidden).toBe(true);
+    key(q(root, "#t1"), "ArrowRight");
+    expect(q(root, "#t2").getAttribute("aria-selected")).toBe("true");
+    expect(q(root, "#p2").hidden).toBe(false);
+    expect(q(root, "#p1").hidden).toBe(true);
+    expect((document.getElementById("p1") as HTMLElement).hidden).toBe(false);
+  });
+
+  it("a dropdown stays open for clicks inside it and closes for one outside the host", async () => {
+    const root = await shadow(
+      `<oq-dropdown><details class="oq-dropdown"><summary>Menu</summary><div class="oq-menu">
+        <span class="oq-menu__label" id="label">Node</span><button class="oq-menu__item" data-value="dup">Duplicate</button></div></details></oq-dropdown>`,
+      `<p id="out">outside</p>`,
+    );
+    const details = q<HTMLDetailsElement>(root, "details");
+    details.open = true;
+    // Retargeted, this click reaches the document as a click on the host: still inside.
+    q(root, "#label").click();
+    expect(details.open).toBe(true);
+    (document.getElementById("out") as HTMLElement).click();
+    expect(details.open).toBe(false);
+    details.open = true;
+    q(root, ".oq-menu__item").click();
+    expect(details.open).toBe(false);
+  });
+
+  it("a combobox filters and marks the match with real elements", async () => {
+    const root = await shadow(`<oq-combobox class="oq-combobox"><input class="oq-input"><ul class="oq-listbox">
+      <li class="oq-option" data-value="bot">bothandler</li><li class="oq-option" data-value="pot">hackerpot</li>
+      <li class="oq-option" data-value="api">api-gateway</li></ul></oq-combobox>`);
+    const input = q<HTMLInputElement>(root, "input");
+    input.value = "pot";
+    input.dispatchEvent(new Event("input"));
+    const opts = [...root.querySelectorAll(".oq-option")];
+    expect(opts.map((o) => o.textContent)).toEqual(["hackerpot"]);
+    expect(opts[0]?.querySelector("mark")?.textContent).toBe("pot");
+    input.value = "<img src=x onerror=alert(1)>";
+    input.dispatchEvent(new Event("input"));
+    expect(root.querySelector("img")).toBeNull();
+    expect(root.querySelector(".oq-listbox__empty")?.textContent).toBe("No results");
+  });
+
+  it("toasts go to a region inside the root: from script with `root`, and from a data-oq-toast trigger", async () => {
+    const root = await shadow(`<div id="panel"><button data-oq-toast-title="Saved" data-oq-toast-message="<b>6 nodes</b>">Save</button></div>`);
+    toast({ title: "From script", root: q(root, "#panel") });
+    const region = q(root, "oq-toast-region");
+    expect(region).not.toBeNull();
+    expect(document.querySelector("body > oq-toast-region")).toBeNull();
+    q(root, "button").click();
+    const titles = [...region.querySelectorAll(".oq-toast__title")].map((t) => t.textContent);
+    expect(titles).toEqual(["From script", "Saved"]);
+    // Text stays text: the message is shown, not parsed.
+    expect(region.querySelector("b")).toBeNull();
+    expect(region.querySelector(".oq-toast__message")?.textContent).toBe("<b>6 nodes</b>");
+    expect(region.querySelector(".oq-toast svg path")).not.toBeNull();
+  });
+
+  it("a theme picker themes an element by id inside the root, or the closest data-theme ancestor", async () => {
+    const root = await shadow(
+      `<div id="panel" data-theme="dark"><oq-theme-select id="a" target="#panel" storage-key=""></oq-theme-select>
+       <oq-theme-select id="b" target="closest" storage-key=""></oq-theme-select></div>`,
+      `<div id="panel" data-theme="dark"></div>`,
+    );
+    const a = q<HTMLSelectElement>(root, "#a select");
+    expect([...a.options].map((o) => o.value)).toContain("midnight");
+    a.value = "paper";
+    a.dispatchEvent(new Event("change"));
+    expect(q(root, "#panel").dataset.theme).toBe("paper");
+    expect((document.getElementById("panel") as HTMLElement).dataset.theme).toBe("dark");
+    const b = q<HTMLSelectElement>(root, "#b select");
+    b.value = "slate";
+    b.dispatchEvent(new Event("change"));
+    expect(q(root, "#panel").dataset.theme).toBe("slate");
+  });
+
+  it("a sortable table sorts inside the root", async () => {
+    const root = await shadow(`<oq-sortable-table><table class="oq-table"><thead><tr>
+      <th aria-sort="none" data-key="n">N</th></tr></thead><tbody><tr><td>30</td></tr><tr><td>4</td></tr><tr><td>200</td></tr></tbody></table></oq-sortable-table>`);
+    q(root, "th").click();
+    expect([...root.querySelectorAll("tbody td")].map((t) => t.textContent)).toEqual(["4", "30", "200"]);
   });
 });

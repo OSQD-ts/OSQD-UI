@@ -1,4 +1,4 @@
-import { emit, numberAttr, OqElement } from "./base";
+import { emit, numberAttr, OqElement, treeOf } from "./base";
 
 /**
  * `<oq-copy>` around a button: a click copies text to the clipboard.
@@ -31,7 +31,7 @@ export class OqCopy extends OqElement {
     if (own !== null) return own;
     const sel = this.getAttribute("target");
     if (sel) {
-      const t = this.ownerDocument.querySelector(sel);
+      const t = treeOf(this).querySelector(sel) ?? this.ownerDocument.querySelector(sel);
       if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement) return t.value;
       return t?.textContent ?? "";
     }

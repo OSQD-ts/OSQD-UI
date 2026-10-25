@@ -30,7 +30,7 @@ const AREAS = {
   Inputs: [
     "Button", "IconButton", "ButtonGroup", "Segmented", "TextField", "Select", "Checkbox", "Radio",
     "RadioGroup", "Switch", "Slider", "NumberInput", "TagInput", "Combobox", "DropZone", "FileList",
-    "FileItem", "DatePicker", "DateRangePicker", "Calendar",
+    "FileItem", "DatePicker", "DateRangePicker", "Calendar", "ConfirmButton",
   ],
   Forms: [
     "Form", "FieldShell", "ErrorSummary", "SaveBar", "MultiSelect", "ColorInput", "PasswordInput",
@@ -40,13 +40,17 @@ const AREAS = {
   "Data display": [
     "Card", "CardHeader", "CardBody", "CardFooter", "Paper", "Stat", "Chip", "Badge", "Dot",
     "StatusDot", "Avatar", "AvatarGroup", "List", "ListItem", "DescriptionList", "Accordion",
-    "AccordionItem", "Timeline", "CodeBlock", "EmptyState", "TreeView",
+    "AccordionItem", "Timeline", "CodeBlock", "EmptyState", "TreeView", "CardTools", "CardTool",
+    "SortableList", "PreviewFrame",
   ],
-  Data: ["Table", "DataTable", "TablePagination", "VirtualTable", "LogViewer", "JsonInspector", "DiffView"],
-  Charts: ["BarChart", "LineChart", "AreaChart", "DonutChart", "Heatmap", "Sparkline", "Meter", "Gauge"],
+  Data: ["Table", "DataTable", "TablePagination", "VirtualTable", "LogViewer", "JsonInspector", "DiffView", "ChipGrid"],
+  Charts: [
+    "BarChart", "LineChart", "AreaChart", "DonutChart", "Heatmap", "Sparkline", "Meter", "Gauge", "RankedBars",
+    "StackBar", "Funnel", "Histogram", "PercentileStrip",
+  ],
   Navigation: [
     "Tabs", "Breadcrumbs", "Pagination", "Stepper", "AppBar", "Nav", "NavSection", "NavItem",
-    "Toolbar", "ToolbarSeparator", "ToolbarLabel",
+    "Toolbar", "ToolbarSeparator", "ToolbarLabel", "SkipLink",
   ],
   Overlays: [
     "Dialog", "Dropdown", "Menu", "MenuItem", "MenuSeparator", "MenuLabel", "Popover", "Tooltip",

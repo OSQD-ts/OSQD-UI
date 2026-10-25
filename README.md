@@ -71,6 +71,12 @@ The components are:
 - **Other:** avatar, divider, accordion, empty state.
 - **Typography:** `oq-h1`–`oq-h5`, `oq-muted`, `oq-overline`, `oq-mono`, `oq-kbd`, `oq-pre`.
 - **Layout:** `oq-stack`, `oq-row`, `oq-grid` (`--min`), `oq-gap-*`.
+- **Dashboard data (plain HTML, no React needed):** ranked bars (`oq-bars`), 100% stacked bar (`oq-stackbar`), funnel (`oq-funnel`), histogram with a threshold (`oq-histogram`), percentile strip (`oq-percentiles`), HTML heat grid (`oq-heatgrid`, `oq-heatcell`), and a recipe for drawing line, area and bar SVG with `oq-chart__*` classes (see `preview-charts.html`).
+- **Colour classes:** `oq-fill-series-1…8`, `oq-fill-seq-0…12` (sequential ramp `--oq-seq-*`), `oq-fill-ord-1…5` (ordinal ramp `--oq-ord-*`), `oq-stroke-series-1…8`, and `oq-w-0…100` (steps of 5) to set `--value` — so bars, cells and markers need no `style` attribute.
+- **Table extras:** expandable detail rows (`oq-table__expander` + `tr.oq-table__detail`), group header rows (`tr.oq-table__group`), row accent by intent (`tr.oq-row-accent`).
+- **Dashboard pieces:** hashed-hue tags (`oq-hue-0…11`), proven / suspected chips (`oq-chip--proven`, `oq-chip--suspected`), skip link (`oq-skip-link`), two-click confirm (`.oq-btn[data-armed="true"]`), sortable list (`oq-sortable`), chip grid for long lists (`oq-chipgrid`), iframe preview (`oq-frame`), value flash (`oq-flash`), stale data (`[data-stale="true"]`, `oq-stale-mark`), card fold and pin tools (`oq-card__tools`, `data-folded`, `data-pinned`).
+
+**Strict CSP and shadow DOM.** Every component can be written without a `style` attribute (variants are classes or `data-*`; geometry is `--value`, set by a class or from script with `el.style.setProperty`). The tokens are declared on `:root` and on `:host` (with `:host([data-theme=…])` for each theme), so the same stylesheet, adopted into a shadow root, themes it from the host element's `data-theme`. A forced-colours pass keeps focus rings, selection and data marks visible in Windows high-contrast mode.
 
 ## React
 
@@ -125,6 +131,8 @@ The exported components are:
 - **Big data:** `VirtualTable` (100k+ rows, resize, hide, inline edit, CSV), `LogViewer`, `JsonInspector`, `DiffView`.
 - **Forms:** `useForm`, `Form`, `ErrorSummary`, `SaveBar`, `validators` (used as `validators.port()`, `validators.cidr()` …), `MultiSelect`, `ColorInput`, `PasswordInput`, `OtpInput`, `CronInput`, `KeyValueEditor`, `IpInput`, `CidrInput`, `QueryBuilder` (text ⇄ chips ⇄ a JQL query via `toJql`), `Wizard`, `ConfirmProvider` + `useConfirm()`.
 - **Page layout:** `SplitPane`, `CollapsibleShell` (rail and phone drawer), `PageHeader`, `DetailLayout`, `ContextMenu`, `ShortcutsProvider` + `ShortcutsOverlay`, `NotificationCenter`, `SkeletonTable` / `Card` / `List` / `Text`, `ErrorPage`, `DensityProvider`.
+- **Dashboard data:** `RankedBars`, `StackBar`, `Funnel`, `Histogram`, `PercentileStrip`; `DataTable` takes `renderDetail` (expandable rows), `groupBy` / `renderGroup` (group header rows) and `rowAccent`.
+- **Dashboard pieces:** `ConfirmButton` (two clicks instead of a dialog), `SortableList`, `ChipGrid`, `PreviewFrame`, `CardTools` / `CardTool`, `SkipLink`, `Chip` with `hue` and `evidence`, `hueIndex(text)`, `useFlash(value)`.
 - **Helpers:** `formatBytes`, `meterColor` (the intent a value earns from `low` / `high` / `optimum`, as on `<meter>`), `sparklinePoints`, `scoreCommand`.
 - **Icons:** `Icon` (all 128) and `Illustration`.
 
