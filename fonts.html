@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en" class="oq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSQD UI Fonts</title>
+<link rel="stylesheet" href="styles/index.css">
+<style>
+  /* Specimen layout only; nothing here is part of the kit. */
+  html, body { margin: 0; }
+  .ft-main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 64px; display: flex; flex-direction: column; gap: 40px; font-family: var(--oq-font-sans); }
+  .ft-section { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .ft-lede { max-width: 760px; }
+  .ft-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+  .ft-card { display: flex; flex-direction: column; gap: 8px; padding: 16px; text-align: left; font: inherit; font-family: var(--oq-font-sans); color: var(--oq-text); cursor: pointer; min-width: 0; }
+  .ft-card[aria-pressed="true"] { outline: 2px solid var(--oq-focus); outline-offset: 2px; }
+  .ft-card__name { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .ft-card__sample { font-size: 28px; line-height: 1.15; overflow-wrap: anywhere; }
+  .ft-card__mono { font-family: var(--oq-font-mono); font-size: 14px; color: var(--oq-text-muted); overflow-wrap: anywhere; }
+  .ft-code { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .ft-confuse { display: grid; gap: 8px; }
+  .ft-confuse > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 24px; padding: 12px 16px; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-md); background: var(--oq-surface); font-family: var(--oq-font-sans); }
+  .ft-confuse .oq-overline { width: 48px; }
+  .ft-big { font-size: 32px; line-height: 1.2; }
+  .ft-mono { font-family: var(--oq-font-mono); }
+  .ft-ramp { display: flex; flex-direction: column; gap: 6px; font-size: 22px; }
+  .ft-ramp > div { display: flex; align-items: baseline; gap: 12px; overflow-wrap: anywhere; min-width: 0; }
+  .ft-tag { flex: none; width: 44px; font-family: var(--oq-font-mono); font-size: var(--oq-text-xs); font-weight: 400; color: var(--oq-text-faint); }
+  .ft-waterfall { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .ft-wf { display: flex; align-items: baseline; gap: 12px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ft-chars { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 6px; }
+  .ft-char { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px 6px; border: 1px solid var(--oq-border); border-radius: var(--oq-radius-sm); background: var(--oq-surface); }
+  .ft-char__glyph { font-size: 30px; line-height: 1.1; }
+  .ft-chars--mono .ft-char__glyph { font-family: var(--oq-font-mono); }
+  .ft-char__code { font-family: var(--oq-font-mono); font-size: 10px; color: var(--oq-text-faint); }
+  .ft-ui { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 12px; align-items: start; }
+  .ft-log { grid-column: 1 / -1; font-size: 13px; }
+  .ft-paras { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr)); gap: 16px 32px; }
+  .ft-paras p { margin: 0; font-size: 14px; line-height: 1.55; }
+  .ft-paras p + p { font-size: 16px; }
+  @media (max-width: 640px) {
+    .ft-big { font-size: 24px; }
+    .ft-ramp { font-size: 18px; }
+  }
+</style>
+</head>
+<body class="oq">
+<a class="oq-skip-link" href="#ft-main">Skip to content</a>
+<header class="oq-appbar oq-appbar--sticky pv-appbar">
+  <a class="oq-appbar__brand" href="preview.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="none" stroke="var(--oq-primary)" stroke-width="2"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="var(--oq-warning)"/></svg>
+    OSQD&nbsp;UI <span class="oq-chip oq-sm oq-neutral">0.6.0</span>
+  </a>
+  <nav class="pv-galleries" aria-label="Galleries">
+    <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview.html">Core</a>
+    <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-charts.html">Charts</a>
+    <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-data.html">Data</a>
+    <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-forms.html">Forms</a>
+    <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="preview-layout.html">Layout</a>
+    <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="elements.html">Elements</a>
+    <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="icons.html">Icons</a>
+    <a class="oq-btn oq-btn--soft oq-neutral oq-sm" href="fonts.html" aria-current="page">Fonts</a>
+    <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="theme-builder.html">Theme builder</a>
+  </nav>
+  <oq-dropdown class="pv-galleries-menu">
+    <details class="oq-dropdown">
+      <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Fonts <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <nav class="oq-menu" role="menu" aria-label="Galleries">
+        <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+        <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+        <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+        <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+        <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+        <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+        <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+        <a class="oq-menu__item" role="menuitem" href="fonts.html" aria-current="page">Fonts</a>
+        <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+      </nav>
+    </details>
+  </oq-dropdown>
+  <oq-dropdown class="pv-samples-menu">
+    <details class="oq-dropdown">
+      <summary class="oq-btn oq-btn--ghost oq-neutral oq-sm">Samples <svg class="oq-icon oq-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <nav class="oq-menu" role="menu" aria-label="Sample sites">
+        <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+        <div class="oq-menu__sep" role="separator"></div>
+        <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+      </nav>
+    </details>
+  </oq-dropdown>
+  <div class="oq-spacer"></div>
+  <div class="pv-appbar-tools">
+      <div class="oq-segmented" role="group" aria-label="Family" id="family">
+        <button aria-pressed="true" data-font-set="sans">Sans</button>
+        <button aria-pressed="false" data-font-set="tech">Tech</button>
+        <button aria-pressed="false" data-font-set="clear">Clear</button>
+        <button aria-pressed="false" data-font-set="system">System</button>
+      </div>
+    </div>
+    <oq-theme-select storage-key="oq-preview-theme" default="dark">
+    <select class="oq-select oq-sm" id="theme-switch" aria-label="Theme" style="width: 132px">
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
+      <option value="graphite">Graphite</option>
+      <option value="midnight">Midnight</option>
+      <option value="contrast">Contrast</option>
+      <option value="paper">Paper</option>
+      <option value="slate">Slate</option>
+      <option value="auto">Auto (system)</option>
+    </select>
+  </oq-theme-select>
+  <oq-dropdown class="pv-site-menu">
+    <details class="oq-dropdown oq-dropdown--end">
+      <summary class="oq-btn oq-btn--ghost oq-neutral oq-btn--icon" aria-label="Menu"><svg class="oq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+      <nav class="oq-menu" aria-label="Galleries and samples">
+        <div class="oq-menu__label oq-overline">Galleries</div>
+        <a class="oq-menu__item" role="menuitem" href="preview.html">Core</a>
+        <a class="oq-menu__item" role="menuitem" href="preview-charts.html">Charts</a>
+        <a class="oq-menu__item" role="menuitem" href="preview-data.html">Data</a>
+        <a class="oq-menu__item" role="menuitem" href="preview-forms.html">Forms</a>
+        <a class="oq-menu__item" role="menuitem" href="preview-layout.html">Layout</a>
+        <a class="oq-menu__item" role="menuitem" href="elements.html">Elements</a>
+        <a class="oq-menu__item" role="menuitem" href="icons.html">Icons</a>
+        <a class="oq-menu__item" role="menuitem" href="fonts.html" aria-current="page">Fonts</a>
+        <a class="oq-menu__item" role="menuitem" href="theme-builder.html">Theme builder</a>
+        <div class="oq-menu__sep" role="separator"></div>
+        <div class="oq-menu__label oq-overline">Samples</div>
+        <a class="oq-menu__item" role="menuitem" href="examples/index.html">All samples</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/dashboard.html">Dashboard</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/logs.html">Log explorer</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/admin.html">Admin (CRUD)</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/settings.html">Settings</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/tickets.html">Tickets</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/login.html">Sign in</a>
+        <a class="oq-menu__item" role="menuitem" href="examples/docs-page.html">Docs page</a>
+      </nav>
+    </details>
+  </oq-dropdown>
+  <style data-pv-appbar>
+    /* Gallery app bar (the same on every gallery page). */
+    .pv-appbar { gap: 8px; min-width: 0; }
+    .pv-appbar .oq-appbar__brand { flex: none; }
+    .pv-galleries { display: flex; flex: none; gap: 2px; }
+    .pv-appbar > * { white-space: nowrap; }
+    .pv-galleries-menu, .pv-site-menu { display: none; }
+    .pv-appbar .oq-dropdown > summary { gap: 4px; }
+    .pv-appbar .oq-menu { min-width: 200px; }
+    .pv-appbar-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .pv-appbar .oq-input-group { flex: 0 1 240px; min-width: 0; width: auto !important; }
+    @media (max-width: 1359.98px) { .pv-galleries { display: none; } .pv-galleries-menu { display: inline-block; } }
+    /* Phones: brand, theme and one menu; the page's own tools move to a second row that scrolls. */
+    @media (max-width: 720px) {
+      .pv-appbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 4px 8px; row-gap: 0; gap: 4px; }
+      .pv-appbar .oq-appbar__brand .oq-chip, .pv-appbar .pv-hide-sm, .pv-galleries-menu, .pv-samples-menu { display: none; }
+      .pv-site-menu { display: inline-block; }
+      .pv-appbar #theme-switch { width: 108px !important; }
+      .pv-appbar-tools { order: 10; flex: 1 0 100%; padding: 4px 0 8px; overflow-x: auto; scrollbar-width: none; }
+      .pv-appbar-tools .oq-input-group { flex: 1 1 auto; }
+      .pv-site-menu .oq-menu { position: fixed; top: 52px; left: 8px; right: 8px; max-width: none; max-height: calc(100dvh - 64px); }
+    }
+  </style>
+  <script src="assets/osqd-ui-elements.js" defer></script>
+</header>
+<main class="ft-main" id="ft-main" data-font="sans">
+  <section class="ft-section" id="families">
+    <div class="oq-overline">Typefaces</div>
+    <h1 class="oq-h2">OSQD fonts</h1>
+    <p class="oq-muted ft-lede">Three families drawn for the kit, each a sans and a monospaced companion in four weights. Utilitarian first: tall x-height, tabular figures, open counters and clear joins at 12–14 px, so tables, logs and dense forms stay readable. Licensed under the SIL Open Font License 1.1.</p>
+    <div class="ft-cards">
+      <button class="oq-card ft-card" data-font="sans" data-pick="sans" aria-pressed="true">
+        <span class="ft-card__name">OSQD Sans <span class="oq-chip oq-sm oq-neutral">default</span></span>
+        <span class="ft-card__sample">Hamburgefonstiv 0123456789</span>
+        <span class="ft-card__mono">const limit = 0x1F; // Il1| O0o</span>
+        <span class="oq-small oq-muted">Neutral and dense. The kit's default text face.</span>
+      </button>
+      <button class="oq-card ft-card" data-font="tech" data-pick="tech" aria-pressed="false">
+        <span class="ft-card__name">OSQD Tech</span>
+        <span class="ft-card__sample">Hamburgefonstiv 0123456789</span>
+        <span class="ft-card__mono">const limit = 0x1F; // Il1| O0o</span>
+        <span class="oq-small oq-muted">Squared curves and level cuts. Reads like instrumentation.</span>
+      </button>
+      <button class="oq-card ft-card" data-font="clear" data-pick="clear" aria-pressed="false">
+        <span class="ft-card__name">OSQD Clear</span>
+        <span class="ft-card__sample">Hamburgefonstiv 0123456789</span>
+        <span class="ft-card__mono">const limit = 0x1F; // Il1| O0o</span>
+        <span class="oq-small oq-muted">Open shapes and distinct I l 1 | and O 0. For legibility first.</span>
+      </button>
+    </div>
+<pre class="oq-pre ft-code">&lt;html class="oq" data-font="clear"&gt;   &lt;!-- tech | clear | sans | system --&gt;
+
+font-family: var(--oq-font-sans);   /* OSQD Sans, OSQD Tech or OSQD Clear */
+font-family: var(--oq-font-mono);   /* the matching mono */</pre>
+  </section>
+
+  <section class="ft-section" id="confusables">
+    <div class="oq-overline">Look-alikes</div>
+    <h2 class="oq-h3">Characters that must not be confused</h2>
+    <div class="ft-confuse">
+      <div data-font="sans"><span class="oq-overline">Sans</span><span class="ft-big">Il1| O0o rn m cl d</span><span class="ft-big ft-mono">Il1| O0o rn m cl d</span></div>
+      <div data-font="tech"><span class="oq-overline">Tech</span><span class="ft-big">Il1| O0o rn m cl d</span><span class="ft-big ft-mono">Il1| O0o rn m cl d</span></div>
+      <div data-font="clear"><span class="oq-overline">Clear</span><span class="ft-big">Il1| O0o rn m cl d</span><span class="ft-big ft-mono">Il1| O0o rn m cl d</span></div>
+    </div>
+  </section>
+
+  <section class="ft-section" id="weights">
+    <div class="oq-overline">Weights</div>
+    <h2 class="oq-h3">Regular, Medium, SemiBold, Bold</h2>
+    <div class="ft-ramp">
+      <div style="font-weight: 400"><span class="ft-tag">400</span>Request blocked after 3 attempts</div>
+      <div style="font-weight: 500"><span class="ft-tag">500</span>Request blocked after 3 attempts</div>
+      <div style="font-weight: 600"><span class="ft-tag">600</span>Request blocked after 3 attempts</div>
+      <div style="font-weight: 700"><span class="ft-tag">700</span>Request blocked after 3 attempts</div>
+      <div class="ft-mono" style="font-weight: 400"><span class="ft-tag">400</span>GET /api/v1/nodes 200 41ms</div>
+      <div class="ft-mono" style="font-weight: 700"><span class="ft-tag">700</span>GET /api/v1/nodes 200 41ms</div>
+    </div>
+  </section>
+
+  <section class="ft-section" id="sizes">
+    <div class="oq-overline">Sizes</div>
+    <h2 class="oq-h3">From table text to headings</h2>
+    <div class="ft-waterfall" id="waterfall"></div>
+  </section>
+
+  <section class="ft-section" id="charset">
+    <div class="oq-overline">Character set</div>
+    <h2 class="oq-h3">Every character, Polish included</h2>
+    <div class="oq-row oq-wrap">
+      <div class="oq-segmented" role="group" aria-label="Face" id="face">
+        <button aria-pressed="true" data-face="sans">Sans</button>
+        <button aria-pressed="false" data-face="mono">Mono</button>
+      </div>
+      <span class="oq-small oq-muted" id="charcount"></span>
+    </div>
+    <div class="ft-chars" id="chars"></div>
+  </section>
+
+  <section class="ft-section" id="ui">
+    <div class="oq-overline">In use</div>
+    <h2 class="oq-h3">The faces inside the kit</h2>
+    <div class="ft-ui">
+      <div class="oq-card">
+        <div class="oq-card__header"><h3 class="oq-card__title">Edge nodes</h3><span class="oq-chip oq-sm oq-success">6 healthy</span></div>
+        <div class="oq-table-wrap" style="border: 0; border-radius: 0">
+          <table class="oq-table oq-table--dense">
+            <thead><tr><th>Node</th><th class="oq-num">Req/s</th><th class="oq-num">p95</th><th class="oq-num">Errors</th></tr></thead>
+            <tbody>
+              <tr><td class="oq-mono">fra-01</td><td class="oq-num">2,310</td><td class="oq-num">41 ms</td><td class="oq-num">0</td></tr>
+              <tr><td class="oq-mono">fra-02</td><td class="oq-num">1,987</td><td class="oq-num">44 ms</td><td class="oq-num">2</td></tr>
+              <tr><td class="oq-mono">dub-01</td><td class="oq-num">1,111</td><td class="oq-num">58 ms</td><td class="oq-num">11</td></tr>
+              <tr><td class="oq-mono">iad-01</td><td class="oq-num">3,020</td><td class="oq-num">63 ms</td><td class="oq-num">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="oq-card">
+        <div class="oq-card__header"><h3 class="oq-card__title">Rate limit</h3></div>
+        <div class="oq-card__body oq-stack">
+          <label class="oq-field"><span class="oq-label">Requests per minute</span><input class="oq-input" value="120" inputmode="numeric"></label>
+          <label class="oq-field"><span class="oq-label">Trusted network</span><input class="oq-input oq-input--mono" value="10.0.0.0/8"></label>
+          <div class="oq-row"><button class="oq-btn">Save changes</button><button class="oq-btn oq-btn--ghost oq-neutral">Cancel</button></div>
+        </div>
+      </div>
+<pre class="oq-pre ft-log">2026-10-25 11:02:14  info   reload    3 keys changed
+2026-10-25 11:04:51  warn   ratelim   /api/login 30/60s reached
+2026-10-25 11:05:02  error  store     ECONNREFUSED 10.0.0.4:6379
+2026-10-25 11:05:09  info   detector  tor-exit matched 185.220.101.7</pre>
+    </div>
+  </section>
+
+  <section class="ft-section" id="text">
+    <div class="oq-overline">Running text</div>
+    <h2 class="oq-h3">English and Polish at 14 and 16 px</h2>
+    <div class="ft-paras">
+      <p>Every request is scored by the detectors before the policy decides what to do with it. A score above the threshold blocks; a score between the challenge line and the threshold asks the client to prove itself first. Nothing is blocked on suspicion alone, and every decision can be explained.</p>
+      <p lang="pl">Każde żądanie najpierw oceniają detektory, a dopiero potem polityka decyduje, co z nim zrobić. Wynik powyżej progu blokuje; wynik między linią wyzwania a progiem prosi klienta o potwierdzenie. Nic nie jest blokowane wyłącznie na podstawie podejrzeń, a każdą decyzję można wyjaśnić. Zażółć gęślą jaźń.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const main = $("#ft-main");
+  const key = "oq-preview-font";
+  const setFont = (f) => {
+    main.dataset.font = f;
+    $$("#family [data-font-set]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.fontSet === f)));
+    $$("[data-pick]").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.pick === f)));
+    try { localStorage.setItem(key, f); } catch {}
+  };
+  $("#family").addEventListener("click", (e) => { const b = e.target.closest("[data-font-set]"); if (b) setFont(b.dataset.fontSet); });
+  $$("[data-pick]").forEach((c) => c.addEventListener("click", () => setFont(c.dataset.pick)));
+  let saved = "sans";
+  try { saved = localStorage.getItem(key) || "sans"; } catch {}
+  setFont(saved);
+
+  const sizes = [12, 14, 16, 20, 24, 32, 48, 72];
+  $("#waterfall").replaceChildren(...sizes.map((px) => {
+    const row = document.createElement("div");
+    row.className = "ft-wf";
+    const tag = document.createElement("span");
+    tag.className = "ft-tag";
+    tag.textContent = `${px}px`;
+    const text = document.createElement("span");
+    text.textContent = "Detectors 0123456789 Zażółć";
+    text.style.fontSize = `${px}px`;
+    row.append(tag, text);
+    return row;
+  }));
+
+  const chars = [
+    ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ", ..."abcdefghijklmnopqrstuvwxyz", ..."0123456789",
+    ...".,:;!?'\"`-_()[]{}/\\|@#$%^&*+=<>~", ..."ąćęłńóśźżĄĆĘŁŃÓŚŹŻ", ..."–—‘’“”„…•·°±×÷€←→↑↓✓",
+  ];
+  const grid = $("#chars");
+  grid.replaceChildren(...chars.map((ch) => {
+    const cell = document.createElement("div");
+    cell.className = "ft-char";
+    const g = document.createElement("span");
+    g.className = "ft-char__glyph";
+    g.textContent = ch;
+    const code = document.createElement("span");
+    code.className = "ft-char__code";
+    code.textContent = `U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")}`;
+    cell.append(g, code);
+    return cell;
+  }));
+  $("#charcount").textContent = `${chars.length} characters plus the space and no-break space`;
+  $("#face").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-face]"); if (!b) return;
+    $$("#face button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    grid.classList.toggle("ft-chars--mono", b.dataset.face === "mono");
+  });
+})();
+</script>
+</body>
+</html>

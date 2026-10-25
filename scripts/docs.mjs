@@ -675,6 +675,7 @@ ${THEME_BOOT}
       <a class="oq-btn oq-btn--${current === "elements" ? "soft" : "ghost"} oq-neutral oq-sm" href="${up}elements.html"${current === "elements" ? ' aria-current="page"' : ""}>Web Components</a>
       <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="${up}../../preview.html">Galleries</a>
       <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="${up}../../icons.html">Icons</a>
+      <a class="oq-btn oq-btn--ghost oq-neutral oq-sm" href="${up}../../fonts.html">Fonts</a>
     </nav>
     <div class="oq-spacer"></div>
     <form class="oq-input-group docs-bar-search" action="${up}index.html" method="get" role="search">
@@ -696,6 +697,7 @@ ${THEME_BOOT}
       <a class="oq-nav__item" href="${up}elements.html"${current === "elements" ? ' aria-current="page"' : ""}>Web Components</a>
       <a class="oq-nav__item" href="${up}../../preview.html">Galleries</a>
       <a class="oq-nav__item" href="${up}../../icons.html">Icons</a>
+      <a class="oq-nav__item" href="${up}../../fonts.html">Fonts</a>
       <label class="docs-drawer-theme oq-field" style="padding: 8px 10px 4px"><span class="oq-label">Theme</span><oq-theme-select storage-key="oq-preview-theme" aria-label="Theme"></oq-theme-select></label>
     </nav>
     <nav class="oq-nav" aria-label="Components">
@@ -895,6 +897,12 @@ export function App() {
   ],
   ["Density", "html", `<div data-density="compact">…</div>   <!-- compact · comfortable -->`],
   [
+    "Fonts",
+    "html",
+    `<!-- OSQD Sans and OSQD Mono by default; switch any subtree to another family -->
+<html class="oq" data-font="clear">   <!-- sans · tech · clear · system -->`,
+  ],
+  [
     "Icons",
     "html",
     `<svg class="oq-icon"><use href="node_modules/@osqd/ui/assets/icons.svg#oq-i-search"/></svg>
@@ -927,7 +935,7 @@ ${list
     ([title, lang, code]) => `<div class="oq-stack oq-gap-2"><h3 class="oq-h5">${esc(title)}</h3>${codeBlock(lang, code)}</div>`,
   ).join("\n");
   const links = [
-    ["Galleries", [["Core", "preview.html"], ["Charts", "preview-charts.html"], ["Data", "preview-data.html"], ["Forms", "preview-forms.html"], ["Layout", "preview-layout.html"], ["Elements", "elements.html"], ["Icons", "icons.html"]]],
+    ["Galleries", [["Core", "preview.html"], ["Charts", "preview-charts.html"], ["Data", "preview-data.html"], ["Forms", "preview-forms.html"], ["Layout", "preview-layout.html"], ["Elements", "elements.html"], ["Icons", "icons.html"], ["Fonts", "fonts.html"]]],
     ["Sample sites", [["All samples", "examples/index.html"], ["Dashboard", "examples/dashboard.html"], ["Logs", "examples/logs.html"], ["Admin", "examples/admin.html"], ["Settings", "examples/settings.html"], ["Tickets", "examples/tickets.html"], ["Login", "examples/login.html"], ["Docs page", "examples/docs-page.html"]]],
     ["Tools", [["Theme builder", "theme-builder.html"], ["Error pages", "pages/404.html"]]],
   ]

@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.6.0 — 2026-10-25
+
+- **Icons:** 128 → 627, all drawn for the kit in the same 24 × 24, 1.75-stroke style.
+  - New areas: security and bot defence (bot, honeypot, trap, fingerprint, firewall, WAF, shield variants, captcha, rate limit, threat level, IP address, CIDR, onion, proxy, VPN); infrastructure (container, cluster, load balancer, router, network switch, rack, GPU, memory, cloud upload/download); data and development (chart area/scatter/funnel/histogram, heat map, flow, trace, logs, diff, braces, function, regex, git merge/pull request/fork, webhook, API, pipeline, queue).
+  - More everyday icons: arrows and corners, clipboard and copy-check, sort and filter variants, toggles, alarm, stopwatch, hourglass, text formatting, layout panes, media and devices, batteries, commerce, transport and weather.
+  - Second round (+305): arrow and chevron variants, square/circle/octagon status marks, seals (`badge-*`), calendar and clock variants, file and folder variants, database and table operations, cloud and server states, signal levels, security extras (vault, scan variants, crawler, cookie), people and messages (id-card, handshake, phone, mail and message variants), devices and media controls, commerce (landmark, coins, ticket, trophy), weather and nature.
+  - Two new categories, **Text editing** (alignment, headings, quote, sub/superscript, highlighter, eraser…) and **Shapes & math** (basic shapes, sigma, infinity, pi, calculator…).
+  - Grouped into 14 categories: `iconCategories`, `iconCategoryNames` and `iconCategoryLabels` are exported, and `icons.html` filters by category.
+- **Illustrations:** 8 → 61, in seven categories (empty states, errors and limits, security, account, data & reports, onboarding, activity). New: `start-search`, `no-notifications`, `no-logs`, `all-clear`, `connection-lost`, `timeout`, `rate-limited`, `maintenance`, `coming-soon`, `access-denied`, `bot-blocked`, `honeypot`, `two-factor`, `api-keys`, `welcome`, `setup-complete`, `launch`, `upload`, `data-import`, `syncing`. `illustrationCategories` and `illustrationCategoryLabels` are exported, and the gallery groups them. Round two: `empty-folder`, `empty-table`, `empty-cart`, `trash-empty`, `no-location`, `archive-empty`, `audit-log-empty`, `unsupported-browser`, `quota-exceeded`, `payment-failed`, `session-expired`, `verify-email`, `email-sent`, `password-reset`, `account-locked`, `no-team`, `invite-sent`, `privacy`, `export-ready`, `report-ready`, `backup-complete`, `restore-data`, `migration`, `new-feature`, `update-available`, `feedback-thanks`, `contact-support`, `integration-connected`, `scheduled`, `queue-waiting`, `processing`, `incident-resolved`, `alert-firing`.
+
+- **Fonts:** three original type families drawn for the kit, each a sans and a monospaced companion in Regular, Medium, SemiBold and Bold (24 WOFF2 files, about 6.5 KB each, SIL Open Font License 1.1).
+  - **OSQD Sans / OSQD Mono** — neutral and dense; the new default (`--oq-font-sans`, `--oq-font-mono`).
+  - **OSQD Tech / OSQD Tech Mono** — squared curves and level cuts, engineered.
+  - **OSQD Clear / OSQD Clear Mono** — open shapes, serifed I, tailed l, footed 1, dotted (sans) or slashed (mono) zero, so I l 1 | and O 0 never meet.
+  - Latin with Polish, tabular figures in every sans, kerning in the proportional faces, one 600-unit advance in the monos.
+  - `data-font="tech|clear|sans|system"` switches any subtree; `fonts.html` is the specimen. The default stacks fall back to `system-ui` and `ui-monospace`, so a page without the font files — or a CSP that refuses them — keeps working.
+  - Built from parameters in `type/` (`npm run fonts`, checked by `npm run fonts:check`); `styles/fonts.css` is generated with them.
+- **Galleries:** every gallery's app bar links the new Fonts page, and its version chip follows the CHANGELOG (a test holds them to it).
+
 ## 0.5.0 — 2026-10-25
 
 Pieces the OSQD dashboards need, all usable as plain HTML and CSS under a strict CSP and inside a shadow root.

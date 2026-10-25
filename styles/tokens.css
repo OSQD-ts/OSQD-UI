@@ -31,8 +31,8 @@
   --oq-focus: #78dce8;
   --oq-selection: rgba(120, 220, 232, 0.16);
   --oq-overlay: rgba(25, 24, 26, 0.72);
-  --oq-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --oq-font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --oq-font-sans: "OSQD Sans", system-ui, sans-serif;
+  --oq-font-mono: "OSQD Mono", ui-monospace, monospace;
   --oq-line-height: 1.45;
   --oq-text-xs: 11px;
   --oq-text-sm: 13px;
@@ -83,8 +83,8 @@
   --oq-focus: #0e6f7c;
   --oq-selection: rgba(14, 111, 124, 0.12);
   --oq-overlay: rgba(45, 42, 46, 0.45);
-  --oq-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --oq-font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --oq-font-sans: "OSQD Sans", system-ui, sans-serif;
+  --oq-font-mono: "OSQD Mono", ui-monospace, monospace;
   --oq-line-height: 1.45;
   --oq-text-xs: 11px;
   --oq-text-sm: 13px;
@@ -137,8 +137,8 @@
     --oq-focus: #0e6f7c;
     --oq-selection: rgba(14, 111, 124, 0.12);
     --oq-overlay: rgba(45, 42, 46, 0.45);
-    --oq-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-    --oq-font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --oq-font-sans: "OSQD Sans", system-ui, sans-serif;
+    --oq-font-mono: "OSQD Mono", ui-monospace, monospace;
     --oq-line-height: 1.45;
     --oq-text-xs: 11px;
     --oq-text-sm: 13px;
@@ -191,8 +191,8 @@
   --oq-focus: #6cb6ff;
   --oq-selection: rgba(108, 182, 255, 0.16);
   --oq-overlay: rgba(10, 12, 16, 0.72);
-  --oq-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --oq-font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --oq-font-sans: "OSQD Sans", system-ui, sans-serif;
+  --oq-font-mono: "OSQD Mono", ui-monospace, monospace;
   --oq-line-height: 1.45;
   --oq-text-xs: 11px;
   --oq-text-sm: 13px;
@@ -243,8 +243,8 @@
   --oq-focus: #82a8ff;
   --oq-selection: rgba(130, 168, 255, 0.18);
   --oq-overlay: rgba(5, 8, 16, 0.75);
-  --oq-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --oq-font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --oq-font-sans: "OSQD Sans", system-ui, sans-serif;
+  --oq-font-mono: "OSQD Mono", ui-monospace, monospace;
   --oq-line-height: 1.45;
   --oq-text-xs: 11px;
   --oq-text-sm: 13px;
@@ -295,8 +295,8 @@
   --oq-focus: #ffe04d;
   --oq-selection: rgba(92, 225, 255, 0.25);
   --oq-overlay: rgba(0, 0, 0, 0.85);
-  --oq-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --oq-font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --oq-font-sans: "OSQD Sans", system-ui, sans-serif;
+  --oq-font-mono: "OSQD Mono", ui-monospace, monospace;
   --oq-line-height: 1.45;
   --oq-text-xs: 11px;
   --oq-text-sm: 13px;
@@ -347,8 +347,8 @@
   --oq-focus: #9a4a0e;
   --oq-selection: rgba(154, 74, 14, 0.14);
   --oq-overlay: rgba(43, 38, 32, 0.45);
-  --oq-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --oq-font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --oq-font-sans: "OSQD Sans", system-ui, sans-serif;
+  --oq-font-mono: "OSQD Mono", ui-monospace, monospace;
   --oq-line-height: 1.45;
   --oq-text-xs: 11px;
   --oq-text-sm: 13px;
@@ -399,8 +399,8 @@
   --oq-focus: #2457c5;
   --oq-selection: rgba(36, 87, 197, 0.12);
   --oq-overlay: rgba(28, 36, 48, 0.45);
-  --oq-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --oq-font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --oq-font-sans: "OSQD Sans", system-ui, sans-serif;
+  --oq-font-mono: "OSQD Mono", ui-monospace, monospace;
   --oq-line-height: 1.45;
   --oq-text-xs: 11px;
   --oq-text-sm: 13px;

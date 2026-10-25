@@ -79,11 +79,11 @@
     "css": "node scripts/build-css.mjs",
     "docs": "node scripts/docs.mjs",
     "docs:check": "tsc --noEmit --strict --exactOptionalPropertyTypes --noUncheckedIndexedAccess --module esnext --moduleResolution bundler --target es2022 --jsx react-jsx --lib es2022,dom,dom.iterable --skipLibCheck --types react,react-dom scripts/docs-examples.tsx && node scripts/docs.mjs --check",
-    "build": "npm run tokens && npm run icons && npm run elements && tsup && tsc -p tsconfig.json --emitDeclarationOnly && npm run css",
+    "build": "npm run tokens && npm run fonts && npm run icons && npm run elements && tsup && tsc -p tsconfig.json --emitDeclarationOnly && npm run css",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "biome lint .",
     "test": "vitest run",
-    "check": "npm run tokens:check && npm run icons:check && npm run elements:check && npm run docs:check && npm run samples:check && npm run typecheck && npm run typecheck:types && npm run lint && npm test",
+    "check": "npm run tokens:check && npm run fonts:check && npm run icons:check && npm run elements:check && npm run docs:check && npm run samples:check && npm run typecheck && npm run typecheck:types && npm run lint && npm test",
     "preview": "python3 -m http.server 11240",
     "typecheck:types": "tsc --noEmit --strict --jsx react-jsx --module esnext --moduleResolution bundler --target es2022 --skipLibCheck --exactOptionalPropertyTypes --noUncheckedIndexedAccess tests/types/*.tsx",
     "samples": "node examples/build.mjs",
@@ -91,7 +91,9 @@
     "audit:mobile": "node scripts/responsive-audit.mjs",
     "check:package": "npm run build && node scripts/check-package.mjs",
     "prepack": "npm run build",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "fonts": "node type/build.mjs",
+    "fonts:check": "node type/build.mjs --check"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -111,11 +113,13 @@
     "@types/react-dom": "^19.2.0",
     "esbuild": "^0.25.0",
     "happy-dom": "^21.0.4",
+    "opentype.js": "^2.0.0",
     "playwright-core": "^1.63.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "wawoff2": "^2.0.1"
   }
 }

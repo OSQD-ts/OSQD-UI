@@ -7,7 +7,7 @@ A utilitarian UI kit for the OSQD projects. It is dense, readable and made for t
   - plain CSS that works in any HTML page with no build step;
   - Web Components (`<oq-dialog>`, `<oq-tabs>`, …) in one script, for interactive pages without React;
   - React components, about 130 of them, from buttons to virtual tables, charts and forms.
-- **Assets:** 128 icons (single SVGs, a sprite and a React component) and 8 illustrations for empty and error states.
+- **Assets:** 627 icons in 14 categories (single SVGs, a sprite and a React component) and 61 illustrations for empty, error, security, account, data, onboarding and activity states.
 
 Everything below opens straight from disk, or run `npm run preview` and go to http://localhost:11240/.
 
@@ -20,6 +20,7 @@ Everything below opens straight from disk, or run `npm run preview` and go to ht
 | `preview-layout.html` | Split panes, collapsible sidebar, page header, context menu, shortcuts, notifications, skeletons, density |
 | `elements.html` | Every Web Component with copyable markup |
 | `icons.html` | Icon and illustration gallery |
+| `fonts.html` | The OSQD typefaces: families, weights, sizes, the full character set |
 | `theme-builder.html` | Make a theme: live preview, contrast checks, export as TypeScript, CSS or JSON |
 | `docs/site/index.html` | Generated reference: one page per component with props, live example and code |
 | `examples/index.html` | Sample sites |
@@ -134,13 +135,21 @@ The exported components are:
 - **Dashboard data:** `RankedBars`, `StackBar`, `Funnel`, `Histogram`, `PercentileStrip`; `DataTable` takes `renderDetail` (expandable rows), `groupBy` / `renderGroup` (group header rows) and `rowAccent`.
 - **Dashboard pieces:** `ConfirmButton` (two clicks instead of a dialog), `SortableList`, `ChipGrid`, `PreviewFrame`, `CardTools` / `CardTool`, `SkipLink`, `Chip` with `hue` and `evidence`, `hueIndex(text)`, `useFlash(value)`.
 - **Helpers:** `formatBytes`, `meterColor` (the intent a value earns from `low` / `high` / `optimum`, as on `<meter>`), `sparklinePoints`, `scoreCommand`.
-- **Icons:** `Icon` (all 128) and `Illustration`.
+- **Icons:** `Icon` (all 627) and `Illustration` (all 61), plus `iconCategories` / `illustrationCategories` to group them.
 
 The full reference, with props tables and examples for each, is generated into `docs/site/` (`npm run docs`).
 
 ## Icons and illustrations
 
-There are 128 stroke icons on a 24 × 24 grid, plus 8 spot illustrations for empty and error states. To browse them, open `icons.html`. You can search, switch the icon size, and click an icon to copy its snippet.
+There are 627 stroke icons on a 24 × 24 grid in 14 categories, plus 61 spot illustrations. To browse them, open `icons.html`. You can filter by category, search, switch the icon size, and click an icon to copy its snippet.
+
+- **Icon categories:** navigation, actions, status and time, security (bots, shields, keys, threats, network identities), people and messages, files and data (charts included), development, infrastructure, layout and text, devices and media, commerce and places, weather and appearance. `iconCategories` maps each name to its category, and `iconCategoryLabels` gives the display names.
+- **Illustrations**, by category:
+  - empty states: `empty-inbox`, `no-results`, `start-search`, `no-data`, `no-notifications`, `no-logs`, `all-clear`;
+  - errors and limits: `error-404`, `server-error`, `offline`, `connection-lost`, `timeout`, `rate-limited`, `maintenance`, `coming-soon`;
+  - security: `locked`, `access-denied`, `bot-blocked`, `honeypot`, `two-factor`, `api-keys`;
+  - onboarding: `welcome`, `setup-complete`, `launch`, `success`;
+  - activity: `upload`, `data-import`, `syncing`.
 
 ```html
 <!-- Plain HTML: the sprite, one <use> per icon -->
@@ -161,6 +170,18 @@ iconSvg("search", { size: 24 })                 // the same icon as an <svg> str
 - **Colour.** To colour an icon by intent, add `.oq-text-c` plus an intent class, for example `.oq-text-c .oq-danger`.
 - **Illustrations follow the theme** when they are inlined. As an `<img>` they use the dark-theme colours.
 - **Sources.** The icons live in `src/icons/index.ts` and the illustrations in `src/illustrations/index.ts`. `npm run icons` regenerates `assets/` and the inline copy in `icons.html`, and `npm run check` fails if they are out of date.
+
+## Fonts
+
+The kit ships its own typefaces, drawn for it and licensed under the SIL Open Font License 1.1 (`assets/fonts/OFL.txt`): three families, each a sans with a monospaced companion, in Regular, Medium, SemiBold and Bold.
+
+| Family | Character |
+|---|---|
+| OSQD Sans · OSQD Mono | Neutral and dense; the default |
+| OSQD Tech · OSQD Tech Mono | Squared curves and level cuts |
+| OSQD Clear · OSQD Clear Mono | Open shapes; I l 1 \| and O 0 always distinct |
+
+All of them have tabular figures and cover Latin with Polish. `styles/index.css` (and `dist/osqd-ui.css`) declares them; `data-font="tech"`, `"clear"`, `"sans"` or `"system"` on any element switches the family for that subtree. The theme's stacks end in `system-ui` and `ui-monospace`, so a page that does not load the font files still renders. A page with a strict Content Security Policy needs `font-src 'self'` for the files, or keeps the system fallback. The specimen is `fonts.html`; the fonts are built from `type/` by `npm run fonts`.
 
 ## Web Components
 

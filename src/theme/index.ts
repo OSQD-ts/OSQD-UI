@@ -72,8 +72,10 @@ export interface Theme {
 }
 
 const font = {
-  sans: '"Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif',
-  mono: '"JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace',
+  // The kit's own typefaces (styles/fonts.css), then the platform's: a page that does not load
+  // the font files — or whose CSP refuses them — still gets a sans and a mono.
+  sans: '"OSQD Sans", system-ui, sans-serif',
+  mono: '"OSQD Mono", ui-monospace, monospace',
   size: 14,
   lineHeight: 1.45,
 };

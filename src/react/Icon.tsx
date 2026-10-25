@@ -3,8 +3,17 @@ import { type IconName, iconAttrs, icons } from "../icons/index";
 import { type IllustrationName, illustrations } from "../illustrations/index";
 import { type Color, colorClass, cx } from "./cx";
 
-export { type IconName, iconNames, icons, iconSvg } from "../icons/index";
-export { type IllustrationName, illustrationNames, illustrations, illustrationSvg } from "../illustrations/index";
+export { type IconCategory, type IconName, iconCategories, iconCategoryLabels, iconCategoryNames, iconNames, icons, iconSvg } from "../icons/index";
+export {
+  type IllustrationCategory,
+  type IllustrationName,
+  illustrationCategories,
+  illustrationCategoryLabels,
+  illustrationCategoryNames,
+  illustrationNames,
+  illustrations,
+  illustrationSvg,
+} from "../illustrations/index";
 
 export interface IconComponentProps extends Omit<SVGProps<SVGSVGElement>, "color"> {
   name: IconName;

@@ -3,8 +3,14 @@ import { fileURLToPath } from "node:url";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { iconNames, icons, iconSvg } from "../src/icons/index";
-import { illustrationNames, illustrationSvg } from "../src/illustrations/index";
+import { iconCategories, iconCategoryLabels, iconCategoryNames, iconNames, icons, iconSvg } from "../src/icons/index";
+import {
+  illustrationCategories,
+  illustrationCategoryLabels,
+  illustrationCategoryNames,
+  illustrationNames,
+  illustrationSvg,
+} from "../src/illustrations/index";
 import { Icon, Illustration } from "../src/react/Icon";
 
 const ALLOWED = new Set(["path", "circle", "rect", "line", "polyline", "polygon", "ellipse"]);
@@ -12,7 +18,25 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 
 describe("icons", () => {
   it("has a useful number of icons", () => {
-    expect(iconNames.length).toBeGreaterThanOrEqual(90);
+    expect(iconNames.length).toBeGreaterThanOrEqual(600);
+  });
+
+  it("puts every icon in exactly one labelled category, and every category has icons", () => {
+    expect(Object.keys(iconCategories).sort()).toEqual([...iconNames].sort());
+    for (const n of iconNames) expect(iconCategoryNames, n).toContain(iconCategories[n]);
+    for (const c of iconCategoryNames) {
+      expect(iconCategoryLabels[c], c).toBeTruthy();
+      expect(iconNames.filter((n) => iconCategories[n] === c).length, c).toBeGreaterThanOrEqual(5);
+    }
+  });
+
+  it("draws every icon differently", () => {
+    const seen = new Map<string, string>();
+    for (const n of iconNames) {
+      const other = seen.get(icons[n]);
+      expect(other, `${n} is drawn the same as ${other}`).toBeUndefined();
+      seen.set(icons[n], n);
+    }
   });
 
   it.each(iconNames)("%s: kebab-case name, allowed elements only, no hard-coded colour", (name) => {
@@ -62,10 +86,56 @@ describe("icons", () => {
 });
 
 describe("illustrations", () => {
-  it("has the eight states", () => {
+  it("has the states the dashboards need", () => {
     expect(illustrationNames).toEqual(
-      expect.arrayContaining(["empty-inbox", "no-results", "error-404", "server-error", "offline", "success", "no-data", "locked"]),
+      expect.arrayContaining([
+        "empty-inbox",
+        "no-results",
+        "error-404",
+        "server-error",
+        "offline",
+        "success",
+        "no-data",
+        "locked",
+        "bot-blocked",
+        "honeypot",
+        "rate-limited",
+        "maintenance",
+        "welcome",
+        "setup-complete",
+        "start-search",
+        "no-notifications",
+        "no-logs",
+        "all-clear",
+        "connection-lost",
+        "timeout",
+        "upload",
+        "launch",
+        "access-denied",
+        "two-factor",
+        "api-keys",
+        "coming-soon",
+        "data-import",
+        "syncing",
+        "empty-folder",
+        "empty-table",
+        "verify-email",
+        "password-reset",
+        "session-expired",
+        "export-ready",
+        "backup-complete",
+        "incident-resolved",
+        "alert-firing",
+        "quota-exceeded",
+        "integration-connected",
+      ]),
     );
+  });
+
+  it("puts every illustration in exactly one labelled category", () => {
+    expect(Object.keys(illustrationCategories).sort()).toEqual([...illustrationNames].sort());
+    for (const n of illustrationNames) expect(illustrationCategoryNames, n).toContain(illustrationCategories[n]);
+    for (const c of illustrationCategoryNames) expect(illustrationCategoryLabels[c], c).toBeTruthy();
   });
 
   it.each(illustrationNames)("%s takes its colours from theme variables", (name) => {

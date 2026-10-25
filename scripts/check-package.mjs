@@ -34,7 +34,7 @@ const PROBES = {
 };
 
 /** Files a page links directly; each must be in the tarball and not empty. */
-const FILES = ["@osqd/ui/css", "@osqd/ui/styles/index.css", "@osqd/ui/styles/tokens.css", "@osqd/ui/assets/osqd-ui-elements.js", "@osqd/ui/assets/icons.svg"];
+const FILES = ["@osqd/ui/css", "@osqd/ui/styles/index.css", "@osqd/ui/styles/tokens.css", "@osqd/ui/styles/fonts.css", "@osqd/ui/assets/fonts/osqd-sans-400.woff2", "@osqd/ui/assets/fonts/OFL.txt", "@osqd/ui/assets/osqd-ui-elements.js", "@osqd/ui/assets/icons.svg"];
 
 try {
   const out = execFileSync("npm", ["pack", "--silent", "--ignore-scripts", "--pack-destination", scratch], { cwd: root, encoding: "utf8" });
