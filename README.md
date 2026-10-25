@@ -173,15 +173,23 @@ iconSvg("search", { size: 24 })                 // the same icon as an <svg> str
 
 ## Fonts
 
-The kit ships its own typefaces, drawn for it and licensed under the SIL Open Font License 1.1 (`assets/fonts/OFL.txt`): three families, each a sans with a monospaced companion, in Regular, Medium, SemiBold and Bold.
+The kit ships its own typefaces, drawn for it and licensed under the SIL Open Font License 1.1 (`assets/fonts/OFL.txt`): three families, each a sans with a monospaced companion, in eight weights (ExtraLight 200 to Black 900), every one with an italic.
 
 | Family | Character |
 |---|---|
-| OSQD Sans · OSQD Mono | Neutral and dense; the default |
-| OSQD Tech · OSQD Tech Mono | Squared curves and level cuts |
+| OSQD Sans · OSQD Mono · OSQD Sans Condensed | Neutral and dense; the default |
+| OSQD Tech · OSQD Tech Mono · OSQD Tech Condensed | Squared curves and level cuts |
 | OSQD Clear · OSQD Clear Mono | Open shapes; I l 1 \| and O 0 always distinct |
 
-All of them have tabular figures and cover Latin with Polish. `styles/index.css` (and `dist/osqd-ui.css`) declares them; `data-font="tech"`, `"clear"`, `"sans"` or `"system"` on any element switches the family for that subtree. The theme's stacks end in `system-ui` and `ui-monospace`, so a page that does not load the font files still renders. A page with a strict Content Security Policy needs `font-src 'self'` for the files, or keeps the system fallback. The specimen is `fonts.html`; the fonts are built from `type/` by `npm run fonts`.
+- **Weights.** 200–900. ExtraLight is for 24 px and up (it reads at 14 px, but thinly); Black is for headings and figures that must carry. Past Bold the monos' stems grow at half the pace, so m, w and the three-stem Cyrillic letters keep open counters in their fixed cells.
+- **Condensed.** Sans and Tech also come Condensed (about 83 % of the width, upright and italic, every weight), for dense tables and panels: `.oq-condensed` sets a subtree in the current family's condensed cut (Clear uses Sans Condensed), and `data-font="condensed"` or `"tech-condensed"` makes it the subtree's sans. The role is `--oq-font-condensed`.
+- **Optical sizes.** Each sans has a **Caption** cut for 12 px and below (Regular to Bold) and a **Display** cut for 32 px and up (every weight); neither has an italic, where the Text italic stands in. The kit uses them by itself: chips, badges, overlines, help text, table headers and stat labels are set in Caption, `.oq-h1` / `.oq-h2` in Display. The roles are `--oq-font-sans`, `--oq-font-mono`, `--oq-font-caption`, `--oq-font-display` and `--oq-font-condensed`.
+- **OpenType features.** Figures are tabular by default (UI first). The fonts carry `pnum` (proportional figures), `tnum`, `zero` (slashed zero), `ss01` (Clear's serifed I, tailed l and footed 1 in Sans and Tech), `case` (dashes, brackets, guillemets and colons raised for capitals), `sups`, `subs`, `numr`, `dnom` and `frac` (1/2 → ½ by context). The kit's classes switch them: `.oq-pnum`, `.oq-zero`, `.oq-frac`, `.oq-sups`, `.oq-subs`, `.oq-ss01`, `.oq-case` (on by default on `.oq-overline`); `.oq-num`, `code` and table cells stay tabular.
+- **Italics** are the upright drawings, narrowed a little and slanted 9°, with stems thickened to make up for the slant. Shapes stay the upright ones on purpose: a double-storey a and the upright Cyrillic forms read better in a UI than cursive forms.
+- **Languages.** Latin for the Western, Central and Eastern European languages, Turkish, Vietnamese, African Latin and IPA; Cyrillic (with the extended letters), Greek, Armenian, Georgian and Hebrew; and a symbols set (box drawing, blocks, shapes, arrows, technical and maths signs, super- and subscripts), as the glyph modules in `type/scripts/` cover them. `fonts.html` shows each language and anything not yet drawn.
+- **Subsets.** `styles/fonts.css` serves every face as unicode-range subsets (`assets/fonts/subsets/<face>.<latin|latin-ext|vietnamese|cyrillic|greek|armenian|georgian|hebrew|symbols>.woff2`), so a page downloads only the scripts it shows — an English page about 13 KB per face. The Text cuts carry every subset; Condensed carries the European scripts, Display and Caption Latin and Vietnamese, the monos everything but Armenian, Georgian and Hebrew — every role's font stack falls back to the Text cut for the rest. The complete font of every face, `assets/fonts/<face>.woff2`, is in the repository for offline and desktop use, not in the npm package.
+
+`styles/index.css` (and `dist/osqd-ui.css`) declares them; `data-font="tech"`, `"clear"`, `"sans"`, `"condensed"`, `"tech-condensed"` or `"system"` on any element switches every role for that subtree. The stacks end in `system-ui` and `ui-monospace`, so a page that does not load the font files still renders. A page with a strict Content Security Policy needs `font-src 'self'` for the files, or keeps the system fallback. The specimen is `fonts.html`; the fonts are built from `type/` by `npm run fonts` (in parallel worker threads; `OSQD_FONT_WORKERS` caps them, `OSQD_FONT_MODULES=latin,cyrillic` builds with only those glyph modules).
 
 ## Web Components
 

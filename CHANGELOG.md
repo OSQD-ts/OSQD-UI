@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 — 2026-10-25
+
+- **Fonts: weights, italics and optical sizes.** Every family now runs from ExtraLight (200) to Black (900), with an italic for every weight. The italics are the upright drawings narrowed 2.5 % and slanted 9°, with stems thickened by 1/cos 9°. Each sans has a Caption cut for 12 px and below (Regular to Bold) and a Display cut for 32 px and up (all weights, upright only — the Text italic stands in), as "OSQD Sans Caption", "OSQD Sans Display" and so on. The kit sets its small text in Caption and `.oq-h1`/`.oq-h2` in Display through the new `--oq-font-caption` and `--oq-font-display` variables, which `data-font` switches with the others. 164 faces in all.
+- **Fonts: Condensed.** OSQD Sans Condensed and OSQD Tech Condensed (about 83 % width, every weight, upright and italic) for dense tables: `.oq-condensed`, `data-font="condensed"` / `"tech-condensed"` and `--oq-font-condensed`.
+- **Fonts: OpenType features.** `pnum`, `tnum`, `zero`, `ss01`, `case`, `sups`, `subs`, `numr`, `dnom` and `frac` as GSUB lookups (frac by chained context), carried into every subset file with the characters they belong to; utilities `.oq-pnum`, `.oq-zero`, `.oq-frac`, `.oq-sups`, `.oq-subs`, `.oq-ss01`, `.oq-case` (automatic on `.oq-overline`). Figures stay tabular by default.
+- **Fonts: more scripts.** Armenian, Georgian and Hebrew, the extended Cyrillic and African Latin letters, IPA, and a symbols set (box drawing, blocks, shapes, arrows, technical and maths signs, super- and subscripts), each in its own subset file.
+- **Fonts: subsets.** `styles/fonts.css` serves each face as unicode-range subsets (latin, latin-ext, vietnamese, cyrillic, greek, armenian, georgian, hebrew, symbols) from `assets/fonts/subsets/`, so a page downloads only the scripts it shows; the cuts beyond Text ship only the subsets they are for and fall back to Text for the rest, which keeps the npm package under 8 MB. The complete fonts keep their paths, `assets/fonts/<face>.woff2`, in the repository (not in the package). Kerning now also applies to accented letters through their base letter. The build runs on worker threads.
+- **Fonts: fixes.** Monospaced slab serifs (i, j, l, r and Clear's I) no longer lengthen past Bold, which made the heavy monos run into their neighbours. Italic faces carry a real `post.italicAngle` and `head.macStyle`. Past Bold the t and f curls are drawn lighter than the stem (with a fillet into it) so they do not close into solid feet, the monos' stems grow at half the pace so their three-stem letters keep open counters, and Vietnamese stacked marks stay two marks at Black. A near-flat stroke is cut square instead of level (a level cut grows without limit as the stroke flattens).
+
 ## 0.6.0 — 2026-10-25
 
 - **Icons:** 128 → 627, all drawn for the kit in the same 24 × 24, 1.75-stroke style.

@@ -1,5 +1,6 @@
 Copyright 2026 The OSQD Authors.
-OSQD Sans, OSQD Mono, OSQD Tech, OSQD Tech Mono, OSQD Clear and OSQD Clear Mono.
+OSQD Sans, OSQD Mono, OSQD Tech, OSQD Tech Mono, OSQD Clear and OSQD Clear Mono,
+with their Caption and Display optical sizes.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

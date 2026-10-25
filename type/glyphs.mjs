@@ -7,6 +7,11 @@
 //   S straight, R round, D diagonal, T tight (overhanging), N none (the drawing positions itself).
 
 import { bar, bbox, disc, ellipse, mirrorX, mirrorY, orient, pointAt, polygon, rect, ring, sector, stroke, transform } from "./geom.mjs";
+import { SCRIPT_MODULES } from "./scripts/index.mjs";
+import { scriptDigit } from "./scripts/symbols.mjs";
+
+/** The stroke of a t or f curl: the stem up to Bold's, then growing at 0.4 of the stem's pace. */
+const curlStroke = (S) => (S > 130 ? 130 + (S - 130) * 0.4 : S);
 
 /** The pen a drawing works with. */
 function pen(p) {
@@ -32,6 +37,11 @@ function pen(p) {
       if (p.dot === "round") add(disc(cx - d * 0.56, cy - d * 0.56, cx + d * 0.56, cy + d * 0.56));
       else add(rect(cx - d / 2, cy - d / 2, cx + d / 2, cy + d / 2));
     },
+    /**
+     * The stem, capped at the monospaced Bold stem: what slab serifs are measured in. A heavier
+     * weight thickens a slab but must not lengthen it, or the ink outgrows the fixed advance.
+     */
+    slab: Math.min(p.S, 134),
     /** Remember the ink box so accents added afterwards do not move the glyph. */
     mark: () => {
       g.base = bbox(contours);
@@ -140,9 +150,15 @@ const LOWER = {
     // A compact hook whose end sits above the end of the crossbar, so the f spaces from its
     // crossbar like every other letter instead of from a hook hanging far to the right. The
     // hook is the top of a full circle standing on the stem, so it keeps its shape at Bold.
-    const r = Math.max(S * 1.25, g.p.mono ? Math.min(150, (w - xs) * 0.95) : 104 * (S / 84) ** 0.3);
-    g.rect(xs, 0, xs + S, A + O - r + 6);
-    g.sector(xs, A + O - 2 * r, xs + 2 * r, A + O, 0.5, 2.0, g.p.cut, "r");
+    // The hook grows with the stroke only as fast as its inside needs to stay open: tied to the
+    // stem outright, it ballooned at ExtraBold and pushed the crossbar (and the next letter) away.
+    const r = Math.max(S * 1.08, g.p.mono ? Math.min(150, (w - xs) * 0.95) : 104 * (S / 84) ** 0.3);
+    // As in t: thinner than the stem past Bold, with a fillet into it, so the hook stays open.
+    const sx = curlStroke(S);
+    const yJ = A + O - r + 6;
+    g.rect(xs, 0, xs + S, yJ);
+    g.sector(xs, A + O - 2 * r, xs + 2 * r, A + O, 0.5, 2.0, g.p.cut, "r", sx, H);
+    if (sx < S) g.poly([[xs + S, yJ], [xs + sx, yJ], pointAt(ellipse(xs + sx, A + O - 2 * r + H, xs + 2 * r - sx, A + O - H, g.p.kin), 1.6)]);
     g.rect(0, X - H, g.p.mono ? w * 0.86 : xs + r * 1.78, X);
   }],
   g: ["RS", 440, (g, w) => {
@@ -166,7 +182,7 @@ const LOWER = {
     const x = g.p.mono ? w * 0.62 : 150;
     g.rect(x, D + hr - O - 8, x + S, X);
     g.sector(x - 2 * hr + S, D - O, x + S, D + 2 * hr, 2.6, 4.0, g.p.cut, "r");
-    if (g.p.mono) g.rect(x - S * 1.9, X - g.p.H, x + S, X);
+    if (g.p.mono) g.rect(x - g.slab * 1.9, X - g.p.H, x + S, X);
     g.mark();
     g.dot(x + S / 2, X + 130);
   }],
@@ -184,7 +200,7 @@ const LOWER = {
       const x = w * 0.42;
       g.stemX = x + S / 2;
       g.rect(x, 134, x + S, A);
-      g.rect(x - S * 1.6, A - H, x + S, A);
+      g.rect(x - g.slab * 1.6, A - H, x + S, A);
       g.sector(x, -g.p.O, x + 300, 280, 2.0, 3.6, "r", g.p.cut);
       return;
     }
@@ -198,7 +214,8 @@ const LOWER = {
   }],
   m: ["SS", 660, (g, w) => {
     const { S, X } = g.p;
-    const s = g.p.mono ? S * 0.86 : S;
+    // The mono cell does not grow with the stems: past Bold its three stems step down further.
+    const s = g.p.mono ? S * (S > 130 ? 0.76 : 0.86) : S;
     const m1 = (w + s) / 2;
     g.rect(0, 0, s, X);
     g.add(sector(0, X - 2 * X * 0.36 - g.p.O, m1, X + g.p.O, s, g.p.H, g.p.k, 0, 1.62, "r", "r", g.p.kin));
@@ -226,8 +243,9 @@ const LOWER = {
     if (g.p.mono) {
       const x = w * 0.28;
       g.rect(x, 0, x + S, X);
-      g.add(sector(x, X - 2 * X * 0.4 - O, x + w * 0.95, X + O, S, g.p.H, g.p.k, 0.55, 1.62, g.p.cut, "r", g.p.kin));
-      g.rect(x - S * 1.2, 0, x + S * 2.2, g.p.H);
+      // Past Bold the arm pulls in by what the stem gained, so the ink keeps to the advance.
+      g.add(sector(x, X - 2 * X * 0.4 - O, x + w * 0.95 - (S - g.slab) * 1.5, X + O, S, g.p.H, g.p.k, 0.55, 1.62, g.p.cut, "r", g.p.kin));
+      g.rect(x - g.slab * 1.2, 0, x + S + g.slab * 1.2, g.p.H);
       return;
     }
     g.rect(0, 0, S, X);
@@ -240,10 +258,18 @@ const LOWER = {
   t: ["NR", 276, (g, w) => {
     const { S, H, X, A, O } = g.p;
     const xs = w * 0.24;
-    // Never tighter than the stroke allows, or the inside of the curl collapses at Bold.
-    const r = Math.max(S * 1.45, Math.min(140, (w - xs) * 0.8));
-    g.rect(xs, r - O - 8, xs + S, X + (A - X) * 0.4);
-    g.sector(xs, -O, xs + 2 * r, 2 * r - O, 2.0, 3.48, "r", g.p.cut === "r" ? "r" : "v");
+    // Never tighter than the stroke allows, or the inside of the curl collapses at Bold — but no
+    // looser either: tied to the stem at 1.45, the curl ballooned at 700–800 and "attempts" read
+    // as "at tempts".
+    const r = Math.max(S * 1.12, Math.min(140, (w - xs) * 0.8));
+    // Past Bold the curl is drawn thinner than the stem — a full-weight curl closes up into a
+    // solid foot at ExtraBold and Black — and a fillet runs from the stem into the thinner curl,
+    // so the join has no step. Below Bold, sx is the stem and nothing changes.
+    const sx = curlStroke(S);
+    const yJ = r - O - 8;
+    g.rect(xs, yJ, xs + S, X + (A - X) * 0.4);
+    g.sector(xs, -O, xs + 2 * r, 2 * r - O, 2.0, 3.48, "r", g.p.cut === "r" ? "r" : "v", sx, H);
+    if (sx < S) g.poly([[xs + S, yJ], [xs + sx, yJ], pointAt(ellipse(xs + sx, -O + H, xs + 2 * r - sx, 2 * r - O - H, g.p.kin), 2.4)]);
     g.rect(0, X - H, w * 0.9, X);
   }],
   u: ["SS", 410, (g, w) => {
@@ -291,8 +317,8 @@ function monoI(g, top, dot) {
   const { S, H } = g.p;
   const x = 230;
   g.rect(x, 0, x + S, top);
-  g.rect(x - S * 1.5, top - H, x + S, top);
-  g.rect(x - S * 1.5 - 30, 0, x + S * 2.5 + 30, H);
+  g.rect(x - g.slab * 1.5, top - H, x + S, top);
+  g.rect(x - g.slab * 1.5 - 30, 0, x + S + g.slab * 1.5 + 30, H);
   g.mark();
   if (dot) g.dot(x + S / 2, top + 130);
 }
@@ -937,7 +963,7 @@ function place(p, name, unicode, sides, width, draw, extra) {
   }
   if (g.contours.length === 0) {
     const adv = mono ? p.monoAdvance : unicode === " " ? 1000 : Math.round(250 * p.wf);
-    return { name, unicode, advance: adv, contours: [] };
+    return { name, unicode, advance: adv, contours: [], spec: { sides, width, draw, extra } };
   }
   const b = g.base ?? bbox(g.contours);
   let shift;
@@ -956,7 +982,12 @@ function place(p, name, unicode, sides, width, draw, extra) {
     shift = l - b.x0;
   }
   const contours = transform(g.contours, ([x, y]) => [Math.round((x + shift) * 10) / 10, Math.round(y * 10) / 10]);
-  return { name, unicode, advance: Math.round(advance), contours };
+  return { name, unicode, advance: Math.round(advance), contours, spec: { sides, width, draw, extra } };
+}
+
+/** What a script module's glyphs(api) gets: the font's numbers, the base drawings and the tools. */
+function moduleApi(p) {
+  return { p, defs: { ...LOWER, ...UPPER }, figures: FIGURES, sym: SYM, accents: { acute, dotAbove, ogonek, slashOver }, geom: { bar, bbox, disc, ellipse, mirrorX, mirrorY, orient, pointAt, polygon, rect, ring, sector, stroke, transform } };
 }
 
 /** Every glyph of one font. */
@@ -964,6 +995,7 @@ export function buildGlyphs(p) {
   // Tabular figures: one advance for all ten, wide enough for the widest.
   p.figureAdvance = Math.round(560 * p.wf + (p.S - 84) * 0.6);
   const figureW = Math.round((p.figureAdvance - 2 * 56) * (p.mono ? 1 : 0.98));
+  p.figureW = figureW;
   const out = [];
   const lowerByChar = {};
   const add = (name, unicode, sides, width, draw, extra) => {
@@ -991,11 +1023,25 @@ export function buildGlyphs(p) {
     const wd = width || (baseCh === "l" ? p.S : p.S);
     add(name, ch, sides, wd, draw, accent);
   }
+  // Further scripts and languages, one module each in scripts/ (see scripts/index.mjs): each
+  // returns glyphs in the same shape as the Polish letters above, drawn with the same pen.
+  const api = moduleApi(p);
+  const seen = new Set(out.map((gl) => gl.unicode).filter(Boolean));
+  // OSQD_FONT_MODULES=latin,cyrillic builds with only those modules — for working on one module, or
+  // on the core while another is half-written. Unset, every module is built.
+  const only = globalThis.process?.env?.OSQD_FONT_MODULES?.split(",").map((m) => m.trim());
+  for (const mod of only ? SCRIPT_MODULES.filter((m) => only.includes(m.id)) : SCRIPT_MODULES) {
+    for (const { name, unicode, sides, width, draw, accent } of mod.glyphs(api)) {
+      if (seen.has(unicode)) throw new Error(`type: ${mod.id} draws U+${unicode.codePointAt(0).toString(16).toUpperCase()} (${name}), which another table already has`);
+      seen.add(unicode);
+      add(name, unicode, sides, width, draw, accent);
+    }
+  }
   return out;
 }
 
-/** Kerning pairs for proportional fonts, by character, in font units. */
-export const KERNING = [
+/** Kerning pairs for proportional fonts, by character, in font units (plus each script module's `kerning`). */
+const BASE_KERNING = [
   ["A", "V", -46], ["V", "A", -46], ["A", "T", -50], ["T", "A", -50], ["A", "Y", -50], ["Y", "A", -50],
   ["A", "W", -28], ["W", "A", -28], ["L", "T", -70], ["L", "Y", -70], ["L", "V", -56], ["L", "W", -36],
   ["T", "a", -60], ["T", "e", -60], ["T", "o", -60], ["T", "c", -60], ["T", "s", -50], ["T", "y", -40], ["T", "u", -40], ["T", "r", -40],
@@ -1007,3 +1053,135 @@ export const KERNING = [
   ['"', "A", -50], ["'", "A", -50], ["“", "A", -50], ["‘", "A", -50], ["A", '"', -50], ["A", "'", -50],
   ["v", ".", -40], ["v", ",", -40], ["y", ".", -40], ["y", ",", -40], ["w", ".", -30], ["w", ",", -30],
 ];
+
+export const KERNING = [...BASE_KERNING, ...SCRIPT_MODULES.flatMap((mod) => mod.kerning ?? [])];
+
+/* ------------------------------------------------------------------ OpenType alternates */
+
+/**
+ * The features the fonts carry, as GSUB lookups built in build.mjs from what this returns:
+ *   pnum  proportional figures (tabular stay the default: UI first)   tnum  back to tabular
+ *   zero  slashed zero (where the face's own zero is not slashed)     case  dashes, brackets,
+ *   ss01  the Clear forms in Sans and Tech: serifed I, tailed l,            guillemets, bullets
+ *         1 with a base                                                     and colon raised for
+ *   sups, subs, numr, dnom  small figures above, below, for fractions       all-caps text
+ *   frac  numerator / fraction slash / denominator, by context (build.mjs)
+ */
+export const FEATURE_TAGS = ["case", "dnom", "frac", "numr", "pnum", "ss01", "subs", "sups", "tnum", "zero"];
+
+const DIGITS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+const PNUM_SIDES = { zero: "RR", one: "SS", two: "RR", three: "RR", four: "DS", five: "SR", six: "RR", seven: "SD", eight: "RR", nine: "RR" };
+/** What `case` raises: punctuation that sits on the x-height, moved to sit on the capitals. */
+const CASE_CHARS = [..."-‐‑‒–—―()[]{}«»‹›·•:¡¿"];
+
+/**
+ * Every alternate glyph one font carries, and the substitutions each feature makes, by glyph name.
+ * `drawn` is buildGlyphs(p)'s output: every placed glyph keeps the recipe it was drawn from
+ * (`spec`), so a variant is the same recipe placed again with different numbers — which is how the
+ * script modules' composites (Í, ĺ, Ł …) get their ss01 forms without knowing about it.
+ * Each alternate carries `base`, the character whose subset file it ships in.
+ */
+export function buildAlternates(p, drawn) {
+  const byChar = new Map(drawn.filter((d) => d.unicode).map((d) => [d.unicode, d]));
+  const byName = new Map(drawn.map((d) => [d.name, d]));
+  const glyphs = [];
+  const subs = Object.fromEntries(FEATURE_TAGS.map((t) => [t, []]));
+  const fig = Object.fromEntries(DIGITS.map((n) => [n, FIGURES[n][1]]));
+  const r1 = (v) => Math.round(v * 10) / 10;
+  /** Re-centres a placed glyph on the tabular figure advance (a mono's own advance already is). */
+  const tab = (gl) => {
+    if (p.mono || gl.contours.length === 0) return gl;
+    const b = bbox(gl.contours);
+    const shift = (p.figureAdvance - (b.x1 - b.x0)) / 2 - b.x0;
+    return { ...gl, advance: p.figureAdvance, contours: transform(gl.contours, ([x, y]) => [r1(x + shift), y]) };
+  };
+  const push = (gl, base) => {
+    glyphs.push({ ...gl, unicode: undefined, base });
+    return gl.name;
+  };
+  const again = (pp, d, name) => place(pp, name, undefined, d.spec.sides, d.spec.width, d.spec.draw, d.spec.extra);
+
+  // pnum / tnum: each figure spaced by its own shape. The monos have one advance, so no pnum.
+  const pnum = {};
+  if (!p.mono) {
+    for (const n of DIGITS) {
+      const w = n === "one" ? p.figureW : Math.round(p.figureW * 0.95);
+      pnum[n] = push(place(p, `${n}.pnum`, undefined, PNUM_SIDES[n], 0, (g) => fig[n](g, w)), "0");
+      subs.pnum.push([n, pnum[n]]);
+      subs.tnum.push([pnum[n], n]);
+    }
+  }
+
+  // zero: the slashed form, where the face's own zero is something else.
+  if (p.zero !== "slashed" && byName.has("zero")) {
+    const pz = { ...p, zero: "slashed" };
+    subs.zero.push(["zero", push(tab(again(pz, byName.get("zero"), "zero.zero")), "0")]);
+    if (pnum.zero) subs.zero.push([pnum.zero, push(place(pz, "zero.pnum.zero", undefined, "RR", 0, (g) => fig.zero(g, Math.round(p.figureW * 0.95))), "0")]);
+  }
+
+  // ss01: Clear's distinguishing forms for Sans and Tech — every glyph drawn from I, J, l or 1.
+  if (!p.mono && !(p.serifI && p.tailL && p.baseOne)) {
+    const ps = { ...p, serifI: true, tailL: true, baseOne: true };
+    const from = new Set([UPPER.I[2], UPPER.J[2], LOWER.l[2]]);
+    for (const d of drawn) {
+      if (!d.unicode || !d.spec) continue;
+      const base = d.unicode.normalize("NFD")[0];
+      if (!(from.has(d.spec.draw) || "IJl".includes(base))) continue;
+      const alt = again(ps, d, `${d.name}.ss01`);
+      if (alt.contours.length === d.contours.length && alt.contours.every((c, i) => JSON.stringify(c) === JSON.stringify(d.contours[i]))) continue;
+      subs.ss01.push([d.name, push(alt, d.unicode)]);
+    }
+    subs.ss01.push(["one", push(tab(place(ps, "one.ss01", undefined, "NN", 0, (g) => fig.one(g, p.figureW))), "1")]);
+    if (pnum.one) subs.ss01.push([pnum.one, push(place(ps, "one.pnum.ss01", undefined, "SS", 0, (g) => fig.one(g, p.figureW)), "1")]);
+  }
+
+  // case: raised to sit on the capitals rather than the lowercase.
+  const dy = Math.round((p.C - p.X) / 2);
+  for (const ch of CASE_CHARS) {
+    const d = byChar.get(ch);
+    if (!d || d.contours.length === 0) continue;
+    subs.case.push([d.name, push({ ...d, name: `${d.name}.case`, contours: transform(d.contours, ([x, y]) => [x, y + dy]) }, ch)]);
+  }
+
+  // Small figures: the symbols module's, so sups, subs, numr and dnom are the same drawings as the
+  // encoded ⁰¹² … ₀₁₂ — drawn heavier and scaled there, so their stems are not starved.
+  const api = moduleApi(p);
+  const position = { sups: "sup", subs: "sub", numr: "numr", dnom: "dnom" };
+  const smallAdvance = p.mono ? p.monoAdvance : Math.round(p.figureAdvance * 0.64);
+  const smallNames = {};
+  for (const tag of Object.keys(position)) {
+    smallNames[tag] = {};
+    for (const [i, n] of DIGITS.entries()) {
+      const scaled = scriptDigit(api, String(i), position[tag]);
+      const b = bbox(scaled);
+      const shift = (smallAdvance - (b.x1 - b.x0)) / 2 - b.x0;
+      const name = push({ name: `${n}.${tag}`, advance: smallAdvance, contours: transform(scaled, ([x, y]) => [r1(x + shift), r1(y)]) }, "0");
+      smallNames[tag][n] = name;
+      subs[tag].push([n, name]);
+      if (pnum[n]) subs[tag].push([pnum[n], name]);
+    }
+  }
+  // dnom also takes a numerator: frac turns numerators after a fraction slash into denominators.
+  for (const n of DIGITS) subs.dnom.push([smallNames.numr[n], smallNames.dnom[n]]);
+  // The other features run first (lookup order), so a figure may already be a slashed zero or
+  // Clear's one when the small-figure and fraction lookups see it: they take those too.
+  const variants = { zero: ["zero.zero", "zero.pnum.zero"], one: ["one.ss01", "one.pnum.ss01"] };
+  const made = new Set(glyphs.map((gl) => gl.name));
+  const extra = Object.entries(variants).flatMap(([n, names]) => names.filter((v) => made.has(v)).map((v) => [n, v]));
+  for (const tag of Object.keys(position)) for (const [n, v] of extra) subs[tag].push([v, smallNames[tag][n]]);
+
+  // frac: its own fraction slash, unencoded and shipped with "/", so the latin subset file has it
+  // whichever subset an encoded U+2044 is served from (features cannot reach across files).
+  // Steeper than the solidus and set tight, so the small figures tuck in towards it.
+  const t = p.S * 0.78;
+  const fraction = push(place(p, "fraction.frac", undefined, "TT", 0, (g) => g.stroke(0, -10, p.C * 0.3, p.C + 10, t)), "/");
+  const digits = [...DIGITS, ...Object.values(pnum), ...extra.map(([, v]) => v)];
+  const frac = {
+    digits,
+    numr: Object.values(smallNames.numr),
+    dnom: Object.values(smallNames.dnom),
+    slashes: ["slash", ...(byChar.has("\u2044") ? [byChar.get("\u2044").name] : [])],
+    fraction,
+  };
+  return { glyphs, subs, frac };
+}

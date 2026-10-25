@@ -64,7 +64,13 @@
   "files": [
     "dist",
     "styles",
-    "assets",
+    "assets/icons",
+    "assets/icons.svg",
+    "assets/icons.json",
+    "assets/illustrations",
+    "assets/osqd-ui-elements.js",
+    "assets/fonts/subsets",
+    "assets/fonts/OFL.txt",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"

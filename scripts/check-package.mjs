@@ -34,7 +34,7 @@ const PROBES = {
 };
 
 /** Files a page links directly; each must be in the tarball and not empty. */
-const FILES = ["@osqd/ui/css", "@osqd/ui/styles/index.css", "@osqd/ui/styles/tokens.css", "@osqd/ui/styles/fonts.css", "@osqd/ui/assets/fonts/osqd-sans-400.woff2", "@osqd/ui/assets/fonts/OFL.txt", "@osqd/ui/assets/osqd-ui-elements.js", "@osqd/ui/assets/icons.svg"];
+const FILES = ["@osqd/ui/css", "@osqd/ui/styles/index.css", "@osqd/ui/styles/tokens.css", "@osqd/ui/styles/fonts.css", "@osqd/ui/assets/fonts/subsets/osqd-sans-400.latin.woff2", "@osqd/ui/assets/fonts/OFL.txt", "@osqd/ui/assets/osqd-ui-elements.js", "@osqd/ui/assets/icons.svg"];
 
 try {
   const out = execFileSync("npm", ["pack", "--silent", "--ignore-scripts", "--pack-destination", scratch], { cwd: root, encoding: "utf8" });
@@ -62,6 +62,14 @@ try {
     if (!existsSync(path) || statSync(path).size === 0) throw new Error(`${specifier} resolves to ${path}, which is missing or empty`);
     process.stdout.write(`ok  ${specifier} (${(statSync(path).size / 1024).toFixed(0)} KB)\n`);
   }
+
+  // Every font file the shipped stylesheet points at must be in the tarball: the complete fonts
+  // stay in the repository (for installing on a desktop), the page loads only the subsets.
+  const fontsCss = fileURLToPath(execFileSync(process.execPath, ["--input-type=module", "-e", 'process.stdout.write(import.meta.resolve("@osqd/ui/styles/fonts.css"))'], { cwd: scratch, encoding: "utf8" }));
+  const urls = [...readFileSync(fontsCss, "utf8").matchAll(/url\("([^"]+)"\)/g)].map((m) => m[1]);
+  const missing = urls.filter((u) => !existsSync(new URL(u, `file://${fontsCss}`)));
+  if (urls.length === 0 || missing.length > 0) throw new Error(`styles/fonts.css points at ${missing.length} of ${urls.length} font files that are not in the package: ${missing.slice(0, 3).join(", ")}`);
+  process.stdout.write(`ok  styles/fonts.css: all ${urls.length} font files are in the package\n`);
 
   const deps = Object.keys(manifest.dependencies ?? {});
   if (deps.length) throw new Error(`the kit must have no runtime dependencies, found: ${deps.join(", ")}`);

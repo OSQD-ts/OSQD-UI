@@ -177,6 +177,18 @@ export function stroke(x0, y0, x1, y1, t) {
   const dy = y1 - y0;
   if (Math.abs(dy) < 1e-6) return rect(Math.min(x0, x1), y0 - t / 2, Math.max(x0, x1), y0 + t / 2);
   const len = Math.hypot(dx, dy);
+  // Below 30° from the horizontal a level cut grows without limit (its half-width is t/2 ÷ sin),
+  // so a near-flat stroke is cut square instead, across the stroke.
+  if (Math.abs(dy) / len < 0.5) {
+    const nx = (-dy / len) * (t / 2);
+    const ny = (dx / len) * (t / 2);
+    return polygon([
+      [x0 + nx, y0 + ny],
+      [x1 + nx, y1 + ny],
+      [x1 - nx, y1 - ny],
+      [x0 - nx, y0 - ny],
+    ]);
+  }
   const hw = (t / 2) * (len / Math.abs(dy)); // horizontal half-width of the cut
   return polygon([
     [x0 - hw, y0],
