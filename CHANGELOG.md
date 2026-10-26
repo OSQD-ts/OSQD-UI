@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.1 — 2026-10-26
+
+- **Fixed: the OSQD fonts rendered ragged at text sizes.** Two causes, both in how outlines were written:
+  - *Overlapping contours.* The drawings overlap by design (a stem runs into its bowl), and 1,006 of the 1,370 glyphs in a face shipped that way. A rasteriser fills overlaps correctly but anti-aliases them badly: where two contours meet, both add coverage to the same edge pixels, so joins came out as dark notches — the crossbar of G, the crossing of &, the stroke through $. Outlines are now unioned (Skia's path operations, exact on curves) before they are written.
+  - *Rounding drift.* opentype.js writes each CFF curve as three relative steps, rounds each from the unrounded previous point and then assumes the pen landed on the rounded end, so every curve could leave it up to 1.5 units off and the error walked along the contour: in 0.7.0's Sans Regular 3,031 points sat more than 2 units from where they were drawn (18 on a brace), and 84 curves in the Latin subset ended beside their own start, so the closing line drew a spike. Every coordinate is now a whole unit before it is written, which makes each step exact.
+- Outlines are counter-clockwise with clockwise counters, the zero-area anchor contours box drawing used for placement are no longer written, and every font carries a `gasp` table (smoothing at every size, no grid-fitting).
+- The fonts grow about 12 % (the union splits curves where contours crossed): 8.6 MB of subsets in the package, about the same per page.
+- New tests in `tests/fonts.test.ts` keep the outlines clean: no curve ending beside its start, no sliver contours, no overlaps or filled counters, consistent directions, `gasp` everywhere.
+
 ## 0.7.0 — 2026-10-25
 
 - **Fonts: weights, italics and optical sizes.** Every family now runs from ExtraLight (200) to Black (900), with an italic for every weight. The italics are the upright drawings narrowed 2.5 % and slanted 9°, with stems thickened by 1/cos 9°. Each sans has a Caption cut for 12 px and below (Regular to Bold) and a Display cut for 32 px and up (all weights, upright only — the Text italic stands in), as "OSQD Sans Caption", "OSQD Sans Display" and so on. The kit sets its small text in Caption and `.oq-h1`/`.oq-h2` in Display through the new `--oq-font-caption` and `--oq-font-display` variables, which `data-font` switches with the others. 164 faces in all.

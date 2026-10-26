@@ -13,6 +13,12 @@
 // The output is deterministic — fixed timestamps, glyphs in table order, kerning sorted — so
 // --check can compare bytes. opentype.js writes CFF outlines but no kerning, so a legacy `kern`
 // table is added to the font file here; every current browser applies it.
+//
+// Outlines are cleaned on the way out (see `outline` below): the drawings overlap by design — a
+// stem runs into its bowl so no join merely touches — and overlaps are unioned away here, every
+// coordinate is rounded to a whole unit before opentype.js sees it, and contour directions are
+// made consistent. Both the overlaps and opentype.js's own rounding left the shipped outlines
+// ragged at text sizes; the comment on `outline` says how.
 
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -27,6 +33,10 @@ import { FAMILIES, ITALIC_ANGLE, OPTICAL, resolve, WEIGHT_NAMES, WEIGHTS, WIDTHS
 const require = createRequire(import.meta.url);
 const opentype = require("opentype.js");
 const wawoff2 = require("wawoff2");
+// Skia's path operations, for the union of overlapping contours: exact on cubic curves (a curve is
+// split where it crosses another, never flattened). Loaded once per thread.
+const PathKitInit = require("pathkit-wasm/bin/pathkit.js");
+const PK = await PathKitInit({ wasmBinary: readFileSync(require.resolve("pathkit-wasm/bin/pathkit.wasm")) });
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const outDir = join(root, "assets/fonts");
@@ -35,9 +45,208 @@ const CREATED = Date.UTC(2026, 9, 25) / 1000; // fixed, so the bytes only change
 const VERSION = "Version 1.000";
 const COPYRIGHT = "Copyright 2026 The OSQD Authors. Licensed under the SIL Open Font License, Version 1.1.";
 
+/* ------------------------------------------------------------------ outlines */
+
+// PathKit's path verbs (toCmds): move, line, quadratic, conic, cubic, close.
+const VERB = { move: 0, line: 1, quad: 2, conic: 3, cubic: 4, close: 5 };
+
+/** Twice the signed area of a contour, from its on-curve and control points (enough for a sign). */
+function signedArea(ct) {
+  const pts = [ct.start, ...ct.segs.flatMap((s) => (s.L ? [s.L] : s.C))];
+  let a = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const [x1, y1] = pts[i];
+    const [x2, y2] = pts[(i + 1) % pts.length];
+    a += x1 * y2 - x2 * y1;
+  }
+  return a;
+}
+
+/** The same contour drawn the other way round. */
+function reversed(ct) {
+  const ends = [ct.start, ...ct.segs.map((s) => s.L ?? s.C[2])];
+  const segs = [];
+  for (let i = ct.segs.length - 1; i >= 0; i--) {
+    const s = ct.segs[i];
+    segs.push(s.L ? { L: ends[i] } : { C: [s.C[1], s.C[0], ends[i]] });
+  }
+  return { start: ends[ends.length - 1], segs };
+}
+
+const same = (a, b) => a[0] === b[0] && a[1] === b[1];
+
+/**
+ * A glyph's contours as they are written to the font. Two things made the shipped outlines ragged
+ * at text sizes, and both are dealt with here:
+ *
+ * - Overlaps. The drawings overlap on purpose (a stem runs into its bowl), which a rasteriser
+ *   fills correctly but anti-aliases badly: where two contours share or nearly share an edge, both
+ *   add coverage to the same pixel and the join comes out too dark, notched. The contours are
+ *   unioned into one non-overlapping outline (which also drops zero-area anchor contours a drawing
+ *   used for placement only — the glyph is already placed by then).
+ * - Rounding. opentype.js writes a CFF curve as three relative steps, each rounded separately and
+ *   measured from the unrounded previous point, then assumes the pen landed on the rounded end:
+ *   every curve can leave the pen up to 1.5 units off, and the error walks along the contour —
+ *   the closing line then jumps back to the start, and control points stop lining up with their
+ *   curve ends. Measured on 0.7.0's Sans Regular: 3,031 points off by more than 2 units, up to 18
+ *   on a brace. Rounding every coordinate to a whole unit first makes each step exact.
+ *
+ * Directions end up consistent: outlines counter-clockwise and counters clockwise, as PostScript
+ * outlines expect and as nonzero filling needs.
+ */
+function outline(contours) {
+  if (contours.length === 0) return [];
+  const path = PK.NewPath();
+  path.setFillType(PK.FillType.WINDING);
+  for (const ct of contours) {
+    path.moveTo(ct.start[0], ct.start[1]);
+    for (const s of ct.segs) {
+      if (s.L) path.lineTo(s.L[0], s.L[1]);
+      else path.cubicTo(s.C[0][0], s.C[0][1], s.C[1][0], s.C[1][1], s.C[2][0], s.C[2][1]);
+    }
+    path.close();
+  }
+  path.simplify();
+  const cmds = path.toCmds();
+  path.delete();
+  const r = (x, y) => [Math.round(x), Math.round(y)];
+  const raw = [];
+  let cur;
+  let pen = [0, 0];
+  for (const c of cmds) {
+    const v = c[0];
+    if (v === VERB.move) {
+      cur = { start: r(c[1], c[2]), segs: [] };
+      raw.push(cur);
+      pen = [c[1], c[2]];
+    } else if (v === VERB.line) {
+      cur.segs.push({ L: r(c[1], c[2]) });
+      pen = [c[1], c[2]];
+    } else if (v === VERB.quad) {
+      // Raised to a cubic: the control points two thirds of the way to the quadratic's one.
+      const [x0, y0] = pen;
+      const [qx, qy, x, y] = [c[1], c[2], c[3], c[4]];
+      cur.segs.push({ C: [r(x0 + (2 / 3) * (qx - x0), y0 + (2 / 3) * (qy - y0)), r(x + (2 / 3) * (qx - x), y + (2 / 3) * (qy - y)), r(x, y)] });
+      pen = [x, y];
+    } else if (v === VERB.cubic) {
+      cur.segs.push({ C: [r(c[1], c[2]), r(c[3], c[4]), r(c[5], c[6])] });
+      pen = [c[5], c[6]];
+    } else if (v === VERB.conic) {
+      throw new Error("type: a union produced a conic, which no drawing should");
+    }
+  }
+  // Whole units can collapse a tiny segment to nothing; such segments, and contours left with no
+  // area, are dropped.
+  const out = [];
+  for (const ct of raw) {
+    const segs = [];
+    let last = ct.start;
+    for (const s of ct.segs) {
+      const end = s.L ?? s.C[2];
+      if (same(end, last) && (s.L || (same(s.C[0], last) && same(s.C[1], last)))) continue;
+      segs.push(s);
+      last = end;
+    }
+    const cleaned = { start: ct.start, segs };
+    // Under 8 square units (on the curve, not its control polygon) is a sliver the union left
+    // where two edges nearly met — invisible, but a contour a rasteriser still has to walk.
+    if (segs.length >= 2 && Math.abs(polygonArea(flatten(cleaned))) >= 8) out.push(cleaned);
+  }
+  // The union comes back with no direction convention (its result is even-odd), so each contour
+  // is oriented by how deeply it nests: an outline counter-clockwise, a counter inside it
+  // clockwise, an island inside that counter-clockwise again. The contours no longer cross, so
+  // one point on a contour tells which others contain it.
+  const polys = out.map(flatten);
+  return out.map((ct, i) => {
+    const probe = within(polys[i]);
+    const depth = polys.reduce((n, poly, j) => n + (j !== i && inside(probe, poly) ? 1 : 0), 0);
+    const ccw = signedArea(ct) > 0;
+    return ccw === (depth % 2 === 0) ? ct : reversed(ct);
+  });
+}
+
+/** The signed area of a polygon. */
+function polygonArea(pts) {
+  let a = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const [x1, y1] = pts[i];
+    const [x2, y2] = pts[(i + 1) % pts.length];
+    a += x1 * y2 - x2 * y1;
+  }
+  return a / 2;
+}
+
+/** A contour as a polygon, curves sampled finely enough to test containment. */
+function flatten(ct) {
+  const pts = [ct.start];
+  let p0 = ct.start;
+  for (const s of ct.segs) {
+    if (s.L) pts.push(s.L);
+    else {
+      const [c1, c2, p3] = s.C;
+      for (let t = 1; t <= 12; t++) {
+        const u = t / 12;
+        const v = 1 - u;
+        pts.push([v * v * v * p0[0] + 3 * v * v * u * c1[0] + 3 * v * u * u * c2[0] + u * u * u * p3[0], v * v * v * p0[1] + 3 * v * v * u * c1[1] + 3 * v * u * u * c2[1] + u * u * u * p3[1]]);
+      }
+    }
+    p0 = s.L ?? s.C[2];
+  }
+  return pts;
+}
+
+/**
+ * A point just inside a polygon, half a unit in from the middle of its longest edge: not on the
+ * edge itself, where contours that touch (a shade's dots meet at their corners) would make the
+ * containment test ambiguous.
+ */
+function within(poly) {
+  let best = 0;
+  let len = -1;
+  for (let i = 0; i < poly.length; i++) {
+    const [ax, ay] = poly[i];
+    const [bx, by] = poly[(i + 1) % poly.length];
+    const l = Math.hypot(bx - ax, by - ay);
+    if (l > len) {
+      len = l;
+      best = i;
+    }
+  }
+  const [ax, ay] = poly[best];
+  const [bx, by] = poly[(best + 1) % poly.length];
+  const mx = (ax + bx) / 2;
+  const my = (ay + by) / 2;
+  const nx = -(by - ay) / (len || 1);
+  const ny = (bx - ax) / (len || 1);
+  const a = [mx + nx * 0.5, my + ny * 0.5];
+  return inside(a, poly) ? a : [mx - nx * 0.5, my - ny * 0.5];
+}
+
+/** Even-odd point-in-polygon. */
+function inside([x, y], poly) {
+  let hit = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) hit = !hit;
+  }
+  return hit;
+}
+
+/** The cleaned outline of a drawing, computed once: the full font and its subsets share glyphs. */
+const outlines = new WeakMap();
+function cleaned(contours) {
+  let done = outlines.get(contours);
+  if (done === undefined) {
+    done = outline(contours);
+    outlines.set(contours, done);
+  }
+  return done;
+}
+
 function toPath(contours) {
   const path = new opentype.Path();
-  for (const ct of contours) {
+  for (const ct of cleaned(contours)) {
     path.moveTo(ct.start[0], ct.start[1]);
     for (const s of ct.segs) {
       if (s.L) path.lineTo(s.L[0], s.L[1]);
@@ -47,6 +256,12 @@ function toPath(contours) {
   }
   return path;
 }
+
+/**
+ * gasp: smooth (grey-scale, symmetric) at every size and never grid-fit. These outlines carry no
+ * hints, and a renderer that reads gasp should not try to snap them.
+ */
+const GASP = Buffer.from([0x00, 0x01, 0x00, 0x01, 0xff, 0xff, 0x00, 0x0a]);
 
 /* ------------------------------------------------------------------ italic */
 
@@ -262,7 +477,7 @@ function makeFont(p, drawn, alts) {
   // head.macStyle: bit 0 bold, bit 1 italic — what macOS reads to group the styles.
   const macStyle = (p.weight >= 700 ? 1 : 0) | (p.italic ? 2 : 0);
   const otf = Buffer.from(font.toArrayBuffer());
-  if (p.mono) return rewrite(otf, null, null, macStyle);
+  if (p.mono) return rewrite(otf, [{ tag: "gasp", data: GASP }], macStyle);
   const index = new Map();
   glyphs.forEach((g, i) => {
     if (g.unicode !== undefined) index.set(String.fromCodePoint(g.unicode), i);
@@ -281,7 +496,9 @@ function makeFont(p, drawn, alts) {
     pairs.sort((x, y) => x[0] - y[0] || x[1] - y[1]);
   }
   // A subset with no pair in it (a script with nothing in the table) gets no kern table at all.
-  return pairs.length === 0 ? rewrite(otf, null, null, macStyle) : rewrite(otf, "kern", kernTable(pairs), macStyle);
+  const extra = [{ tag: "gasp", data: GASP }];
+  if (pairs.length > 0) extra.push({ tag: "kern", data: kernTable(pairs) });
+  return rewrite(otf, extra, macStyle);
 }
 
 /** One face: its complete font and its subset fonts, as OpenType bytes. */
@@ -344,7 +561,7 @@ const checksum = (buf) => {
  * writer stamps the current time there, which would make every build differ. head.macStyle is
  * set there too: the writer leaves it 0.
  */
-function rewrite(font, tag, data, macStyle = 0) {
+function rewrite(font, extra = [], macStyle = 0) {
   const num = font.readUInt16BE(4);
   const tables = [];
   for (let i = 0; i < num; i++) {
@@ -354,7 +571,7 @@ function rewrite(font, tag, data, macStyle = 0) {
     const len = font.readUInt32BE(rec + 12);
     tables.push({ tag: t, data: Buffer.from(font.subarray(off, off + len)) });
   }
-  if (tag) tables.push({ tag, data });
+  tables.push(...extra.map(({ tag, data }) => ({ tag, data: Buffer.from(data) })));
   tables.sort((a, b) => (a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : 0));
   const n = tables.length;
   let pow = 1;

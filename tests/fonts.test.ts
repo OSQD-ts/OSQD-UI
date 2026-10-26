@@ -381,3 +381,165 @@ describe("OSQD typefaces: OpenType features", () => {
     expect(pairs(ext, "pnum")).toEqual([]);
   });
 });
+
+/**
+ * The outlines as a rasteriser sees them. 0.7.0 shipped overlapping contours (darker, notched joins
+ * at text sizes) and outlines that opentype.js's per-step rounding had pushed off course (curves
+ * ending beside their own start, so the closing line drew a spike). type/build.mjs now unions,
+ * rounds and orients every outline before writing it; these keep it that way.
+ */
+describe("OSQD typefaces: clean outlines", () => {
+  type Pt = [number, number];
+  const contoursOf = (font: any, i: number) => {
+    const out: { pts: Pt[]; start: Pt; last: Pt; lastType: string }[] = [];
+    let cur: Pt[] = [];
+    let start: Pt = [0, 0];
+    let last: Pt = [0, 0];
+    let lastType = "";
+    for (const c of font.glyphs.get(i).path.commands) {
+      if (c.type === "M") {
+        cur = [[c.x, c.y]];
+        start = [c.x, c.y];
+        last = start;
+      } else if (c.type === "L") {
+        cur.push([c.x, c.y]);
+        last = [c.x, c.y];
+        lastType = "L";
+      } else if (c.type === "C") {
+        const p0 = cur[cur.length - 1] as Pt;
+        for (let t = 1; t <= 10; t++) {
+          const u = t / 10;
+          const v = 1 - u;
+          cur.push([v * v * v * p0[0] + 3 * v * v * u * c.x1 + 3 * v * u * u * c.x2 + u * u * u * c.x, v * v * v * p0[1] + 3 * v * v * u * c.y1 + 3 * v * u * u * c.y2 + u * u * u * c.y]);
+        }
+        last = [c.x, c.y];
+        lastType = "C";
+      } else if (c.type === "Z") out.push({ pts: cur, start, last, lastType });
+    }
+    return out;
+  };
+  const area = (pts: Pt[]) => {
+    let a = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const [x1, y1] = pts[i] as Pt;
+      const [x2, y2] = pts[(i + 1) % pts.length] as Pt;
+      a += x1 * y2 - x2 * y1;
+    }
+    return a / 2;
+  };
+
+  it("closes every curve exactly on its start — no rounding drift", () => {
+    const off: string[] = [];
+    for (const f of faces) {
+      const font = parsed.get(f.file);
+      for (let i = 1; i < font.glyphs.length; i++) {
+        for (const ct of contoursOf(font, i)) {
+          const gap = Math.hypot(ct.last[0] - ct.start[0], ct.last[1] - ct.start[1]);
+          if (ct.lastType === "C" && gap > 0 && gap < 30) off.push(`${f.file} ${font.glyphs.get(i).name}`);
+        }
+      }
+    }
+    expect(off.slice(0, 5), `${off.length} curves end beside their own start`).toEqual([]);
+  });
+
+  // The build drops contours under 8 square units measured at 12 steps a curve; this samples at 10,
+  // so it allows half that: still far below a real dot or accent, and zero-area anchors fail it.
+  it("has no degenerate contours: nothing under 4 square units", () => {
+    const tiny: string[] = [];
+    for (const f of faces) {
+      const font = parsed.get(f.file);
+      for (let i = 1; i < font.glyphs.length; i++) {
+        if (contoursOf(font, i).some((ct) => Math.abs(area(ct.pts)) < 4)) tiny.push(`${f.file} ${font.glyphs.get(i).name}`);
+      }
+    }
+    expect(tiny.slice(0, 5), `${tiny.length} glyphs carry a sliver contour`).toEqual([]);
+  });
+
+  // Unions every glyph of four faces through the path library: a few seconds, more on a busy machine.
+  it("has no overlapping contours and fills no counter, in a sample of faces", () => {
+    const sample = [
+      faces.find((f) => f.key === "sans" && !f.mono && f.opsz === "text" && f.width === "normal" && f.weight === 400 && !f.italic),
+      faces.find((f) => f.key === "sans" && !f.mono && f.opsz === "text" && f.width === "normal" && f.weight === 900 && f.italic),
+      faces.find((f) => f.key === "clear" && f.mono && f.weight === 200 && !f.italic),
+      faces.find((f) => f.key === "tech" && f.width === "condensed" && f.weight === 700 && !f.italic),
+    ];
+    const bad: string[] = [];
+    for (const f of sample) {
+      expect(f).toBeDefined();
+      const font = parsed.get((f as Face).file);
+      for (let i = 1; i < font.glyphs.length; i++) {
+        const cts = contoursOf(font, i);
+        if (cts.length === 0) continue;
+        const all = cts.flatMap((ct) => ct.pts);
+        const xs = all.map((p) => p[0]);
+        const ys = all.map((p) => p[1]);
+        const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+        let wrong = false;
+        for (let gx = 0; gx < 24 && !wrong; gx++) {
+          for (let gy = 0; gy < 24 && !wrong; gy++) {
+            const sx = x0 + ((x1 - x0) * (gx + 0.5)) / 24;
+            const sy = y0 + ((y1 - y0) * (gy + 0.5)) / 24;
+            let w = 0;
+            let crossings = 0;
+            for (const ct of cts) {
+              for (let j = 0; j < ct.pts.length; j++) {
+                const [ax, ay] = ct.pts[j] as Pt;
+                const [bx, by] = ct.pts[(j + 1) % ct.pts.length] as Pt;
+                const side = (bx - ax) * (sy - ay) - (sx - ax) * (by - ay);
+                if (ay <= sy) {
+                  if (by > sy && side > 0) {
+                    w++;
+                    crossings++;
+                  }
+                } else if (by <= sy && side < 0) {
+                  w--;
+                  crossings++;
+                }
+              }
+            }
+            // An overlap winds twice; a counter drawn the wrong way round is filled by nonzero
+            // although even-odd leaves it empty.
+            if (Math.abs(w) > 1 || (w !== 0 && crossings % 2 === 0)) wrong = true;
+          }
+        }
+        if (wrong) bad.push(`${(f as Face).file} ${font.glyphs.get(i).name}`);
+      }
+    }
+    expect(bad.slice(0, 5), `${bad.length} glyphs overlap or fill a counter`).toEqual([]);
+  }, 60_000);
+
+  it("draws outlines counter-clockwise, as PostScript outlines expect", () => {
+    const cw: string[] = [];
+    for (const f of faces) {
+      const font = parsed.get(f.file);
+      for (let i = 1; i < font.glyphs.length; i++) {
+        const areas = contoursOf(font, i).map((ct) => area(ct.pts));
+        if (areas.length === 0) continue;
+        const largest = areas.reduce((a, b) => (Math.abs(b) > Math.abs(a) ? b : a));
+        if (largest < 0) cw.push(`${f.file} ${font.glyphs.get(i).name}`);
+      }
+    }
+    expect(cw.slice(0, 5), `${cw.length} glyphs drawn clockwise`).toEqual([]);
+  });
+
+  it("carries a gasp table asking for smoothing at every size, in every font file", async () => {
+    const tablesOf = (bytes: Uint8Array) => {
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      const n = view.getUint16(4);
+      const out = new Map<string, Uint8Array>();
+      for (let i = 0; i < n; i++) {
+        const rec = 12 + i * 16;
+        const tag = String.fromCharCode(...bytes.subarray(rec, rec + 4));
+        out.set(tag, bytes.subarray(view.getUint32(rec + 8), view.getUint32(rec + 8) + view.getUint32(rec + 12)));
+      }
+      return out;
+    };
+    const files = [...faces.map((f) => `${root}assets/fonts/${f.file}`), ...readdirSync(`${root}assets/fonts/subsets`).slice(0, 60).map((n) => `${root}assets/fonts/subsets/${n}`)];
+    for (const path of files) {
+      const gasp = tablesOf(await wawoff2.decompress(readFileSync(path))).get("gasp");
+      expect(gasp, path).toBeDefined();
+      // version 1, one range up to 0xFFFF ppem: grey-scale, symmetric smoothing, no grid-fitting.
+      expect([...(gasp as Uint8Array)]).toEqual([0, 1, 0, 1, 0xff, 0xff, 0, 0x0a]);
+    }
+  }, 300_000);
+});
