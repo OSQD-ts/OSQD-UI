@@ -569,7 +569,12 @@ function rewrite(font, extra = [], macStyle = 0) {
     const t = font.toString("latin1", rec, rec + 4);
     const off = font.readUInt32BE(rec + 8);
     const len = font.readUInt32BE(rec + 12);
-    tables.push({ tag: t, data: Buffer.from(font.subarray(off, off + len)) });
+    const data = Buffer.from(font.subarray(off, off + len));
+    // makeFont sets USE_TYPO_METRICS (fsSelection bit 7), which is only defined from OS/2 version
+    // 4; the writer emits version 3, which leaves a renderer free to ignore the bit and take the
+    // line height from the Windows metrics. Versions 3 and 4 have the same fields.
+    if (t === "OS/2" && data.readUInt16BE(0) < 4) data.writeUInt16BE(4, 0);
+    tables.push({ tag: t, data });
   }
   tables.push(...extra.map(({ tag, data }) => ({ tag, data: Buffer.from(data) })));
   tables.sort((a, b) => (a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : 0));

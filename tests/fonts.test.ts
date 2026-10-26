@@ -522,7 +522,7 @@ describe("OSQD typefaces: clean outlines", () => {
     expect(cw.slice(0, 5), `${cw.length} glyphs drawn clockwise`).toEqual([]);
   });
 
-  it("carries a gasp table asking for smoothing at every size, in every font file", async () => {
+  it("carries a gasp table asking for smoothing at every size and an OS/2 table that defines USE_TYPO_METRICS, in every font file", async () => {
     const tablesOf = (bytes: Uint8Array) => {
       const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
       const n = view.getUint16(4);
@@ -540,6 +540,11 @@ describe("OSQD typefaces: clean outlines", () => {
       expect(gasp, path).toBeDefined();
       // version 1, one range up to 0xFFFF ppem: grey-scale, symmetric smoothing, no grid-fitting.
       expect([...(gasp as Uint8Array)]).toEqual([0, 1, 0, 1, 0xff, 0xff, 0, 0x0a]);
+      // USE_TYPO_METRICS (fsSelection bit 7) is set, and only OS/2 version 4 and later define it.
+      const os2 = tablesOf(await wawoff2.decompress(readFileSync(path))).get("OS/2") as Uint8Array;
+      const view = new DataView(os2.buffer, os2.byteOffset, os2.byteLength);
+      expect(view.getUint16(0), `${path}: OS/2 version`).toBeGreaterThanOrEqual(4);
+      expect(view.getUint16(62) & 0x80, `${path}: USE_TYPO_METRICS`).toBe(0x80);
     }
   }, 300_000);
 });

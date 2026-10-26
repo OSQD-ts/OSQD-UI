@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.2 — 2026-10-26
+
+- **Fixed:** every font's OS/2 table is version 4, so USE_TYPO_METRICS (set since the first
+  release) is honoured. opentype.js wrote version 3, where that bit is undefined, and a renderer
+  could take the line height from the Windows metrics instead.
+- TrueType autohinting was tried and measured, and is not shipped: on Linux, Chromium and Firefox
+  ignore the horizontal hints, and the rounded advances made spacing worse.
+
 ## 0.7.1 — 2026-10-26
 
 - **Fixed: the OSQD fonts rendered ragged at text sizes.** Two causes, both in how outlines were written:
